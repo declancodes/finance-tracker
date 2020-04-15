@@ -15,34 +15,33 @@ import (
 // AccountController .
 type AccountController struct{}
 
+var accountRepo = repositories.AccountRepository{}
+
 func logError(err error) {
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 }
 
-func getUUID(r *http.Request) uuid.UUID {
+func getUUID(r *http.Request) (uuid.UUID, error) {
 	params := mux.Vars(r)
 	ID, err := uuid.Parse(params["uuid"])
 	if err != nil {
-		log.Fatal("invalid uuid")
+		log.Println(err)
+		return uuid.Nil, err
 	}
-	return ID
+	return ID, nil
 }
 
 // CreateAccountCategory .
 func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var accountCategory models.AccountCategory
-		accountCategoryUUID, _ := uuid.NewUUID()
-
 		err := json.NewDecoder(r.Body).Decode(&accountCategory)
 		logError(err)
 
-		accountCategory.AccountCategoryUUID = accountCategoryUUID
-
-		accountRepo := repositories.AccountRepository{}
-		accountCategoryUUID = accountRepo.CreateAccountCategory(db, accountCategory)
+		accountCategory.AccountCategoryUUID, _ = uuid.NewUUID()
+		accountCategoryUUID := accountRepo.CreateAccountCategory(db, accountCategory)
 
 		err = json.NewEncoder(w).Encode(accountCategoryUUID)
 		logError(err)
@@ -53,15 +52,11 @@ func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) h
 func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var account models.Account
-		accountUUID, _ := uuid.NewUUID()
-
 		err := json.NewDecoder(r.Body).Decode(&account)
 		logError(err)
 
-		account.AccountUUID = accountUUID
-
-		accountRepo := repositories.AccountRepository{}
-		accountUUID = accountRepo.CreateAccount(db, account)
+		account.AccountUUID, _ = uuid.NewUUID()
+		accountUUID := accountRepo.CreateAccount(db, account)
 
 		err = json.NewEncoder(w).Encode(accountUUID)
 		logError(err)
@@ -71,13 +66,16 @@ func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.Hand
 // GetAccountCategory .
 func (accountController *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var accountCategory models.AccountCategory
-		accountCategoryUUID := getUUID(r)
+		accountCategoryUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		accountRepo := repositories.AccountRepository{}
-		accountCategory = accountRepo.GetAccountCategory(db, accountCategoryUUID)
+		accountCategory := accountRepo.GetAccountCategory(db, accountCategoryUUID)
 
-		err := json.NewEncoder(w).Encode(accountCategory)
+		err = json.NewEncoder(w).Encode(accountCategory)
 		logError(err)
 	}
 }
@@ -85,7 +83,6 @@ func (accountController *AccountController) GetAccountCategory(db *sqlx.DB) http
 // GetAccountCategories .
 func (accountController *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accountRepo := repositories.AccountRepository{}
 		accountCategories := accountRepo.GetAccountCategories(db)
 
 		err := json.NewEncoder(w).Encode(accountCategories)
@@ -96,13 +93,16 @@ func (accountController *AccountController) GetAccountCategories(db *sqlx.DB) ht
 // GetAccount .
 func (accountController *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var account models.Account
-		accountUUID := getUUID(r)
+		accountUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		accountRepo := repositories.AccountRepository{}
-		account = accountRepo.GetAccount(db, accountUUID)
+		account := accountRepo.GetAccount(db, accountUUID)
 
-		err := json.NewEncoder(w).Encode(account)
+		err = json.NewEncoder(w).Encode(account)
 		logError(err)
 	}
 }
@@ -110,7 +110,6 @@ func (accountController *AccountController) GetAccount(db *sqlx.DB) http.Handler
 // GetAccounts .
 func (accountController *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accountRepo := repositories.AccountRepository{}
 		accounts := accountRepo.GetAccounts(db)
 
 		err := json.NewEncoder(w).Encode(accounts)
@@ -121,15 +120,18 @@ func (accountController *AccountController) GetAccounts(db *sqlx.DB) http.Handle
 // UpdateAccountCategory .
 func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var accountCategory models.AccountCategory
-		accountCategoryUUID := getUUID(r)
+		accountCategoryUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		err := json.NewDecoder(r.Body).Decode(&accountCategory)
+		var accountCategory models.AccountCategory
+		err = json.NewDecoder(r.Body).Decode(&accountCategory)
 		logError(err)
 
 		accountCategory.AccountCategoryUUID = accountCategoryUUID
-
-		accountRepo := repositories.AccountRepository{}
 		accountRepo.UpdateAccountCategory(db, accountCategory)
 
 		err = json.NewEncoder(w).Encode(accountCategory)
@@ -140,15 +142,18 @@ func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) h
 // UpdateAccount .
 func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var account models.Account
-		accountUUID := getUUID(r)
+		accountUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		err := json.NewDecoder(r.Body).Decode(&account)
+		var account models.Account
+		err = json.NewDecoder(r.Body).Decode(&account)
 		logError(err)
 
 		account.AccountUUID = accountUUID
-
-		accountRepo := repositories.AccountRepository{}
 		accountRepo.UpdateAccount(db, account)
 
 		err = json.NewEncoder(w).Encode(account)
@@ -159,9 +164,13 @@ func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.Hand
 // DeleteAccountCategory .
 func (accountController *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accountCategoryUUID := getUUID(r)
+		accountCategoryUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		accountRepo := repositories.AccountRepository{}
 		accountRepo.DeleteAccountCategory(db, accountCategoryUUID)
 	}
 }
@@ -169,9 +178,13 @@ func (accountController *AccountController) DeleteAccountCategory(db *sqlx.DB) h
 // DeleteAccount .
 func (accountController *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accountUUID := getUUID(r)
+		accountUUID, err := getUUID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid uuid"))
+			return
+		}
 
-		accountRepo := repositories.AccountRepository{}
 		accountRepo.DeleteAccount(db, accountUUID)
 	}
 }

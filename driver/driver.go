@@ -10,12 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func logError(err error) {
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
 // DbConn is the means of getting a connection to the database.
 func DbConn() (db *sqlx.DB) {
 	dbUser, dbPassword, dbHost, dbPort, dbName :=
@@ -33,7 +27,9 @@ func DbConn() (db *sqlx.DB) {
 		dbName)
 
 	db, err := sqlx.Open("postgres", connString)
-	logError(err)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	return db
 }

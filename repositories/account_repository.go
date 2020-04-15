@@ -13,7 +13,7 @@ type AccountRepository struct{}
 
 func logError(err error) {
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 }
 
