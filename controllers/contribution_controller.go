@@ -27,7 +27,8 @@ func (contributionController *ContributionController) CreateContribution(db *sql
 		contributionRepo := repositories.ContributionRepository{}
 		contributionUUID = contributionRepo.CreateContribution(db, contribution)
 
-		json.NewEncoder(w).Encode(contributionUUID)
+		err = json.NewEncoder(w).Encode(contributionUUID)
+		logError(err)
 	}
 }
 
@@ -40,7 +41,8 @@ func (contributionController *ContributionController) GetContribution(db *sqlx.D
 		contributionRepo := repositories.ContributionRepository{}
 		contribution = contributionRepo.GetContribution(db, contributionUUID)
 
-		json.NewEncoder(w).Encode(contribution)
+		err := json.NewEncoder(w).Encode(contribution)
+		logError(err)
 	}
 }
 
@@ -50,7 +52,8 @@ func (contributionController *ContributionController) GetContributions(db *sqlx.
 		contributionRepo := repositories.ContributionRepository{}
 		contributions := contributionRepo.GetContributions(db)
 
-		json.NewEncoder(w).Encode(contributions)
+		err := json.NewEncoder(w).Encode(contributions)
+		logError(err)
 	}
 }
 
@@ -68,7 +71,8 @@ func (contributionController *ContributionController) UpdateContribution(db *sql
 		contributionRepo := repositories.ContributionRepository{}
 		contributionRepo.UpdateContribution(db, contribution)
 
-		json.NewEncoder(w).Encode(contribution)
+		err = json.NewEncoder(w).Encode(contribution)
+		logError(err)
 	}
 }
 

@@ -44,7 +44,8 @@ func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) h
 		accountRepo := repositories.AccountRepository{}
 		accountCategoryUUID = accountRepo.CreateAccountCategory(db, accountCategory)
 
-		json.NewEncoder(w).Encode(accountCategoryUUID)
+		err = json.NewEncoder(w).Encode(accountCategoryUUID)
+		logError(err)
 	}
 }
 
@@ -62,7 +63,8 @@ func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.Hand
 		accountRepo := repositories.AccountRepository{}
 		accountUUID = accountRepo.CreateAccount(db, account)
 
-		json.NewEncoder(w).Encode(accountUUID)
+		err = json.NewEncoder(w).Encode(accountUUID)
+		logError(err)
 	}
 }
 
@@ -75,7 +77,8 @@ func (accountController *AccountController) GetAccountCategory(db *sqlx.DB) http
 		accountRepo := repositories.AccountRepository{}
 		accountCategory = accountRepo.GetAccountCategory(db, accountCategoryUUID)
 
-		json.NewEncoder(w).Encode(accountCategory)
+		err := json.NewEncoder(w).Encode(accountCategory)
+		logError(err)
 	}
 }
 
@@ -85,7 +88,8 @@ func (accountController *AccountController) GetAccountCategories(db *sqlx.DB) ht
 		accountRepo := repositories.AccountRepository{}
 		accountCategories := accountRepo.GetAccountCategories(db)
 
-		json.NewEncoder(w).Encode(accountCategories)
+		err := json.NewEncoder(w).Encode(accountCategories)
+		logError(err)
 	}
 }
 
@@ -98,7 +102,8 @@ func (accountController *AccountController) GetAccount(db *sqlx.DB) http.Handler
 		accountRepo := repositories.AccountRepository{}
 		account = accountRepo.GetAccount(db, accountUUID)
 
-		json.NewEncoder(w).Encode(account)
+		err := json.NewEncoder(w).Encode(account)
+		logError(err)
 	}
 }
 
@@ -108,7 +113,8 @@ func (accountController *AccountController) GetAccounts(db *sqlx.DB) http.Handle
 		accountRepo := repositories.AccountRepository{}
 		accounts := accountRepo.GetAccounts(db)
 
-		json.NewEncoder(w).Encode(accounts)
+		err := json.NewEncoder(w).Encode(accounts)
+		logError(err)
 	}
 }
 
@@ -126,7 +132,8 @@ func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) h
 		accountRepo := repositories.AccountRepository{}
 		accountRepo.UpdateAccountCategory(db, accountCategory)
 
-		json.NewEncoder(w).Encode(accountCategory)
+		err = json.NewEncoder(w).Encode(accountCategory)
+		logError(err)
 	}
 }
 
@@ -144,7 +151,8 @@ func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.Hand
 		accountRepo := repositories.AccountRepository{}
 		accountRepo.UpdateAccount(db, account)
 
-		json.NewEncoder(w).Encode(account)
+		err = json.NewEncoder(w).Encode(account)
+		logError(err)
 	}
 }
 

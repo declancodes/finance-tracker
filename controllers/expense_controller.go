@@ -27,7 +27,8 @@ func (expenseController *ExpenseController) CreateExpenseCategory(db *sqlx.DB) h
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseCategoryUUID = expenseRepo.CreateExpenseCategory(db, expenseCategory)
 
-		json.NewEncoder(w).Encode(expenseCategoryUUID)
+		err = json.NewEncoder(w).Encode(expenseCategoryUUID)
+		logError(err)
 	}
 }
 
@@ -45,7 +46,8 @@ func (expenseController *ExpenseController) CreateExpense(db *sqlx.DB) http.Hand
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseUUID = expenseRepo.CreateExpense(db, expense)
 
-		json.NewEncoder(w).Encode(expenseUUID)
+		err = json.NewEncoder(w).Encode(expenseUUID)
+		logError(err)
 	}
 }
 
@@ -58,7 +60,8 @@ func (expenseController *ExpenseController) GetExpenseCategory(db *sqlx.DB) http
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseCategory = expenseRepo.GetExpenseCategory(db, expenseCategoryUUID)
 
-		json.NewEncoder(w).Encode(expenseCategory)
+		err := json.NewEncoder(w).Encode(expenseCategory)
+		logError(err)
 	}
 }
 
@@ -68,7 +71,8 @@ func (expenseController *ExpenseController) GetExpenseCategories(db *sqlx.DB) ht
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseCategories := expenseRepo.GetExpenseCategories(db)
 
-		json.NewEncoder(w).Encode(expenseCategories)
+		err := json.NewEncoder(w).Encode(expenseCategories)
+		logError(err)
 	}
 }
 
@@ -81,7 +85,8 @@ func (expenseController *ExpenseController) GetExpense(db *sqlx.DB) http.Handler
 		expenseRepo := repositories.ExpenseRepository{}
 		expense = expenseRepo.GetExpense(db, expenseUUID)
 
-		json.NewEncoder(w).Encode(expense)
+		err := json.NewEncoder(w).Encode(expense)
+		logError(err)
 	}
 }
 
@@ -91,7 +96,8 @@ func (expenseController *ExpenseController) GetExpenses(db *sqlx.DB) http.Handle
 		expenseRepo := repositories.ExpenseRepository{}
 		expenses := expenseRepo.GetExpenses(db)
 
-		json.NewEncoder(w).Encode(expenses)
+		err := json.NewEncoder(w).Encode(expenses)
+		logError(err)
 	}
 }
 
@@ -109,7 +115,8 @@ func (expenseController *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) h
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseRepo.UpdateExpenseCategory(db, expenseCategory)
 
-		json.NewEncoder(w).Encode(expenseCategory)
+		err = json.NewEncoder(w).Encode(expenseCategory)
+		logError(err)
 	}
 }
 
@@ -127,7 +134,8 @@ func (expenseController *ExpenseController) UpdateExpense(db *sqlx.DB) http.Hand
 		expenseRepo := repositories.ExpenseRepository{}
 		expenseRepo.UpdateExpense(db, expense)
 
-		json.NewEncoder(w).Encode(expense)
+		err = json.NewEncoder(w).Encode(expense)
+		logError(err)
 	}
 }
 
