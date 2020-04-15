@@ -19,7 +19,9 @@ func (expenseController *ExpenseController) CreateExpenseCategory(db *sqlx.DB) h
 		var expenseCategory models.ExpenseCategory
 		expenseCategoryUUID, _ := uuid.NewUUID()
 
-		json.NewDecoder(r.Body).Decode(&expenseCategory)
+		err := json.NewDecoder(r.Body).Decode(&expenseCategory)
+		logError(err)
+
 		expenseCategory.ExpenseCategoryUUID = expenseCategoryUUID
 
 		expenseRepo := repositories.ExpenseRepository{}
@@ -35,7 +37,9 @@ func (expenseController *ExpenseController) CreateExpense(db *sqlx.DB) http.Hand
 		var expense models.Expense
 		expenseUUID, _ := uuid.NewUUID()
 
-		json.NewDecoder(r.Body).Decode(&expense)
+		err := json.NewDecoder(r.Body).Decode(&expense)
+		logError(err)
+
 		expense.ExpenseUUID = expenseUUID
 
 		expenseRepo := repositories.ExpenseRepository{}
@@ -97,7 +101,9 @@ func (expenseController *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) h
 		var expenseCategory models.ExpenseCategory
 		expenseCategoryUUID := getUUID(r)
 
-		json.NewDecoder(r.Body).Decode(&expenseCategory)
+		err := json.NewDecoder(r.Body).Decode(&expenseCategory)
+		logError(err)
+
 		expenseCategory.ExpenseCategoryUUID = expenseCategoryUUID
 
 		expenseRepo := repositories.ExpenseRepository{}
@@ -113,7 +119,9 @@ func (expenseController *ExpenseController) UpdateExpense(db *sqlx.DB) http.Hand
 		var expense models.Expense
 		expenseUUID := getUUID(r)
 
-		json.NewDecoder(r.Body).Decode(&expense)
+		err := json.NewDecoder(r.Body).Decode(&expense)
+		logError(err)
+
 		expense.ExpenseUUID = expenseUUID
 
 		expenseRepo := repositories.ExpenseRepository{}

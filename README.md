@@ -6,7 +6,7 @@ App for tracking finances. This is mostly for me to experiment with Go.
 
 - [Running locally](#running-locally)
 
-## Running locally
+### Running locally
 
 Setup is easy with [docker](https://www.docker.com/get-started) and [compose](https://docs.docker.com/compose/).
 

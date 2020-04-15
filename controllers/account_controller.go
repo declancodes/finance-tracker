@@ -15,6 +15,12 @@ import (
 // AccountController .
 type AccountController struct{}
 
+func logError(err error) {
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
 func getUUID(r *http.Request) uuid.UUID {
 	params := mux.Vars(r)
 	ID, err := uuid.Parse(params["uuid"])
@@ -30,7 +36,9 @@ func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) h
 		var accountCategory models.AccountCategory
 		accountCategoryUUID, _ := uuid.NewUUID()
 
-		json.NewDecoder(r.Body).Decode(&accountCategory)
+		err := json.NewDecoder(r.Body).Decode(&accountCategory)
+		logError(err)
+
 		accountCategory.AccountCategoryUUID = accountCategoryUUID
 
 		accountRepo := repositories.AccountRepository{}
@@ -46,7 +54,9 @@ func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.Hand
 		var account models.Account
 		accountUUID, _ := uuid.NewUUID()
 
-		json.NewDecoder(r.Body).Decode(&account)
+		err := json.NewDecoder(r.Body).Decode(&account)
+		logError(err)
+
 		account.AccountUUID = accountUUID
 
 		accountRepo := repositories.AccountRepository{}
@@ -108,7 +118,9 @@ func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) h
 		var accountCategory models.AccountCategory
 		accountCategoryUUID := getUUID(r)
 
-		json.NewDecoder(r.Body).Decode(&accountCategory)
+		err := json.NewDecoder(r.Body).Decode(&accountCategory)
+		logError(err)
+
 		accountCategory.AccountCategoryUUID = accountCategoryUUID
 
 		accountRepo := repositories.AccountRepository{}
@@ -124,7 +136,9 @@ func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.Hand
 		var account models.Account
 		accountUUID := getUUID(r)
 
-		json.NewDecoder(r.Body).Decode(&account)
+		err := json.NewDecoder(r.Body).Decode(&account)
+		logError(err)
+
 		account.AccountUUID = accountUUID
 
 		accountRepo := repositories.AccountRepository{}

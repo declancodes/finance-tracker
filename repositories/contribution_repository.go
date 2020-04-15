@@ -65,7 +65,11 @@ func (contributionRepo *ContributionRepository) GetContribution(db *sqlx.DB, con
 	WHERE
 		contribution.contribution_uuid = $1;`
 
-	err := db.Get(&contribution, query, contributionUUID.String())
+	err := db.QueryRowx(query, contributionUUID.String()).Scan(&contribution.ContributionUUID,
+		&contribution.Account.AccountUUID,
+		&contribution.Account.AccountCategory.AccountCategoryUUID, &contribution.Account.AccountCategory.Name, &contribution.Account.AccountCategory.Description,
+		&contribution.Account.Name, &contribution.Account.Description, &contribution.Account.Amount,
+		&contribution.Name, &contribution.Description, &contribution.Amount, &contribution.Date)
 	logError(err)
 
 	return contribution
@@ -93,8 +97,21 @@ func (contributionRepo *ContributionRepository) GetContributions(db *sqlx.DB) (c
 	INNER JOIN account_category
 		ON account.account_category_uuid = account_category.account_category_uuid;`
 
-	err := db.Select(&contributions, query)
+	rows, err := db.Queryx(query)
 	logError(err)
+
+	for rows.Next() {
+		var contribution models.Contribution
+
+		err = rows.Scan(&contribution.ContributionUUID,
+			&contribution.Account.AccountUUID,
+			&contribution.Account.AccountCategory.AccountCategoryUUID, &contribution.Account.AccountCategory.Name, &contribution.Account.AccountCategory.Description,
+			&contribution.Account.Name, &contribution.Account.Description, &contribution.Account.Amount,
+			&contribution.Name, &contribution.Description, &contribution.Amount, &contribution.Date)
+		logError(err)
+
+		contributions = append(contributions, contribution)
+	}
 
 	return contributions
 }

@@ -32,8 +32,8 @@ type Expense struct {
   Category ExpenseCategory
   Name string
   Description string
-  Date timestamp.Timestamp
-  Amount money.Money
+  Date time.Time
+  Amount decimal.Decimal
 }
 
 type AccountCategory struct {
@@ -47,7 +47,7 @@ type Account struct {
   Category AccountCategory
   Name string
   Description string
-  Amount money.Money
+  Amount decimal.Decimal
 }
 
 type Contribution struct {
@@ -55,7 +55,7 @@ type Contribution struct {
   Account account.Account
   Name string
   Description string
-  Date timestamp.Timestamp
-  Amount money.Money
+  Date time.Time
+  Amount decimal.Decimal
 }
 ```

@@ -19,7 +19,9 @@ func (contributionController *ContributionController) CreateContribution(db *sql
 		var contribution models.Contribution
 		contributionUUID, _ := uuid.NewUUID()
 
-		json.NewDecoder(r.Body).Decode(&contribution)
+		err := json.NewDecoder(r.Body).Decode(&contribution)
+		logError(err)
+
 		contribution.ContributionUUID = contributionUUID
 
 		contributionRepo := repositories.ContributionRepository{}
@@ -58,7 +60,9 @@ func (contributionController *ContributionController) UpdateContribution(db *sql
 		var contribution models.Contribution
 		contributionUUID := getUUID(r)
 
-		json.NewDecoder(r.Body).Decode(&contribution)
+		err := json.NewDecoder(r.Body).Decode(&contribution)
+		logError(err)
+
 		contribution.ContributionUUID = contributionUUID
 
 		contributionRepo := repositories.ContributionRepository{}
