@@ -16,167 +16,167 @@ type ExpenseController struct{}
 var expenseRepo = repositories.ExpenseRepository{}
 
 // CreateExpenseCategory .
-func (expenseController *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var expenseCategory models.ExpenseCategory
+		var ec models.ExpenseCategory
 
-		err := json.NewDecoder(r.Body).Decode(&expenseCategory)
+		err := json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
 			writeHeaderForBadRequestModel(w, "expense category", err)
 			return
 		}
 
-		expenseCategory.ExpenseCategoryUUID, _ = uuid.NewUUID()
-		expenseCategoryUUID := expenseRepo.CreateExpenseCategory(db, expenseCategory)
+		ec.ExpenseCategoryUUID, _ = uuid.NewUUID()
+		ecUUID := expenseRepo.CreateExpenseCategory(db, ec)
 
-		err = json.NewEncoder(w).Encode(expenseCategoryUUID)
+		err = json.NewEncoder(w).Encode(ecUUID)
 		logError(err)
 	}
 }
 
 // CreateExpense .
-func (expenseController *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var expense models.Expense
+		var e models.Expense
 
-		err := json.NewDecoder(r.Body).Decode(&expense)
+		err := json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
 			writeHeaderForBadRequestModel(w, "expense", err)
 			return
 		}
 
-		expense.ExpenseUUID, _ = uuid.NewUUID()
-		expenseUUID := expenseRepo.CreateExpense(db, expense)
+		e.ExpenseUUID, _ = uuid.NewUUID()
+		eUUID := expenseRepo.CreateExpense(db, e)
 
-		err = json.NewEncoder(w).Encode(expenseUUID)
+		err = json.NewEncoder(w).Encode(eUUID)
 		logError(err)
 	}
 }
 
 // GetExpenseCategory .
-func (expenseController *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseCategoryUUID, err := getUUID(r)
+		ecUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		expenseCategory := expenseRepo.GetExpenseCategory(db, expenseCategoryUUID)
+		ec := expenseRepo.GetExpenseCategory(db, ecUUID)
 
-		err = json.NewEncoder(w).Encode(expenseCategory)
+		err = json.NewEncoder(w).Encode(ec)
 		logError(err)
 	}
 }
 
 // GetExpenseCategories .
-func (expenseController *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseCategories := expenseRepo.GetExpenseCategories(db)
+		ecs := expenseRepo.GetExpenseCategories(db)
 
-		err := json.NewEncoder(w).Encode(expenseCategories)
+		err := json.NewEncoder(w).Encode(ecs)
 		logError(err)
 	}
 }
 
 // GetExpense .
-func (expenseController *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseUUID, err := getUUID(r)
+		eUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		expense := expenseRepo.GetExpense(db, expenseUUID)
+		e := expenseRepo.GetExpense(db, eUUID)
 
-		err = json.NewEncoder(w).Encode(expense)
+		err = json.NewEncoder(w).Encode(e)
 		logError(err)
 	}
 }
 
 // GetExpenses .
-func (expenseController *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenses := expenseRepo.GetExpenses(db)
+		es := expenseRepo.GetExpenses(db)
 
-		err := json.NewEncoder(w).Encode(expenses)
+		err := json.NewEncoder(w).Encode(es)
 		logError(err)
 	}
 }
 
 // UpdateExpenseCategory .
-func (expenseController *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseCategoryUUID, err := getUUID(r)
+		ecUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		var expenseCategory models.ExpenseCategory
+		var ec models.ExpenseCategory
 
-		err = json.NewDecoder(r.Body).Decode(&expenseCategory)
+		err = json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
 			writeHeaderForBadRequestModel(w, "expense category", err)
 			return
 		}
 
-		expenseCategory.ExpenseCategoryUUID = expenseCategoryUUID
-		expenseRepo.UpdateExpenseCategory(db, expenseCategory)
+		ec.ExpenseCategoryUUID = ecUUID
+		expenseRepo.UpdateExpenseCategory(db, ec)
 
-		err = json.NewEncoder(w).Encode(expenseCategory)
+		err = json.NewEncoder(w).Encode(ec)
 		logError(err)
 	}
 }
 
 // UpdateExpense .
-func (expenseController *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseUUID, err := getUUID(r)
+		eUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		var expense models.Expense
+		var e models.Expense
 
-		err = json.NewDecoder(r.Body).Decode(&expense)
+		err = json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
 			writeHeaderForBadRequestModel(w, "expense", err)
 			return
 		}
 
-		expense.ExpenseUUID = expenseUUID
-		expenseRepo.UpdateExpense(db, expense)
+		e.ExpenseUUID = eUUID
+		expenseRepo.UpdateExpense(db, e)
 
-		err = json.NewEncoder(w).Encode(expense)
+		err = json.NewEncoder(w).Encode(e)
 		logError(err)
 	}
 }
 
 // DeleteExpenseCategory .
-func (expenseController *ExpenseController) DeleteExpenseCategory(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) DeleteExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseCategoryUUID, err := getUUID(r)
+		ecUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		expenseRepo.DeleteExpenseCategory(db, expenseCategoryUUID)
+		expenseRepo.DeleteExpenseCategory(db, ecUUID)
 	}
 }
 
 // DeleteExpense .
-func (expenseController *ExpenseController) DeleteExpense(db *sqlx.DB) http.HandlerFunc {
+func (c *ExpenseController) DeleteExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		expenseUUID, err := getUUID(r)
+		eUUID, err := getUUID(r)
 		if err != nil {
 			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
-		expenseRepo.DeleteExpense(db, expenseUUID)
+		expenseRepo.DeleteExpense(db, eUUID)
 	}
 }
