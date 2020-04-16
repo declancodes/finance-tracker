@@ -22,7 +22,7 @@ func (expenseController *ExpenseController) CreateExpenseCategory(db *sqlx.DB) h
 
 		err := json.NewDecoder(r.Body).Decode(&expenseCategory)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid expense category", err)
+			writeHeaderForBadRequestModel(w, "expense category", err)
 			return
 		}
 
@@ -41,7 +41,7 @@ func (expenseController *ExpenseController) CreateExpense(db *sqlx.DB) http.Hand
 
 		err := json.NewDecoder(r.Body).Decode(&expense)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid expense", err)
+			writeHeaderForBadRequestModel(w, "expense", err)
 			return
 		}
 
@@ -118,7 +118,7 @@ func (expenseController *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) h
 
 		err = json.NewDecoder(r.Body).Decode(&expenseCategory)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid expense category", err)
+			writeHeaderForBadRequestModel(w, "expense category", err)
 			return
 		}
 
@@ -143,7 +143,7 @@ func (expenseController *ExpenseController) UpdateExpense(db *sqlx.DB) http.Hand
 
 		err = json.NewDecoder(r.Body).Decode(&expense)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid expense", err)
+			writeHeaderForBadRequestModel(w, "expense", err)
 			return
 		}
 

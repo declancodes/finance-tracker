@@ -22,7 +22,7 @@ func (contributionController *ContributionController) CreateContribution(db *sql
 
 		err := json.NewDecoder(r.Body).Decode(&contribution)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid contribution", err)
+			writeHeaderForBadRequestModel(w, "contribution", err)
 			return
 		}
 
@@ -73,7 +73,7 @@ func (contributionController *ContributionController) UpdateContribution(db *sql
 
 		err = json.NewDecoder(r.Body).Decode(&contribution)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid contribution", err)
+			writeHeaderForBadRequestModel(w, "contribution", err)
 			return
 		}
 

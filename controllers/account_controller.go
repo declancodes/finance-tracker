@@ -43,6 +43,10 @@ func writeHeaderForBadRequestUUID(w http.ResponseWriter, err error) {
 	writeHeaderForBadRequest(w, "invalid uuid", err)
 }
 
+func writeHeaderForBadRequestModel(w http.ResponseWriter, model string, err error) {
+	writeHeaderForBadRequest(w, "invalid "+model, err)
+}
+
 // CreateAccountCategory .
 func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +54,7 @@ func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) h
 
 		err := json.NewDecoder(r.Body).Decode(&accountCategory)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid account category", err)
+			writeHeaderForBadRequestModel(w, "account category", err)
 			return
 		}
 
@@ -69,7 +73,7 @@ func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.Hand
 
 		err := json.NewDecoder(r.Body).Decode(&account)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid account", err)
+			writeHeaderForBadRequestModel(w, "account", err)
 			return
 		}
 
@@ -146,7 +150,7 @@ func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) h
 
 		err = json.NewDecoder(r.Body).Decode(&accountCategory)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid account category", err)
+			writeHeaderForBadRequestModel(w, "account category", err)
 			return
 		}
 
@@ -171,7 +175,7 @@ func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.Hand
 
 		err = json.NewDecoder(r.Body).Decode(&account)
 		if err != nil {
-			writeHeaderForBadRequest(w, "invalid account", err)
+			writeHeaderForBadRequestModel(w, "account", err)
 			return
 		}
 
