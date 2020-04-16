@@ -27,18 +27,32 @@ func getUUID(r *http.Request) (uuid.UUID, error) {
 	params := mux.Vars(r)
 	ID, err := uuid.Parse(params["uuid"])
 	if err != nil {
-		log.Println(err)
 		return uuid.Nil, err
 	}
 	return ID, nil
+}
+
+func writeHeaderForBadRequest(w http.ResponseWriter, msg string, err error) {
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(msg))
+
+	log.Println(err)
+}
+
+func writeHeaderForBadRequestUUID(w http.ResponseWriter, err error) {
+	writeHeaderForBadRequest(w, "invalid uuid", err)
 }
 
 // CreateAccountCategory .
 func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var accountCategory models.AccountCategory
+
 		err := json.NewDecoder(r.Body).Decode(&accountCategory)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid account category", err)
+			return
+		}
 
 		accountCategory.AccountCategoryUUID, _ = uuid.NewUUID()
 		accountCategoryUUID := accountRepo.CreateAccountCategory(db, accountCategory)
@@ -52,8 +66,12 @@ func (accountController *AccountController) CreateAccountCategory(db *sqlx.DB) h
 func (accountController *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var account models.Account
+
 		err := json.NewDecoder(r.Body).Decode(&account)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid account", err)
+			return
+		}
 
 		account.AccountUUID, _ = uuid.NewUUID()
 		accountUUID := accountRepo.CreateAccount(db, account)
@@ -68,8 +86,7 @@ func (accountController *AccountController) GetAccountCategory(db *sqlx.DB) http
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountCategoryUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
@@ -95,8 +112,7 @@ func (accountController *AccountController) GetAccount(db *sqlx.DB) http.Handler
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
@@ -122,14 +138,17 @@ func (accountController *AccountController) UpdateAccountCategory(db *sqlx.DB) h
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountCategoryUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
 		var accountCategory models.AccountCategory
+
 		err = json.NewDecoder(r.Body).Decode(&accountCategory)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid account category", err)
+			return
+		}
 
 		accountCategory.AccountCategoryUUID = accountCategoryUUID
 		accountRepo.UpdateAccountCategory(db, accountCategory)
@@ -144,14 +163,17 @@ func (accountController *AccountController) UpdateAccount(db *sqlx.DB) http.Hand
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
 		var account models.Account
+
 		err = json.NewDecoder(r.Body).Decode(&account)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid account", err)
+			return
+		}
 
 		account.AccountUUID = accountUUID
 		accountRepo.UpdateAccount(db, account)
@@ -166,8 +188,7 @@ func (accountController *AccountController) DeleteAccountCategory(db *sqlx.DB) h
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountCategoryUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
@@ -180,8 +201,7 @@ func (accountController *AccountController) DeleteAccount(db *sqlx.DB) http.Hand
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 

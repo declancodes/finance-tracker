@@ -19,8 +19,12 @@ var contributionRepo = repositories.ContributionRepository{}
 func (contributionController *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var contribution models.Contribution
+
 		err := json.NewDecoder(r.Body).Decode(&contribution)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid contribution", err)
+			return
+		}
 
 		contribution.ContributionUUID, _ = uuid.NewUUID()
 		contributionUUID := contributionRepo.CreateContribution(db, contribution)
@@ -35,8 +39,7 @@ func (contributionController *ContributionController) GetContribution(db *sqlx.D
 	return func(w http.ResponseWriter, r *http.Request) {
 		contributionUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
@@ -62,14 +65,17 @@ func (contributionController *ContributionController) UpdateContribution(db *sql
 	return func(w http.ResponseWriter, r *http.Request) {
 		contributionUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
 		var contribution models.Contribution
+
 		err = json.NewDecoder(r.Body).Decode(&contribution)
-		logError(err)
+		if err != nil {
+			writeHeaderForBadRequest(w, "invalid contribution", err)
+			return
+		}
 
 		contribution.ContributionUUID = contributionUUID
 		contributionRepo.UpdateContribution(db, contribution)
@@ -84,8 +90,7 @@ func (contributionController *ContributionController) DeleteContribution(db *sql
 	return func(w http.ResponseWriter, r *http.Request) {
 		contributionUUID, err := getUUID(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid uuid"))
+			writeHeaderForBadRequestUUID(w, err)
 			return
 		}
 
