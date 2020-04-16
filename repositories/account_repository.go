@@ -18,7 +18,7 @@ func logError(err error) {
 }
 
 // CreateAccountCategory creates an AccountCategory in db.
-func (accountRepo *AccountRepository) CreateAccountCategory(db *sqlx.DB, accountCategory models.AccountCategory) uuid.UUID {
+func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.AccountCategory) uuid.UUID {
 	query := `
 	INSERT INTO account_category (
 		account_category_uuid,
@@ -32,19 +32,19 @@ func (accountRepo *AccountRepository) CreateAccountCategory(db *sqlx.DB, account
 	)
 	RETURNING account_category_uuid;`
 
-	rows, err := db.NamedQuery(query, accountCategory)
+	rows, err := db.NamedQuery(query, ac)
 	logError(err)
 
 	for rows.Next() {
-		err = rows.Scan(&accountCategory.AccountCategoryUUID)
+		err = rows.Scan(&ac.AccountCategoryUUID)
 		logError(err)
 	}
 
-	return accountCategory.AccountCategoryUUID
+	return ac.AccountCategoryUUID
 }
 
 // CreateAccount creates an Account in db.
-func (accountRepo *AccountRepository) CreateAccount(db *sqlx.DB, account models.Account) uuid.UUID {
+func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) uuid.UUID {
 	query := `
 	INSERT INTO account (
 		account_uuid,
@@ -62,19 +62,19 @@ func (accountRepo *AccountRepository) CreateAccount(db *sqlx.DB, account models.
 	)
 	RETURNING account_uuid;`
 
-	rows, err := db.NamedQuery(query, account)
+	rows, err := db.NamedQuery(query, a)
 	logError(err)
 
 	for rows.Next() {
-		err = rows.Scan(&account.AccountUUID)
+		err = rows.Scan(&a.AccountUUID)
 		logError(err)
 	}
 
-	return account.AccountUUID
+	return a.AccountUUID
 }
 
 // GetAccountCategory retrieves an AccountCategory from db.
-func (accountRepo *AccountRepository) GetAccountCategory(db *sqlx.DB, accountCategoryUUID uuid.UUID) (accountCategory models.AccountCategory) {
+func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (ac models.AccountCategory) {
 	query := `
 	SELECT
 		account_category_uuid,
@@ -84,14 +84,14 @@ func (accountRepo *AccountRepository) GetAccountCategory(db *sqlx.DB, accountCat
 	WHERE
 		account_category_uuid = $1;`
 
-	err := db.Get(&accountCategory, query, accountCategoryUUID.String())
+	err := db.Get(&ac, query, acUUID.String())
 	logError(err)
 
-	return accountCategory
+	return ac
 }
 
 // GetAccountCategories retrieves AccountCategorys from db.
-func (accountRepo *AccountRepository) GetAccountCategories(db *sqlx.DB) (accountCategories []models.AccountCategory) {
+func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) (acs []models.AccountCategory) {
 	query := `
 	SELECT
 		account_category_uuid,
@@ -99,14 +99,14 @@ func (accountRepo *AccountRepository) GetAccountCategories(db *sqlx.DB) (account
 		description
 	FROM account_category;`
 
-	err := db.Select(&accountCategories, query)
+	err := db.Select(&acs, query)
 	logError(err)
 
-	return accountCategories
+	return acs
 }
 
 // GetAccount retrieves an Account from db.
-func (accountRepo *AccountRepository) GetAccount(db *sqlx.DB, accountUUID uuid.UUID) (account models.Account) {
+func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.Account) {
 	query := `
 	SELECT
 		account.account_uuid,
@@ -122,14 +122,14 @@ func (accountRepo *AccountRepository) GetAccount(db *sqlx.DB, accountUUID uuid.U
 	WHERE
 		account.account_uuid = $1;`
 
-	err := db.Get(&account, query, accountUUID.String())
+	err := db.Get(&a, query, aUUID.String())
 	logError(err)
 
-	return account
+	return a
 }
 
 // GetAccounts retrieves Accounts from db.
-func (accountRepo *AccountRepository) GetAccounts(db *sqlx.DB) (accounts []models.Account) {
+func (r *AccountRepository) GetAccounts(db *sqlx.DB) (as []models.Account) {
 	query := `
 	SELECT
 		account.account_uuid,
@@ -143,14 +143,14 @@ func (accountRepo *AccountRepository) GetAccounts(db *sqlx.DB) (accounts []model
 	INNER JOIN account_category
 		ON account.account_category_uuid = account_category.account_category_uuid;`
 
-	err := db.Select(&accounts, query)
+	err := db.Select(&as, query)
 	logError(err)
 
-	return accounts
+	return as
 }
 
 // UpdateAccountCategory updates an AccountCategory in db.
-func (accountRepo *AccountRepository) UpdateAccountCategory(db *sqlx.DB, accountCategory models.AccountCategory) {
+func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac models.AccountCategory) {
 	query := `
 	UPDATE account_category
 	SET
@@ -159,12 +159,12 @@ func (accountRepo *AccountRepository) UpdateAccountCategory(db *sqlx.DB, account
 	WHERE
 		account_category_uuid = :account_category_uuid;`
 
-	_, err := db.NamedExec(query, accountCategory)
+	_, err := db.NamedExec(query, ac)
 	logError(err)
 }
 
 // UpdateAccount updates an Account in db.
-func (accountRepo *AccountRepository) UpdateAccount(db *sqlx.DB, account models.Account) {
+func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a models.Account) {
 	query := `
 	UPDATE account
 	SET
@@ -175,28 +175,28 @@ func (accountRepo *AccountRepository) UpdateAccount(db *sqlx.DB, account models.
 	WHERE
 		account_uuid = :account_uuid;`
 
-	_, err := db.NamedExec(query, account)
+	_, err := db.NamedExec(query, a)
 	logError(err)
 }
 
 // DeleteAccountCategory deletes an AccountCategory from db.
-func (accountRepo *AccountRepository) DeleteAccountCategory(db *sqlx.DB, accountCategoryUUID uuid.UUID) {
+func (r *AccountRepository) DeleteAccountCategory(db *sqlx.DB, acUUID uuid.UUID) {
 	query := `
 	DELETE FROM account_category
 	WHERE
 		account_category_uuid = $1;`
 
-	_, err := db.Exec(query, accountCategoryUUID.String())
+	_, err := db.Exec(query, acUUID.String())
 	logError(err)
 }
 
 // DeleteAccount deletes an Account from db.
-func (accountRepo *AccountRepository) DeleteAccount(db *sqlx.DB, accountUUID uuid.UUID) {
+func (r *AccountRepository) DeleteAccount(db *sqlx.DB, aUUID uuid.UUID) {
 	query := `
 	DELETE FROM account
 	WHERE
 		account_uuid = $1;`
 
-	_, err := db.Exec(query, accountUUID.String())
+	_, err := db.Exec(query, aUUID.String())
 	logError(err)
 }
