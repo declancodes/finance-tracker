@@ -15,19 +15,30 @@ type ContributionController struct{}
 
 var contributionRepo = repositories.ContributionRepository{}
 
+func badRequestContribution(w http.ResponseWriter, err error) {
+	badRequestModel(w, "contribution", err)
+}
+
+func errorExecutingContribution(w http.ResponseWriter, err error) {
+	errorExecuting(w, "contribution", err)
+}
+
 // CreateContribution .
 func (c *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var c models.Contribution
-
 		err := json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
-			writeHeaderForBadRequestModel(w, "contribution", err)
+			badRequestContribution(w, err)
 			return
 		}
 
 		c.ContributionUUID, _ = uuid.NewUUID()
-		cUUID := contributionRepo.CreateContribution(db, c)
+		cUUID, err := contributionRepo.CreateContribution(db, c)
+		if err != nil {
+			errorCreating(w, "contribution", err)
+			return
+		}
 
 		err = json.NewEncoder(w).Encode(cUUID)
 		logError(err)
@@ -39,11 +50,15 @@ func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cUUID, err := getUUID(r)
 		if err != nil {
-			writeHeaderForBadRequestUUID(w, err)
+			badRequestUUID(w, err)
 			return
 		}
 
-		c := contributionRepo.GetContribution(db, cUUID)
+		c, err := contributionRepo.GetContribution(db, cUUID)
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
 
 		err = json.NewEncoder(w).Encode(c)
 		logError(err)
@@ -53,9 +68,13 @@ func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 // GetContributions .
 func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cs := contributionRepo.GetContributions(db)
+		cs, err := contributionRepo.GetContributions(db)
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
 
-		err := json.NewEncoder(w).Encode(cs)
+		err = json.NewEncoder(w).Encode(cs)
 		logError(err)
 	}
 }
@@ -65,20 +84,23 @@ func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFun
 	return func(w http.ResponseWriter, r *http.Request) {
 		cUUID, err := getUUID(r)
 		if err != nil {
-			writeHeaderForBadRequestUUID(w, err)
+			badRequestUUID(w, err)
 			return
 		}
 
 		var c models.Contribution
-
 		err = json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
-			writeHeaderForBadRequestModel(w, "contribution", err)
+			badRequestContribution(w, err)
 			return
 		}
 
 		c.ContributionUUID = cUUID
-		contributionRepo.UpdateContribution(db, c)
+		err = contributionRepo.UpdateContribution(db, c)
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
 
 		err = json.NewEncoder(w).Encode(c)
 		logError(err)
@@ -88,12 +110,6 @@ func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFun
 // DeleteContribution .
 func (c *ContributionController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cUUID, err := getUUID(r)
-		if err != nil {
-			writeHeaderForBadRequestUUID(w, err)
-			return
-		}
-
-		contributionRepo.DeleteContribution(db, cUUID)
+		delete(w, r, db, "contribution", contributionRepo.DeleteContribution)
 	}
 }

@@ -10,7 +10,7 @@ import (
 type ExpenseRepository struct{}
 
 // CreateExpenseCategory creates an ExpenseCategory in db.
-func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) uuid.UUID {
+func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) (uuid.UUID, error) {
 	query := `
 	INSERT INTO expense_category (
 		expense_category_uuid,
@@ -25,18 +25,22 @@ func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.Expense
 	RETURNING expense_category_uuid;`
 
 	rows, err := db.NamedQuery(query, ec)
-	logError(err)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(&ec.ExpenseCategoryUUID)
-		logError(err)
+		if err != nil {
+			return uuid.Nil, err
+		}
 	}
-
-	return ec.ExpenseCategoryUUID
+	return ec.ExpenseCategoryUUID, nil
 }
 
 // CreateExpense creates an Expense in db.
-func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) uuid.UUID {
+func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.UUID, error) {
 	query := `
 	INSERT INTO expense (
 		expense_uuid,
@@ -57,18 +61,22 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) uuid.UU
 	RETURNING expense_uuid;`
 
 	rows, err := db.NamedQuery(query, e)
-	logError(err)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(&e.ExpenseUUID)
-		logError(err)
+		if err != nil {
+			return uuid.Nil, err
+		}
 	}
-
-	return e.ExpenseUUID
+	return e.ExpenseUUID, nil
 }
 
 // GetExpenseCategory retrieves an ExpenseCategory from db.
-func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (ec models.ExpenseCategory) {
+func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (ec models.ExpenseCategory, err error) {
 	query := `
 	SELECT
 		expense_category_uuid,
@@ -78,14 +86,12 @@ func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (e
 	WHERE
 		expense_category_uuid = $1;`
 
-	err := db.Get(&ec, query, ecUUID.String())
-	logError(err)
-
-	return ec
+	err = db.Get(&ec, query, ecUUID.String())
+	return ec, err
 }
 
 // GetExpenseCategories retrieves ExpenseCategorys from db.
-func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.ExpenseCategory) {
+func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.ExpenseCategory, err error) {
 	query := `
 	SELECT
 		expense_category_uuid,
@@ -93,14 +99,12 @@ func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.Expe
 		description
 	FROM expense_category;`
 
-	err := db.Select(&ecs, query)
-	logError(err)
-
-	return ecs
+	err = db.Select(&ecs, query)
+	return ecs, err
 }
 
 // GetExpense retrieves an Expense from db.
-func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.Expense) {
+func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.Expense, err error) {
 	query := `
 	SELECT
 		expense.expense_uuid,
@@ -117,14 +121,12 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 	WHERE
 		expense.expense_uuid = $1;`
 
-	err := db.Get(&e, query, eUUID.String())
-	logError(err)
-
-	return e
+	err = db.Get(&e, query, eUUID.String())
+	return e, err
 }
 
 // GetExpenses retrieves Expenses from db.
-func (r *ExpenseRepository) GetExpenses(db *sqlx.DB) (es []models.Expense) {
+func (r *ExpenseRepository) GetExpenses(db *sqlx.DB) (es []models.Expense, err error) {
 	query := `
 	SELECT
 		expense.expense_uuid,
@@ -139,14 +141,12 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB) (es []models.Expense) {
 	INNER JOIN expense_category
 		ON expense.expense_category_uuid = expense_category.expense_category_uuid;`
 
-	err := db.Select(&es, query)
-	logError(err)
-
-	return es
+	err = db.Select(&es, query)
+	return es, err
 }
 
 // UpdateExpenseCategory updates an ExpenseCategory in db.
-func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) {
+func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) error {
 	query := `
 	UPDATE expense_category
 	SET
@@ -155,12 +155,14 @@ func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec models.Expense
 	WHERE
 		expense_category_uuid = :expense_category_uuid;`
 
-	_, err := db.NamedExec(query, ec)
-	logError(err)
+	res, err := db.NamedExec(query, ec)
+
+	_, err = getExecuted(res, err)
+	return err
 }
 
 // UpdateExpense updates an Expense in db.
-func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e models.Expense) {
+func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e models.Expense) error {
 	query := `
 	UPDATE expense
 	SET
@@ -172,28 +174,34 @@ func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e models.Expense) {
 	WHERE
 		expense_uuid = :expense_uuid;`
 
-	_, err := db.NamedExec(query, e)
-	logError(err)
+	res, err := db.NamedExec(query, e)
+
+	_, err = getExecuted(res, err)
+	return err
 }
 
 // DeleteExpenseCategory deletes an ExpenseCategory from db.
-func (r *ExpenseRepository) DeleteExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) {
+func (r *ExpenseRepository) DeleteExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) error {
 	query := `
 	DELETE FROM expense_category
 	WHERE
 		expense_category_uuid = $1;`
 
-	_, err := db.Exec(query, ecUUID.String())
-	logError(err)
+	res, err := db.Exec(query, ecUUID.String())
+
+	_, err = getExecuted(res, err)
+	return err
 }
 
 // DeleteExpense deletes an Expense from db.
-func (r *ExpenseRepository) DeleteExpense(db *sqlx.DB, eUUID uuid.UUID) {
+func (r *ExpenseRepository) DeleteExpense(db *sqlx.DB, eUUID uuid.UUID) error {
 	query := `
 	DELETE FROM expense
 	WHERE
 		expense_uuid = $1;`
 
-	_, err := db.Exec(query, eUUID.String())
-	logError(err)
+	res, err := db.Exec(query, eUUID.String())
+
+	_, err = getExecuted(res, err)
+	return err
 }

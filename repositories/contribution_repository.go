@@ -10,7 +10,7 @@ import (
 type ContributionRepository struct{}
 
 // CreateContribution creates a Contribution in db.
-func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contribution) uuid.UUID {
+func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contribution) (uuid.UUID, error) {
 	query := `
 	INSERT INTO contribution (
 		contribution_uuid,
@@ -31,18 +31,22 @@ func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contri
 	RETURNING contribution_uuid;`
 
 	rows, err := db.NamedQuery(query, c)
-	logError(err)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(&c.ContributionUUID)
-		logError(err)
+		if err != nil {
+			return uuid.Nil, err
+		}
 	}
-
-	return c.ContributionUUID
+	return c.ContributionUUID, nil
 }
 
 // GetContribution retrieves a Contribution from db.
-func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c models.Contribution) {
+func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c models.Contribution, err error) {
 	query := `
 	SELECT
 		contribution.contribution_uuid,
@@ -65,18 +69,16 @@ func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (
 	WHERE
 		contribution.contribution_uuid = $1;`
 
-	err := db.QueryRowx(query, cUUID.String()).Scan(&c.ContributionUUID,
+	err = db.QueryRowx(query, cUUID.String()).Scan(&c.ContributionUUID,
 		&c.Account.AccountUUID,
 		&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
 		&c.Account.Name, &c.Account.Description, &c.Account.Amount,
 		&c.Name, &c.Description, &c.Amount, &c.Date)
-	logError(err)
-
-	return c
+	return c, err
 }
 
 // GetContributions retrieves Contributions from db.
-func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Contribution) {
+func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Contribution, err error) {
 	query := `
 	SELECT
 		contribution.contribution_uuid,
@@ -98,7 +100,10 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Cont
 		ON account.account_category_uuid = account_category.account_category_uuid;`
 
 	rows, err := db.Queryx(query)
-	logError(err)
+	if err != nil {
+		return cs, err
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var c models.Contribution
@@ -108,16 +113,17 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Cont
 			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
 			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
 			&c.Name, &c.Description, &c.Amount, &c.Date)
-		logError(err)
+		if err != nil {
+			return cs, err
+		}
 
 		cs = append(cs, c)
 	}
-
-	return cs
+	return cs, nil
 }
 
 // UpdateContribution updates a Contribution in db.
-func (r *ContributionRepository) UpdateContribution(db *sqlx.DB, c models.Contribution) {
+func (r *ContributionRepository) UpdateContribution(db *sqlx.DB, c models.Contribution) error {
 	query := `
 	UPDATE contribution
 	SET
@@ -129,17 +135,21 @@ func (r *ContributionRepository) UpdateContribution(db *sqlx.DB, c models.Contri
 	WHERE
 		contribution_uuid = :contribution_uuid;`
 
-	_, err := db.NamedExec(query, c)
-	logError(err)
+	res, err := db.NamedExec(query, c)
+
+	_, err = getExecuted(res, err)
+	return err
 }
 
 // DeleteContribution deletes a Contribution from db.
-func (r *ContributionRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID) {
+func (r *ContributionRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID) error {
 	query := `
 	DELETE FROM contribution
 	WHERE
 		contribution_uuid = $1;`
 
-	_, err := db.Exec(query, cUUID.String())
-	logError(err)
+	res, err := db.Exec(query, cUUID.String())
+
+	_, err = getExecuted(res, err)
+	return err
 }
