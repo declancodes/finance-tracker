@@ -3,21 +3,31 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/DeclanCodes/finance-tracker/controllers"
 	"github.com/DeclanCodes/finance-tracker/driver"
 	"github.com/gorilla/mux"
 )
 
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t1 := time.Now()
+		next.ServeHTTP(w, r)
+		t2 := time.Now()
+		log.Printf("[%s] %q %v\n", r.Method, r.URL.String(), t2.Sub(t1))
+	})
+}
+
 func main() {
 	db := driver.DbConn()
 	defer db.Close()
 
-	router := mux.NewRouter()
-
 	accountController := controllers.AccountController{}
 	contributionController := controllers.ContributionController{}
 	expenseController := controllers.ExpenseController{}
+
+	router := mux.NewRouter()
 
 	router.HandleFunc("/accountcategories", accountController.CreateAccountCategory(db)).Methods("POST")
 	router.HandleFunc("/accounts", accountController.CreateAccount(db)).Methods("POST")
@@ -46,6 +56,8 @@ func main() {
 	router.HandleFunc("/expenses/{uuid}", expenseController.UpdateExpense(db)).Methods("PUT")
 	router.HandleFunc("/expensecategories/{uuid}", expenseController.DeleteExpenseCategory(db)).Methods("DELETE")
 	router.HandleFunc("/expenses/{uuid}", expenseController.DeleteExpense(db)).Methods("DELETE")
+
+	router.Use(loggingMiddleware)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
