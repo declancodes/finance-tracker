@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/DeclanCodes/finance-tracker/controllers"
@@ -19,45 +20,52 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func trailingSlashesMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	db := driver.DbConn()
 	defer db.Close()
 
-	accountController := controllers.AccountController{}
-	contributionController := controllers.ContributionController{}
-	expenseController := controllers.ExpenseController{}
+	ac := controllers.AccountController{}
+	cc := controllers.ContributionController{}
+	ec := controllers.ExpenseController{}
 
-	router := mux.NewRouter()
+	r := mux.NewRouter()
 
-	router.HandleFunc("/accountcategories", accountController.CreateAccountCategory(db)).Methods("POST")
-	router.HandleFunc("/accounts", accountController.CreateAccount(db)).Methods("POST")
-	router.HandleFunc("/accountcategories", accountController.GetAccountCategories(db)).Methods("GET")
-	router.HandleFunc("/accountcategories/{uuid}", accountController.GetAccountCategory(db)).Methods("GET")
-	router.HandleFunc("/accounts", accountController.GetAccounts(db)).Methods("GET")
-	router.HandleFunc("/accounts/{uuid}", accountController.GetAccount(db)).Methods("GET")
-	router.HandleFunc("/accountcategories/{uuid}", accountController.UpdateAccountCategory(db)).Methods("PUT")
-	router.HandleFunc("/accounts/{uuid}", accountController.UpdateAccount(db)).Methods("PUT")
-	router.HandleFunc("/accountcategories/{uuid}", accountController.DeleteAccountCategory(db)).Methods("DELETE")
-	router.HandleFunc("/accounts/{uuid}", accountController.DeleteAccount(db)).Methods("DELETE")
+	r.HandleFunc("/accountcategories", ac.CreateAccountCategory(db)).Methods("POST")
+	r.HandleFunc("/accounts", ac.CreateAccount(db)).Methods("POST")
+	r.HandleFunc("/accountcategories", ac.GetAccountCategories(db)).Methods("GET")
+	r.HandleFunc("/accountcategories/{uuid}", ac.GetAccountCategory(db)).Methods("GET")
+	r.HandleFunc("/accounts", ac.GetAccounts(db)).Methods("GET")
+	r.HandleFunc("/accounts/{uuid}", ac.GetAccount(db)).Methods("GET")
+	r.HandleFunc("/accountcategories/{uuid}", ac.UpdateAccountCategory(db)).Methods("PUT")
+	r.HandleFunc("/accounts/{uuid}", ac.UpdateAccount(db)).Methods("PUT")
+	r.HandleFunc("/accountcategories/{uuid}", ac.DeleteAccountCategory(db)).Methods("DELETE")
+	r.HandleFunc("/accounts/{uuid}", ac.DeleteAccount(db)).Methods("DELETE")
 
-	router.HandleFunc("/contributions", contributionController.CreateContribution(db)).Methods("POST")
-	router.HandleFunc("/contributions", contributionController.GetContributions(db)).Methods("GET")
-	router.HandleFunc("/contributions/{uuid}", contributionController.GetContribution(db)).Methods("GET")
-	router.HandleFunc("/contributions/{uuid}", contributionController.UpdateContribution(db)).Methods("PUT")
-	router.HandleFunc("/contributions/{uuid}", contributionController.DeleteContribution(db)).Methods("DELETE")
+	r.HandleFunc("/contributions", cc.CreateContribution(db)).Methods("POST")
+	r.HandleFunc("/contributions", cc.GetContributions(db)).Methods("GET")
+	r.HandleFunc("/contributions/{uuid}", cc.GetContribution(db)).Methods("GET")
+	r.HandleFunc("/contributions/{uuid}", cc.UpdateContribution(db)).Methods("PUT")
+	r.HandleFunc("/contributions/{uuid}", cc.DeleteContribution(db)).Methods("DELETE")
 
-	router.HandleFunc("/expensecategories", expenseController.CreateExpenseCategory(db)).Methods("POST")
-	router.HandleFunc("/expenses", expenseController.CreateExpense(db)).Methods("POST")
-	router.HandleFunc("/expensecategories", expenseController.GetExpenseCategories(db)).Methods("GET")
-	router.HandleFunc("/expensecategories/{uuid}", expenseController.GetExpenseCategory(db)).Methods("GET")
-	router.HandleFunc("/expenses", expenseController.GetExpenses(db)).Methods("GET")
-	router.HandleFunc("/expenses/{uuid}", expenseController.GetExpense(db)).Methods("GET")
-	router.HandleFunc("/expensecategories/{uuid}", expenseController.UpdateExpenseCategory(db)).Methods("PUT")
-	router.HandleFunc("/expenses/{uuid}", expenseController.UpdateExpense(db)).Methods("PUT")
-	router.HandleFunc("/expensecategories/{uuid}", expenseController.DeleteExpenseCategory(db)).Methods("DELETE")
-	router.HandleFunc("/expenses/{uuid}", expenseController.DeleteExpense(db)).Methods("DELETE")
+	r.HandleFunc("/expensecategories", ec.CreateExpenseCategory(db)).Methods("POST")
+	r.HandleFunc("/expenses", ec.CreateExpense(db)).Methods("POST")
+	r.HandleFunc("/expensecategories", ec.GetExpenseCategories(db)).Methods("GET")
+	r.HandleFunc("/expensecategories/{uuid}", ec.GetExpenseCategory(db)).Methods("GET")
+	r.HandleFunc("/expenses", ec.GetExpenses(db)).Methods("GET")
+	r.HandleFunc("/expenses/{uuid}", ec.GetExpense(db)).Methods("GET")
+	r.HandleFunc("/expensecategories/{uuid}", ec.UpdateExpenseCategory(db)).Methods("PUT")
+	r.HandleFunc("/expenses/{uuid}", ec.UpdateExpense(db)).Methods("PUT")
+	r.HandleFunc("/expensecategories/{uuid}", ec.DeleteExpenseCategory(db)).Methods("DELETE")
+	r.HandleFunc("/expenses/{uuid}", ec.DeleteExpense(db)).Methods("DELETE")
 
-	router.Use(loggingMiddleware)
+	r.Use(loggingMiddleware)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", trailingSlashesMiddleware(r)))
 }
