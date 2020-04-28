@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// ContributionController .
+// ContributionController is the means for interacting with Contribution entities from an http router.
 type ContributionController struct{}
 
 var contributionRepo = repositories.ContributionRepository{}
@@ -23,7 +23,7 @@ func errorExecutingContribution(w http.ResponseWriter, err error) {
 	errorExecuting(w, "contribution", err)
 }
 
-// CreateContribution .
+// CreateContribution creates a Contribution based on the r *http.Request Body.
 func (c *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var c models.Contribution
@@ -45,7 +45,7 @@ func (c *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFun
 	}
 }
 
-// GetContribution .
+// GetContribution gets a Contribution.
 func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cUUID, err := getUUID(r)
@@ -65,10 +65,24 @@ func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetContributions .
+// GetContributions gets Contribution entities.
 func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cs, err := contributionRepo.GetContributions(db)
+		var cs []models.Contribution
+		var err error
+
+		q := r.URL.Query()
+		accName := q.Get("account")
+		catName := q.Get("category")
+
+		if accName != "" {
+			cs, err = contributionRepo.GetContributionsByAccount(db, accName)
+		} else if catName != "" {
+			cs, err = contributionRepo.GetContributionsByCategory(db, catName)
+		} else {
+			cs, err = contributionRepo.GetContributions(db)
+		}
+
 		if err != nil {
 			errorExecutingContribution(w, err)
 			return
@@ -79,7 +93,7 @@ func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc 
 	}
 }
 
-// UpdateContribution .
+// UpdateContribution updates a Contribution.
 func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cUUID, err := getUUID(r)
@@ -107,7 +121,7 @@ func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFun
 	}
 }
 
-// DeleteContribution .
+// DeleteContribution deletes a Contribution.
 func (c *ContributionController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "contribution", contributionRepo.DeleteContribution)

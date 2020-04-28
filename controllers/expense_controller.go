@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// ExpenseController .
+// ExpenseController is the means for interacting with Expense entities from an http router.
 type ExpenseController struct{}
 
 var expenseRepo = repositories.ExpenseRepository{}
@@ -31,7 +31,7 @@ func errorExecutingExpense(w http.ResponseWriter, err error) {
 	errorExecuting(w, "expense", err)
 }
 
-// CreateExpenseCategory .
+// CreateExpenseCategory creates an ExpenseCategory based on the r *http.Request Body.
 func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ec models.ExpenseCategory
@@ -54,7 +54,7 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 	}
 }
 
-// CreateExpense .
+// CreateExpense creates an Expense based on the r *http.Request Body.
 func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var e models.Expense
@@ -76,7 +76,7 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetExpenseCategory .
+// GetExpenseCategory gets an ExpenseCategory.
 func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ecUUID, err := getUUID(r)
@@ -96,7 +96,7 @@ func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetExpenseCategories .
+// GetExpenseCategories gets ExpenseCategory entities.
 func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ecs, err := expenseRepo.GetExpenseCategories(db)
@@ -110,7 +110,7 @@ func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetExpense .
+// GetExpense gets an Expense.
 func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eUUID, err := getUUID(r)
@@ -130,10 +130,21 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetExpenses .
+// GetExpenses gets Expense entities.
 func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		es, err := expenseRepo.GetExpenses(db)
+		var es []models.Expense
+		var err error
+
+		q := r.URL.Query()
+		catName := q.Get("category")
+
+		if catName != "" {
+			es, err = expenseRepo.GetExpensesByCategory(db, catName)
+		} else {
+			es, err = expenseRepo.GetExpenses(db)
+		}
+
 		if err != nil {
 			errorExecutingExpense(w, err)
 			return
@@ -144,7 +155,7 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// UpdateExpenseCategory .
+// UpdateExpenseCategory updates an ExpenseCategory.
 func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ecUUID, err := getUUID(r)
@@ -172,7 +183,7 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 	}
 }
 
-// UpdateExpense .
+// UpdateExpense updates an Expense.
 func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eUUID, err := getUUID(r)
@@ -200,14 +211,14 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// DeleteExpenseCategory .
+// DeleteExpenseCategory deletes an ExpenseCategory.
 func (c *ExpenseController) DeleteExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "expense category", expenseRepo.DeleteExpenseCategory)
 	}
 }
 
-// DeleteExpense .
+// DeleteExpense deletes an Expense.
 func (c *ExpenseController) DeleteExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "expense", expenseRepo.DeleteExpense)

@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// AccountController .
+// AccountController is the means for interacting with Account entities from an http router.
 type AccountController struct{}
 
 var accountRepo = repositories.AccountRepository{}
@@ -31,7 +31,7 @@ func errorExecutingAccount(w http.ResponseWriter, err error) {
 	errorExecuting(w, "account", err)
 }
 
-// CreateAccountCategory .
+// CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
 func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ac models.AccountCategory
@@ -53,7 +53,7 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 	}
 }
 
-// CreateAccount .
+// CreateAccount creates an Account based on the r *http.Request Body.
 func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var a models.Account
@@ -75,7 +75,7 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetAccountCategory .
+// GetAccountCategory gets an AccountCategory.
 func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		acUUID, err := getUUID(r)
@@ -95,7 +95,7 @@ func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetAccountCategories .
+// GetAccountCategories gets AccountCategory entities.
 func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		acs, err := accountRepo.GetAccountCategories(db)
@@ -109,7 +109,7 @@ func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetAccount .
+// GetAccount gets an Account.
 func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		aUUID, err := getUUID(r)
@@ -129,10 +129,20 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// GetAccounts .
+// GetAccounts gets Account entities.
 func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		as, err := accountRepo.GetAccounts(db)
+		var as []models.Account
+		var err error
+
+		catName := r.URL.Query().Get("category")
+
+		if catName != "" {
+			as, err = accountRepo.GetAccountsByCategory(db, catName)
+		} else {
+			as, err = accountRepo.GetAccounts(db)
+		}
+
 		if err != nil {
 			errorExecutingAccount(w, err)
 			return
@@ -143,7 +153,7 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// UpdateAccountCategory .
+// UpdateAccountCategory updates an AccountCategory.
 func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		acUUID, err := getUUID(r)
@@ -171,7 +181,7 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 	}
 }
 
-// UpdateAccount .
+// UpdateAccount updates an Account.
 func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		aUUID, err := getUUID(r)
@@ -199,14 +209,14 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-// DeleteAccountCategory .
+// DeleteAccountCategory deletes an AccountCategory.
 func (c *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "account category", accountRepo.DeleteAccountCategory)
 	}
 }
 
-// DeleteAccount .
+// DeleteAccount deletes an Account.
 func (c *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "account", accountRepo.DeleteAccount)

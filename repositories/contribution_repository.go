@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -8,6 +10,28 @@ import (
 
 // ContributionRepository is the means for interacting with Contribution storage.
 type ContributionRepository struct{}
+
+const (
+	getContributionsQuery = `
+	SELECT
+		contribution.contribution_uuid,
+		account.account_uuid AS "account.account_uuid",
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name AS "account.name",
+		account.description AS "account.description",
+		account.amount AS "account.amount",
+		contribution.name,
+		contribution.description,
+		contribution.amount,
+		contribution.date_made
+	FROM contribution
+	INNER JOIN account
+		ON contribution.account_uuid = account.account_uuid
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
+)
 
 // CreateContribution creates a Contribution in db.
 func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contribution) (uuid.UUID, error) {
@@ -45,29 +69,12 @@ func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contri
 	return c.ContributionUUID, nil
 }
 
-// GetContribution retrieves a Contribution from db.
+// GetContribution retrieves Contribution with cUUID from db.
 func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c models.Contribution, err error) {
-	query := `
-	SELECT
-		contribution.contribution_uuid,
-		account.account_uuid AS "account.account_uuid",
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name AS "account.name",
-		account.description AS "account.description",
-		account.amount AS "account.amount",
-		contribution.name,
-		contribution.description,
-		contribution.amount,
-		contribution.date_made
-	FROM contribution
-	INNER JOIN account
-		ON contribution.account_uuid = account.account_uuid
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid
+	query := fmt.Sprintf(`
+	%s
 	WHERE
-		contribution.contribution_uuid = $1;`
+		contribution.contribution_uuid = $1;`, getContributionsQuery)
 
 	err = db.QueryRowx(query, cUUID.String()).Scan(&c.ContributionUUID,
 		&c.Account.AccountUUID,
@@ -79,47 +86,29 @@ func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (
 
 // GetContributions retrieves Contributions from db.
 func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Contribution, err error) {
-	query := `
-	SELECT
-		contribution.contribution_uuid,
-		account.account_uuid AS "account.account_uuid",
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name AS "account.name",
-		account.description AS "account.description",
-		account.amount AS "account.amount",
-		contribution.name,
-		contribution.description,
-		contribution.amount,
-		contribution.date_made
-	FROM contribution
-	INNER JOIN account
-		ON contribution.account_uuid = account.account_uuid
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid;`
+	query := fmt.Sprintf(`%s;`, getContributionsQuery)
 
-	rows, err := db.Queryx(query)
-	if err != nil {
-		return cs, err
-	}
-	defer rows.Close()
+	return getContributions(db, query)
+}
 
-	for rows.Next() {
-		var c models.Contribution
+// GetContributionsByAccount retrieves Contributions with Account aName from db.
+func (r *ContributionRepository) GetContributionsByAccount(db *sqlx.DB, aName string) (cs []models.Contribution, err error) {
+	query := fmt.Sprintf(`
+	%s
+	WHERE
+		account.name = $1;`, getContributionsQuery)
 
-		err = rows.Scan(&c.ContributionUUID,
-			&c.Account.AccountUUID,
-			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
-			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
-			&c.Name, &c.Description, &c.Amount, &c.Date)
-		if err != nil {
-			return cs, err
-		}
+	return getContributions(db, query, aName)
+}
 
-		cs = append(cs, c)
-	}
-	return cs, nil
+// GetContributionsByCategory retrieves Contributions with AccountCategory acName from db.
+func (r *ContributionRepository) GetContributionsByCategory(db *sqlx.DB, acName string) (cs []models.Contribution, err error) {
+	query := fmt.Sprintf(`
+	%s
+	WHERE
+		account_category.name = $1;`, getContributionsQuery)
+
+	return getContributions(db, query, acName)
 }
 
 // UpdateContribution updates a Contribution in db.
@@ -152,4 +141,28 @@ func (r *ContributionRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID
 
 	_, err = getExecuted(res, err)
 	return err
+}
+
+func getContributions(db *sqlx.DB, query string, args ...interface{}) (cs []models.Contribution, err error) {
+	rows, err := db.Queryx(query, args...)
+	if err != nil {
+		return cs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var c models.Contribution
+
+		err = rows.Scan(&c.ContributionUUID,
+			&c.Account.AccountUUID,
+			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
+			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
+			&c.Name, &c.Description, &c.Amount, &c.Date)
+		if err != nil {
+			return cs, err
+		}
+
+		cs = append(cs, c)
+	}
+	return cs, nil
 }

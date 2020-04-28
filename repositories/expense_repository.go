@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -8,6 +10,29 @@ import (
 
 // ExpenseRepository is the means for interacting with Expense storage.
 type ExpenseRepository struct{}
+
+const (
+	getExpenseCategoriesQuery = `
+	SELECT
+		expense_category_uuid,
+		name,
+		description
+	FROM expense_category`
+
+	getExpensesQuery = `
+	SELECT
+		expense.expense_uuid,
+		expense_category.expense_category_uuid AS "expense_category.expense_category_uuid",
+		expense_category.name AS "expense_category.name",
+		expense_category.description AS "expense_category.description",
+		expense.name,
+		expense.description,
+		expense.amount,
+		expense.date_incurred
+	FROM expense
+	INNER JOIN expense_category
+		ON expense.expense_category_uuid = expense_category.expense_category_uuid`
+)
 
 // CreateExpenseCategory creates an ExpenseCategory in db.
 func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) (uuid.UUID, error) {
@@ -75,16 +100,12 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.U
 	return e.ExpenseUUID, nil
 }
 
-// GetExpenseCategory retrieves an ExpenseCategory from db.
+// GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.
 func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (ec models.ExpenseCategory, err error) {
-	query := `
-	SELECT
-		expense_category_uuid,
-		name,
-		description
-	FROM expense_category
+	query := fmt.Sprintf(`
+	%s
 	WHERE
-		expense_category_uuid = $1;`
+		expense_category_uuid = $1;`, getExpenseCategoriesQuery)
 
 	err = db.Get(&ec, query, ecUUID.String())
 	return ec, err
@@ -92,34 +113,18 @@ func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (e
 
 // GetExpenseCategories retrieves ExpenseCategorys from db.
 func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.ExpenseCategory, err error) {
-	query := `
-	SELECT
-		expense_category_uuid,
-		name,
-		description
-	FROM expense_category;`
+	query := fmt.Sprintf(`%s;`, getExpenseCategoriesQuery)
 
 	err = db.Select(&ecs, query)
 	return ecs, err
 }
 
-// GetExpense retrieves an Expense from db.
+// GetExpense retrieves Expense with eUUID from db.
 func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.Expense, err error) {
-	query := `
-	SELECT
-		expense.expense_uuid,
-		expense_category.expense_category_uuid AS "expense_category.expense_category_uuid",
-		expense_category.name AS "expense_category.name",
-		expense_category.description AS "expense_category.description",
-		expense.name,
-		expense.description,
-		expense.amount,
-		expense.date_incurred
-	FROM expense
-	INNER JOIN expense_category
-		ON expense.expense_category_uuid = expense_category.expense_category_uuid
+	query := fmt.Sprintf(`
+	%s
 	WHERE
-		expense.expense_uuid = $1;`
+		expense.expense_uuid = $1;`, getExpensesQuery)
 
 	err = db.Get(&e, query, eUUID.String())
 	return e, err
@@ -127,21 +132,20 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 
 // GetExpenses retrieves Expenses from db.
 func (r *ExpenseRepository) GetExpenses(db *sqlx.DB) (es []models.Expense, err error) {
-	query := `
-	SELECT
-		expense.expense_uuid,
-		expense_category.expense_category_uuid AS "expense_category.expense_category_uuid",
-		expense_category.name AS "expense_category.name",
-		expense_category.description AS "expense_category.description",
-		expense.name,
-		expense.description,
-		expense.amount,
-		expense.date_incurred
-	FROM expense
-	INNER JOIN expense_category
-		ON expense.expense_category_uuid = expense_category.expense_category_uuid;`
+	query := fmt.Sprintf(`%s;`, getExpensesQuery)
 
 	err = db.Select(&es, query)
+	return es, err
+}
+
+// GetExpensesByCategory retrieves Expenses with ExpenseCategory ecName from db.
+func (r *ExpenseRepository) GetExpensesByCategory(db *sqlx.DB, ecName string) (es []models.Expense, err error) {
+	query := fmt.Sprintf(`
+	%s
+	WHERE
+		expense_category.name = $1;`, getExpensesQuery)
+
+	err = db.Select(&es, query, ecName)
 	return es, err
 }
 

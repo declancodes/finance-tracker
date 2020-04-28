@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -8,6 +10,28 @@ import (
 
 // AccountRepository is the means for interacting with Account storage.
 type AccountRepository struct{}
+
+const (
+	getAccountCategoriesQuery = `
+	SELECT
+		account_category_uuid,
+		name,
+		description
+	FROM account_category`
+
+	getAccountsQuery = `
+	SELECT
+		account.account_uuid,
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name,
+		account.description,
+		account.amount
+	FROM account
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
+)
 
 // CreateAccountCategory creates an AccountCategory in db.
 func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.AccountCategory) (uuid.UUID, error) {
@@ -73,16 +97,12 @@ func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) (uuid.U
 	return a.AccountUUID, nil
 }
 
-// GetAccountCategory retrieves an AccountCategory from db.
+// GetAccountCategory retrieves the AccountCategory with acUUID from db.
 func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (ac models.AccountCategory, err error) {
-	query := `
-	SELECT
-		account_category_uuid,
-		name,
-		description
-	FROM account_category
+	query := fmt.Sprintf(`
+	%s
 	WHERE
-		account_category_uuid = $1;`
+		account_category_uuid = $1;`, getAccountsQuery)
 
 	err = db.Get(&ac, query, acUUID.String())
 	return ac, err
@@ -90,33 +110,18 @@ func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (a
 
 // GetAccountCategories retrieves AccountCategorys from db.
 func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) (acs []models.AccountCategory, err error) {
-	query := `
-	SELECT
-		account_category_uuid,
-		name,
-		description
-	FROM account_category;`
+	query := fmt.Sprintf(`%s;`, getAccountCategoriesQuery)
 
 	err = db.Select(&acs, query)
 	return acs, err
 }
 
-// GetAccount retrieves an Account from db.
+// GetAccount retrieves the Account with aUUID from db.
 func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.Account, err error) {
-	query := `
-	SELECT
-		account.account_uuid,
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name,
-		account.description,
-		account.amount
-	FROM account
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid
+	query := fmt.Sprintf(`
+	%s
 	WHERE
-		account.account_uuid = $1;`
+		account.account_uuid = $1;`, getAccountsQuery)
 
 	err = db.Get(&a, query, aUUID.String())
 	return a, err
@@ -124,20 +129,20 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.A
 
 // GetAccounts retrieves Accounts from db.
 func (r *AccountRepository) GetAccounts(db *sqlx.DB) (as []models.Account, err error) {
-	query := `
-	SELECT
-		account.account_uuid,
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name,
-		account.description,
-		account.amount
-	FROM account
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid;`
+	query := fmt.Sprintf(`%s;`, getAccountsQuery)
 
 	err = db.Select(&as, query)
+	return as, err
+}
+
+// GetAccountsByCategory retrieves Accounts with AccountCategory acName from db.
+func (r *AccountRepository) GetAccountsByCategory(db *sqlx.DB, acName string) (as []models.Account, err error) {
+	query := fmt.Sprintf(`
+	%s
+	WHERE
+		account_category.name = $1;`, getAccountsQuery)
+
+	err = db.Select(&as, query, acName)
 	return as, err
 }
 
