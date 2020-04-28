@@ -13,7 +13,7 @@ type AccountCategory struct {
 	Description         string    `json:"description" db:"description"`
 }
 
-// Account is a vehicle in which money is be stored.
+// Account is a vehicle in which money is stored.
 type Account struct {
 	AccountUUID     uuid.UUID       `json:"accountUuid,omitEmpty" db:"account_uuid"`
 	AccountCategory AccountCategory `json:"accountCategory" db:"account_category"`
