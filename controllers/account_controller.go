@@ -135,12 +135,12 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 		q := r.URL.Query()
 		catName := q.Get("category")
 
-		m := make(map[string]interface{})
+		mValues := make(map[string]interface{})
 		if catName != "" {
-			m["category"] = catName
+			mValues["category"] = catName
 		}
 
-		as, err := accountRepo.GetAccounts(db, m)
+		as, err := accountRepo.GetAccounts(db, mValues)
 
 		if err != nil {
 			errorExecutingAccount(w, err)

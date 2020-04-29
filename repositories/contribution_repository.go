@@ -84,8 +84,9 @@ func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (
 	return c, err
 }
 
-// GetContributions retrieves Contributions from db.
-func (r *ContributionRepository) GetContributions(db *sqlx.DB, m map[string]interface{}) (cs []models.Contribution, err error) {
+// GetContributions retrieves Contribution entities from db.
+// Filters for Contribution retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *ContributionRepository) GetContributions(db *sqlx.DB, mValues map[string]interface{}) (cs []models.Contribution, err error) {
 	mFilters := map[string]string{
 		"account":  "account.name = ",
 		"category": "account_category.name = ",
@@ -93,7 +94,7 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB, m map[string]inte
 		"end":      "contribution.date_made <= ",
 	}
 
-	clauses, values := buildQueryClauses(m, mFilters)
+	clauses, values := buildQueryClauses(mValues, mFilters)
 	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
 
 	return getContributions(db, query, values...)

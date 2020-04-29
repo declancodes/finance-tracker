@@ -74,21 +74,21 @@ func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc 
 		start := getTime(q.Get("start"))
 		end := getTime(q.Get("end"))
 
-		m := make(map[string]interface{})
+		mValues := make(map[string]interface{})
 		if accName != "" {
-			m["account"] = accName
+			mValues["account"] = accName
 		}
 		if catName != "" {
-			m["category"] = catName
+			mValues["category"] = catName
 		}
 		if !start.IsZero() {
-			m["start"] = start
+			mValues["start"] = start
 		}
 		if !end.IsZero() {
-			m["end"] = end
+			mValues["end"] = end
 		}
 
-		cs, err := contributionRepo.GetContributions(db, m)
+		cs, err := contributionRepo.GetContributions(db, mValues)
 
 		if err != nil {
 			errorExecutingContribution(w, err)

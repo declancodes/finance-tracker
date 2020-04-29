@@ -138,18 +138,18 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 		start := getTime(q.Get("start"))
 		end := getTime(q.Get("end"))
 
-		m := make(map[string]interface{})
+		mValues := make(map[string]interface{})
 		if catName != "" {
-			m["category"] = catName
+			mValues["category"] = catName
 		}
 		if !start.IsZero() {
-			m["start"] = start
+			mValues["start"] = start
 		}
 		if !end.IsZero() {
-			m["end"] = end
+			mValues["end"] = end
 		}
 
-		es, err := expenseRepo.GetExpenses(db, m)
+		es, err := expenseRepo.GetExpenses(db, mValues)
 
 		if err != nil {
 			errorExecutingExpense(w, err)

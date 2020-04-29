@@ -111,7 +111,7 @@ func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (e
 	return ec, err
 }
 
-// GetExpenseCategories retrieves ExpenseCategorys from db.
+// GetExpenseCategories retrieves ExpenseCategory entities from db.
 func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.ExpenseCategory, err error) {
 	query := fmt.Sprintf(`%s;`, getExpenseCategoriesQuery)
 
@@ -130,15 +130,16 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 	return e, err
 }
 
-// GetExpenses retrieves Expenses from db.
-func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, m map[string]interface{}) (es []models.Expense, err error) {
+// GetExpenses retrieves Expense entities from db.
+// Filters for Expense retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interface{}) (es []models.Expense, err error) {
 	mFilters := map[string]string{
 		"category": "expense_category.name = ",
 		"start":    "expense.date_incurred >= ",
 		"end":      "expense.date_incurred <= ",
 	}
 
-	clauses, values := buildQueryClauses(m, mFilters)
+	clauses, values := buildQueryClauses(mValues, mFilters)
 	query := fmt.Sprintf("%s %s", getExpensesQuery, clauses)
 
 	err = db.Select(&es, query, values...)

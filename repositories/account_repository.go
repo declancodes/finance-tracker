@@ -108,7 +108,7 @@ func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (a
 	return ac, err
 }
 
-// GetAccountCategories retrieves AccountCategorys from db.
+// GetAccountCategories retrieves AccountCategory entities from db.
 func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) (acs []models.AccountCategory, err error) {
 	query := fmt.Sprintf(`%s;`, getAccountCategoriesQuery)
 
@@ -127,13 +127,14 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.A
 	return a, err
 }
 
-// GetAccounts retrieves Accounts from db.
-func (r *AccountRepository) GetAccounts(db *sqlx.DB, m map[string]interface{}) (as []models.Account, err error) {
+// GetAccounts retrieves Account entities from db.
+// Filters for Account retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) (as []models.Account, err error) {
 	mFilters := map[string]string{
 		"category": "account_category.name = ",
 	}
 
-	clauses, values := buildQueryClauses(m, mFilters)
+	clauses, values := buildQueryClauses(mValues, mFilters)
 	query := fmt.Sprintf("%s %s", getAccountsQuery, clauses)
 
 	err = db.Select(&as, query, values...)
