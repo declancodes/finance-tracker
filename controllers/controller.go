@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/DeclanCodes/finance-tracker/repositories"
 	"github.com/google/uuid"
@@ -57,6 +58,14 @@ func errorExecuting(w http.ResponseWriter, m string, err error) {
 	}
 
 	log.Println(err)
+}
+
+func getTime(s string) time.Time {
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return time.Time{}
+	}
+	return t
 }
 
 func getUUID(r *http.Request) (uuid.UUID, error) {

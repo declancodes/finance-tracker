@@ -68,20 +68,27 @@ func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 // GetContributions gets Contribution entities.
 func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var cs []models.Contribution
-		var err error
-
 		q := r.URL.Query()
 		accName := q.Get("account")
 		catName := q.Get("category")
+		start := getTime(q.Get("start"))
+		end := getTime(q.Get("end"))
 
+		m := make(map[string]interface{})
 		if accName != "" {
-			cs, err = contributionRepo.GetContributionsByAccount(db, accName)
-		} else if catName != "" {
-			cs, err = contributionRepo.GetContributionsByCategory(db, catName)
-		} else {
-			cs, err = contributionRepo.GetContributions(db)
+			m["account"] = accName
 		}
+		if catName != "" {
+			m["category"] = catName
+		}
+		if !start.IsZero() {
+			m["start"] = start
+		}
+		if !end.IsZero() {
+			m["end"] = end
+		}
+
+		cs, err := contributionRepo.GetContributions(db, m)
 
 		if err != nil {
 			errorExecutingContribution(w, err)

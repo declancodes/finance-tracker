@@ -128,21 +128,15 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.A
 }
 
 // GetAccounts retrieves Accounts from db.
-func (r *AccountRepository) GetAccounts(db *sqlx.DB) (as []models.Account, err error) {
-	query := fmt.Sprintf(`%s;`, getAccountsQuery)
+func (r *AccountRepository) GetAccounts(db *sqlx.DB, m map[string]interface{}) (as []models.Account, err error) {
+	mFilters := map[string]string{
+		"category": "account_category.name = ",
+	}
 
-	err = db.Select(&as, query)
-	return as, err
-}
+	clauses, values := buildQueryClauses(m, mFilters)
+	query := fmt.Sprintf("%s %s", getAccountsQuery, clauses)
 
-// GetAccountsByCategory retrieves Accounts with AccountCategory acName from db.
-func (r *AccountRepository) GetAccountsByCategory(db *sqlx.DB, acName string) (as []models.Account, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		account_category.name = $1;`, getAccountsQuery)
-
-	err = db.Select(&as, query, acName)
+	err = db.Select(&as, query, values...)
 	return as, err
 }
 

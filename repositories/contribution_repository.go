@@ -85,30 +85,18 @@ func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (
 }
 
 // GetContributions retrieves Contributions from db.
-func (r *ContributionRepository) GetContributions(db *sqlx.DB) (cs []models.Contribution, err error) {
-	query := fmt.Sprintf(`%s;`, getContributionsQuery)
+func (r *ContributionRepository) GetContributions(db *sqlx.DB, m map[string]interface{}) (cs []models.Contribution, err error) {
+	mFilters := map[string]string{
+		"account":  "account.name = ",
+		"category": "account_category.name = ",
+		"start":    "contribution.date_made >= ",
+		"end":      "contribution.date_made <= ",
+	}
 
-	return getContributions(db, query)
-}
+	clauses, values := buildQueryClauses(m, mFilters)
+	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
 
-// GetContributionsByAccount retrieves Contributions with Account aName from db.
-func (r *ContributionRepository) GetContributionsByAccount(db *sqlx.DB, aName string) (cs []models.Contribution, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		account.name = $1;`, getContributionsQuery)
-
-	return getContributions(db, query, aName)
-}
-
-// GetContributionsByCategory retrieves Contributions with AccountCategory acName from db.
-func (r *ContributionRepository) GetContributionsByCategory(db *sqlx.DB, acName string) (cs []models.Contribution, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		account_category.name = $1;`, getContributionsQuery)
-
-	return getContributions(db, query, acName)
+	return getContributions(db, query, values...)
 }
 
 // UpdateContribution updates a Contribution in db.

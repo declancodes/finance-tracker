@@ -132,16 +132,15 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 // GetAccounts gets Account entities.
 func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var as []models.Account
-		var err error
+		q := r.URL.Query()
+		catName := q.Get("category")
 
-		catName := r.URL.Query().Get("category")
-
+		m := make(map[string]interface{})
 		if catName != "" {
-			as, err = accountRepo.GetAccountsByCategory(db, catName)
-		} else {
-			as, err = accountRepo.GetAccounts(db)
+			m["category"] = catName
 		}
+
+		as, err := accountRepo.GetAccounts(db, m)
 
 		if err != nil {
 			errorExecutingAccount(w, err)
