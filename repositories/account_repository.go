@@ -134,7 +134,11 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 		"category": "account_category.name = ",
 	}
 
-	clauses, values := buildQueryClauses(mValues, mFilters)
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	if err != nil {
+		return as, err
+	}
+
 	query := fmt.Sprintf("%s %s", getAccountsQuery, clauses)
 
 	err = db.Select(&as, query, values...)

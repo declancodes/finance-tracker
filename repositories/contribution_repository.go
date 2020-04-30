@@ -94,7 +94,11 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB, mValues map[strin
 		"end":      "contribution.date_made <= ",
 	}
 
-	clauses, values := buildQueryClauses(mValues, mFilters)
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	if err != nil {
+		return cs, err
+	}
+
 	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
 
 	return getContributions(db, query, values...)

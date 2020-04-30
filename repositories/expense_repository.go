@@ -139,7 +139,11 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 		"end":      "expense.date_incurred <= ",
 	}
 
-	clauses, values := buildQueryClauses(mValues, mFilters)
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	if err != nil {
+		return es, err
+	}
+
 	query := fmt.Sprintf("%s %s", getExpensesQuery, clauses)
 
 	err = db.Select(&es, query, values...)
