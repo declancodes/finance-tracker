@@ -77,18 +77,15 @@ func TestBuildQueryClausesMultipe(t *testing.T) {
 			len(actualValues), len(expectedValues))
 	}
 
-	if !strings.Contains(actualClauses, "$1") {
-		t.Errorf("Query clauses have incorrect parameterization, got: %s, want to contain: %s",
-			actualClauses, "$1")
+	checkParamsContains := func(param string) {
+		if !strings.Contains(actualClauses, param) {
+			t.Errorf("Query clauses have incorrect parameterization, got: %s, want to contain: %s",
+				actualClauses, param)
+		}
 	}
-	if !strings.Contains(actualClauses, "$2") {
-		t.Errorf("Query clauses have incorrect parameterization, got: %s, want to contain: %s",
-			actualClauses, "$2")
-	}
-	if !strings.Contains(actualClauses, "$3") {
-		t.Errorf("Query clauses have incorrect parameterization, got: %s, want to contain: %s",
-			actualClauses, "$3")
-	}
+	checkParamsContains("$1")
+	checkParamsContains("$2")
+	checkParamsContains("$3")
 
 	for _, v := range mFilters {
 		if !strings.Contains(actualClauses, v) {
