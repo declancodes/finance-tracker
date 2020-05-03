@@ -111,6 +111,7 @@ func (c *HoldingController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.HoldingUUID = hUUID
+		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		err = holdingRepo.UpdateHolding(db, h)
 		if err != nil {
 			errorExecutingHolding(w, err)
