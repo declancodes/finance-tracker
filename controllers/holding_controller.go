@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/DeclanCodes/finance-tracker/repositories"
@@ -34,6 +35,7 @@ func (c *HoldingController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.HoldingUUID, _ = uuid.NewUUID()
+		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		hUUID, err := holdingRepo.CreateHolding(db, h)
 		if err != nil {
 			errorCreating(w, "holding", err)
