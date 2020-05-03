@@ -71,27 +71,30 @@ func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contri
 
 // GetContribution retrieves Contribution with cUUID from db.
 func (r *ContributionRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c models.Contribution, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		contribution.contribution_uuid = $1;`, getContributionsQuery)
+	mValues := map[string]interface{}{
+		"contribution": cUUID.String(),
+	}
 
-	err = db.QueryRowx(query, cUUID.String()).Scan(&c.ContributionUUID,
-		&c.Account.AccountUUID,
-		&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
-		&c.Account.Name, &c.Account.Description, &c.Account.Amount,
-		&c.Name, &c.Description, &c.Amount, &c.Date)
-	return c, err
+	cs, err := r.GetContributions(db, mValues)
+	if err != nil {
+		return c, err
+	}
+	if len(cs) > 1 {
+		return c, fmt.Errorf("more than one Contribution with ID: %v", cUUID)
+	}
+
+	return cs[0], nil
 }
 
 // GetContributions retrieves Contribution entities from db.
 // Filters for Contribution retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *ContributionRepository) GetContributions(db *sqlx.DB, mValues map[string]interface{}) (cs []models.Contribution, err error) {
 	mFilters := map[string]string{
-		"account":  "account.name = ",
-		"category": "account_category.name = ",
-		"start":    "contribution.date_made >= ",
-		"end":      "contribution.date_made <= ",
+		"contribution": "contribution.contribution_uuid = ",
+		"account":      "account.name = ",
+		"category":     "account_category.name = ",
+		"start":        "contribution.date_made >= ",
+		"end":          "contribution.date_made <= ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
@@ -101,7 +104,27 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB, mValues map[strin
 
 	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
 
-	return getContributions(db, query, values...)
+	rows, err := db.Queryx(query, values...)
+	if err != nil {
+		return cs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var c models.Contribution
+
+		err = rows.Scan(&c.ContributionUUID,
+			&c.Account.AccountUUID,
+			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
+			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
+			&c.Name, &c.Description, &c.Amount, &c.Date)
+		if err != nil {
+			return cs, err
+		}
+
+		cs = append(cs, c)
+	}
+	return cs, nil
 }
 
 // UpdateContribution updates a Contribution in db.
@@ -134,28 +157,4 @@ func (r *ContributionRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID
 
 	_, err = getExecuted(res, err)
 	return err
-}
-
-func getContributions(db *sqlx.DB, query string, args ...interface{}) (cs []models.Contribution, err error) {
-	rows, err := db.Queryx(query, args...)
-	if err != nil {
-		return cs, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var c models.Contribution
-
-		err = rows.Scan(&c.ContributionUUID,
-			&c.Account.AccountUUID,
-			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
-			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
-			&c.Name, &c.Description, &c.Amount, &c.Date)
-		if err != nil {
-			return cs, err
-		}
-
-		cs = append(cs, c)
-	}
-	return cs, nil
 }
