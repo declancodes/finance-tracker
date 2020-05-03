@@ -18,7 +18,7 @@ func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]strin
 	var values []interface{}
 	var conditions []string
 
-	if len(mValues) != len(mFilters) {
+	if len(mValues) > len(mFilters) {
 		return "", []interface{}{}, ErrFiltersToMap
 	}
 
@@ -27,9 +27,11 @@ func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]strin
 			if val, ok := mValues[k]; ok {
 				values = append(values, val)
 				conditions = append(conditions, fmt.Sprintf("%s$%d", mFilters[k], len(values)))
-			} else {
-				return "", []interface{}{}, ErrFiltersToMap
 			}
+		}
+
+		if len(values) <= 0 {
+			return "", []interface{}{}, ErrFiltersToMap
 		}
 	}
 

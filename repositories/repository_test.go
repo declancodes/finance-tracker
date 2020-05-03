@@ -25,6 +25,17 @@ func TestBuildQueryClausesSingle(t *testing.T) {
 			[]interface{}{"foo"},
 		},
 		{
+			map[string]interface{}{
+				"amount": 12.5,
+			},
+			map[string]string{
+				"amount":   "foo.amount = ",
+				"category": "test_category.filter >= ",
+			},
+			"WHERE foo.amount = $1;",
+			[]interface{}{12.5},
+		},
+		{
 			map[string]interface{}{},
 			map[string]string{},
 			" ;",
@@ -115,15 +126,6 @@ func TestBuildQueryClausesErrors(t *testing.T) {
 			},
 			map[string]string{
 				"otherCat": "account_category.name = ",
-			},
-		},
-		{
-			map[string]interface{}{
-				"otherCat": "bar",
-			},
-			map[string]string{
-				"otherCat": "account_category.name = ",
-				"category": "test_category.filter >= ",
 			},
 		},
 	}
