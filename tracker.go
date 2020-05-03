@@ -34,6 +34,7 @@ func main() {
 	ac := controllers.AccountController{}
 	cc := controllers.ContributionController{}
 	ec := controllers.ExpenseController{}
+	hc := controllers.HoldingController{}
 
 	r := mux.NewRouter()
 
@@ -64,6 +65,12 @@ func main() {
 	r.HandleFunc("/expenses/{uuid}", ec.UpdateExpense(db)).Methods("PUT")
 	r.HandleFunc("/expensecategories/{uuid}", ec.DeleteExpenseCategory(db)).Methods("DELETE")
 	r.HandleFunc("/expenses/{uuid}", ec.DeleteExpense(db)).Methods("DELETE")
+
+	r.HandleFunc("/holdings", hc.CreateHolding(db)).Methods("POST")
+	r.HandleFunc("/holdings", hc.GetHoldings(db)).Methods("GET")
+	r.HandleFunc("/holdings/{uuid}", hc.GetHolding(db)).Methods("GET")
+	r.HandleFunc("/holdings/{uuid}", hc.UpdateHolding(db)).Methods("PUT")
+	r.HandleFunc("/holdings/{uuid}", hc.DeleteHolding(db)).Methods("DELETE")
 
 	r.Use(loggingMiddleware)
 
