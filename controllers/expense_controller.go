@@ -49,8 +49,7 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(ecUUID)
-		logError(err)
+		created(w, ecUUID)
 	}
 }
 
@@ -71,8 +70,7 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(eUUID)
-		logError(err)
+		created(w, eUUID)
 	}
 }
 
@@ -91,6 +89,7 @@ func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(ec)
 		logError(err)
 	}
@@ -105,6 +104,7 @@ func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(ecs)
 		logError(err)
 	}
@@ -125,6 +125,7 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(e)
 		logError(err)
 	}
@@ -156,6 +157,7 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(es)
 		logError(err)
 	}
@@ -184,8 +186,7 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(ec)
-		logError(err)
+		updated(w, ec.ExpenseCategoryUUID)
 	}
 }
 
@@ -212,8 +213,7 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(e)
-		logError(err)
+		updated(w, e.ExpenseUUID)
 	}
 }
 

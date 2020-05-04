@@ -48,8 +48,7 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(acUUID)
-		logError(err)
+		created(w, acUUID)
 	}
 }
 
@@ -70,8 +69,7 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(aUUID)
-		logError(err)
+		created(w, aUUID)
 	}
 }
 
@@ -90,6 +88,7 @@ func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(ac)
 		logError(err)
 	}
@@ -104,6 +103,7 @@ func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(acs)
 		logError(err)
 	}
@@ -124,6 +124,7 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(a)
 		logError(err)
 	}
@@ -147,6 +148,7 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(as)
 		logError(err)
 	}
@@ -175,8 +177,7 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(ac)
-		logError(err)
+		updated(w, ac.AccountCategoryUUID)
 	}
 }
 
@@ -203,8 +204,7 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(a)
-		logError(err)
+		updated(w, a.AccountUUID)
 	}
 }
 

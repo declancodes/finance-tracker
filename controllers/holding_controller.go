@@ -42,8 +42,7 @@ func (c *HoldingController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(hUUID)
-		logError(err)
+		created(w, hUUID)
 	}
 }
 
@@ -56,13 +55,14 @@ func (c *HoldingController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		c, err := holdingRepo.GetHolding(db, hUUID)
+		h, err := holdingRepo.GetHolding(db, hUUID)
 		if err != nil {
 			errorExecutingHolding(w, err)
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(c)
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(h)
 		logError(err)
 	}
 }
@@ -89,6 +89,7 @@ func (c *HoldingController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(hs)
 		logError(err)
 	}
@@ -118,8 +119,7 @@ func (c *HoldingController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(h)
-		logError(err)
+		updated(w, h.HoldingUUID)
 	}
 }
 

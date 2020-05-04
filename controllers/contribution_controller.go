@@ -40,8 +40,7 @@ func (c *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFun
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(cUUID)
-		logError(err)
+		created(w, cUUID)
 	}
 }
 
@@ -60,6 +59,7 @@ func (c *ContributionController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(c)
 		logError(err)
 	}
@@ -95,6 +95,7 @@ func (c *ContributionController) GetContributions(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
+		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(cs)
 		logError(err)
 	}
@@ -123,8 +124,7 @@ func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFun
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(c)
-		logError(err)
+		updated(w, c.ContributionUUID)
 	}
 }
 

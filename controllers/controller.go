@@ -18,6 +18,20 @@ func logError(err error) {
 	}
 }
 
+func addJSONContentHeader(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func created(w http.ResponseWriter, ID uuid.UUID) {
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(ID.String()))
+}
+
+func updated(w http.ResponseWriter, ID uuid.UUID) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(ID.String()))
+}
+
 func delete(w http.ResponseWriter, r *http.Request, db *sqlx.DB, m string, fn func(*sqlx.DB, uuid.UUID) error) {
 	ID, err := getUUID(r)
 	if err != nil {
@@ -29,6 +43,8 @@ func delete(w http.ResponseWriter, r *http.Request, db *sqlx.DB, m string, fn fu
 	if err != nil {
 		errorExecuting(w, m, err)
 	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func badRequestUUID(w http.ResponseWriter, err error) {
