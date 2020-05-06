@@ -11,6 +11,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// TODO: This is insecure! Specify allowed
+		w.Header().Set("Access-Control-Allow-Headers:", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t1 := time.Now()
@@ -72,7 +88,7 @@ func main() {
 	r.HandleFunc("/holdings/{uuid}", hc.UpdateHolding(db)).Methods("PUT")
 	r.HandleFunc("/holdings/{uuid}", hc.DeleteHolding(db)).Methods("DELETE")
 
-	r.Use(loggingMiddleware)
+	r.Use(corsMiddleware, loggingMiddleware)
 
 	log.Fatal(http.ListenAndServe(":8080", trailingSlashesMiddleware(r)))
 }
