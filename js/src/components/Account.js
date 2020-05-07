@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Account extends Component {
+class Account extends React.Component {
   render() {
     const a = this.props.account;
 
