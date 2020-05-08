@@ -1,8 +1,7 @@
 import React from "react";
 import axios from "axios";
-import AccountCategory from "./AccountCategory";
-import CreateAccountCategoryForm from "./CreateAccountCategoryForm";
-import DeleteButton from "./DeleteButton"
+import Category from "../common/Category";
+import CreateCategoryForm from "../common/CreateCategoryForm";
 
 const API_URL = "http://localhost:8080/accountcategories"
 
@@ -13,7 +12,6 @@ class AccountCategoryPage extends React.Component {
       accountCategories: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
   handleSubmit(values) {
@@ -27,7 +25,7 @@ class AccountCategoryPage extends React.Component {
       })
   }
 
-  handleClick(uuid) {
+  handleDelete(uuid) {
     const url = `${API_URL}/${uuid}`
 
     axios.delete(url)
@@ -51,20 +49,15 @@ class AccountCategoryPage extends React.Component {
         <div className="accountCategories">
           {this.state.accountCategories.map(accountCategory =>
             (
-              <div key={"container-" + accountCategory.accountCategoryUuid}>
-                <AccountCategory
-                  accountCategory={accountCategory}
-                  key={accountCategory.accountCategoryUuid}
-                />
-                <DeleteButton
-                  doClick={() => this.handleClick(accountCategory.accountCategoryUuid)}
-                  key={"delete-" + accountCategory.accountCategoryUuid}
-                />
-              </div>
+              <Category
+                key={accountCategory.accountCategoryUuid}
+                category={accountCategory}
+                handleDelete={() => this.handleDelete(accountCategory.accountCategoryUuid)}
+              />
             )
           )}
         </div>
-        <CreateAccountCategoryForm doSubmit={this.handleSubmit}/>
+        <CreateCategoryForm categoryType="Account" doSubmit={this.handleSubmit}/>
       </div>
     );
   }

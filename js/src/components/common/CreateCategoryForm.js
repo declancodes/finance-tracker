@@ -1,11 +1,11 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
 
-class CreateAccountCategoryForm extends React.Component {
+class CreateCategoryForm extends React.Component {
   render() {
     return (
       <div>
-        <h2>Create New Account Category</h2>
+        <h2>Create New {this.props.categoryType} Category</h2>
         <Formik
           initialValues={{ name: '', description: '' }}
           onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -27,4 +27,4 @@ class CreateAccountCategoryForm extends React.Component {
   }
 }
 
-export default CreateAccountCategoryForm;
+export default CreateCategoryForm;

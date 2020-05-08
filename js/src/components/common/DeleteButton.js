@@ -1,4 +1,5 @@
 import React from "react";
+import "./DeleteButton.css"
 
 class DeleteButton extends React.Component {
   constructor(props) {
@@ -7,7 +8,7 @@ class DeleteButton extends React.Component {
   }
 
   handleClick() {
-    this.props.doClick();
+    this.props.handleDelete();
   }
 
   render() {

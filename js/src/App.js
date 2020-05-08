@@ -1,13 +1,16 @@
 import React from "react";
 import {hot} from "react-hot-loader"
-import AccountCategoryPage from "./components/AccountCategoryPage";
+import AccountCategoryPage from "./components/accounts/AccountCategoryPage";
+import ExpenseCategoryPage from "./components/expenses/ExpenseCategoryPage";
 import "./App.css";
-
 
 class App extends React.Component {
   render() {
     return (
-      <AccountCategoryPage />
+      <div>
+        <AccountCategoryPage />
+        <ExpenseCategoryPage />
+      </div>
     );
   }
 }
