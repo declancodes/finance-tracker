@@ -58,12 +58,12 @@ func (r *HoldingRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.U
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&h.HoldingUUID)
+		err = rows.Scan(&h.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return h.HoldingUUID, nil
+	return h.ID, nil
 }
 
 // GetHolding retrieves Holding with hUUID from db.
@@ -108,9 +108,9 @@ func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interfac
 	for rows.Next() {
 		var h models.Holding
 
-		err = rows.Scan(&h.HoldingUUID,
-			&h.Account.AccountUUID,
-			&h.Account.AccountCategory.AccountCategoryUUID, &h.Account.AccountCategory.Name, &h.Account.AccountCategory.Description,
+		err = rows.Scan(&h.ID,
+			&h.Account.ID,
+			&h.Account.Category.ID, &h.Account.Category.Name, &h.Account.Category.Description,
 			&h.Account.Name, &h.Account.Description, &h.Account.Amount,
 			&h.Name, &h.TickerSymbol, &h.Shares)
 		if err != nil {

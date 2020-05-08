@@ -56,12 +56,12 @@ func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.Expense
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&ec.ExpenseCategoryUUID)
+		err = rows.Scan(&ec.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return ec.ExpenseCategoryUUID, nil
+	return ec.ID, nil
 }
 
 // CreateExpense creates an Expense in db.
@@ -92,12 +92,12 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.U
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&e.ExpenseUUID)
+		err = rows.Scan(&e.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return e.ExpenseUUID, nil
+	return e.ID, nil
 }
 
 // GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.

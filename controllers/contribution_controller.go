@@ -33,7 +33,7 @@ func (c *ContributionController) CreateContribution(db *sqlx.DB) http.HandlerFun
 			return
 		}
 
-		c.ContributionUUID, _ = uuid.NewUUID()
+		c.ID, _ = uuid.NewUUID()
 		cUUID, err := contributionRepo.CreateContribution(db, c)
 		if err != nil {
 			errorCreating(w, "contribution", err)
@@ -117,14 +117,14 @@ func (c *ContributionController) UpdateContribution(db *sqlx.DB) http.HandlerFun
 			return
 		}
 
-		c.ContributionUUID = cUUID
+		c.ID = cUUID
 		err = contributionRepo.UpdateContribution(db, c)
 		if err != nil {
 			errorExecutingContribution(w, err)
 			return
 		}
 
-		updated(w, c.ContributionUUID)
+		updated(w, c.ID)
 	}
 }
 

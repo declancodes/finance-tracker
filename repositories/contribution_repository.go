@@ -61,12 +61,12 @@ func (r *ContributionRepository) CreateContribution(db *sqlx.DB, c models.Contri
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&c.ContributionUUID)
+		err = rows.Scan(&c.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return c.ContributionUUID, nil
+	return c.ID, nil
 }
 
 // GetContribution retrieves Contribution with cUUID from db.
@@ -113,9 +113,9 @@ func (r *ContributionRepository) GetContributions(db *sqlx.DB, mValues map[strin
 	for rows.Next() {
 		var c models.Contribution
 
-		err = rows.Scan(&c.ContributionUUID,
-			&c.Account.AccountUUID,
-			&c.Account.AccountCategory.AccountCategoryUUID, &c.Account.AccountCategory.Name, &c.Account.AccountCategory.Description,
+		err = rows.Scan(&c.ID,
+			&c.Account.ID,
+			&c.Account.Category.ID, &c.Account.Category.Name, &c.Account.Category.Description,
 			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
 			&c.Name, &c.Description, &c.Amount, &c.Date)
 		if err != nil {

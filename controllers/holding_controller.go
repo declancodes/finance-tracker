@@ -34,7 +34,7 @@ func (c *HoldingController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		h.HoldingUUID, _ = uuid.NewUUID()
+		h.ID, _ = uuid.NewUUID()
 		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		hUUID, err := holdingRepo.CreateHolding(db, h)
 		if err != nil {
@@ -111,7 +111,7 @@ func (c *HoldingController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		h.HoldingUUID = hUUID
+		h.ID = hUUID
 		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		err = holdingRepo.UpdateHolding(db, h)
 		if err != nil {
@@ -119,7 +119,7 @@ func (c *HoldingController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		updated(w, h.HoldingUUID)
+		updated(w, h.ID)
 	}
 }
 

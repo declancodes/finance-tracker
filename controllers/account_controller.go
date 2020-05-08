@@ -41,7 +41,7 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		ac.AccountCategoryUUID, _ = uuid.NewUUID()
+		ac.ID, _ = uuid.NewUUID()
 		acUUID, err := accountRepo.CreateAccountCategory(db, ac)
 		if err != nil {
 			errorCreating(w, "account category", err)
@@ -62,7 +62,7 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		a.AccountUUID, _ = uuid.NewUUID()
+		a.ID, _ = uuid.NewUUID()
 		aUUID, err := accountRepo.CreateAccount(db, a)
 		if err != nil {
 			errorCreating(w, "account", err)
@@ -170,14 +170,14 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		ac.AccountCategoryUUID = acUUID
+		ac.ID = acUUID
 		err = accountRepo.UpdateAccountCategory(db, ac)
 		if err != nil {
 			errorExecutingAccountCategory(w, err)
 			return
 		}
 
-		updated(w, ac.AccountCategoryUUID)
+		updated(w, ac.ID)
 	}
 }
 
@@ -197,14 +197,14 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		a.AccountUUID = aUUID
+		a.ID = aUUID
 		err = accountRepo.UpdateAccount(db, a)
 		if err != nil {
 			errorExecutingAccount(w, err)
 			return
 		}
 
-		updated(w, a.AccountUUID)
+		updated(w, a.ID)
 	}
 }
 

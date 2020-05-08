@@ -55,12 +55,12 @@ func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.Account
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&ac.AccountCategoryUUID)
+		err = rows.Scan(&ac.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return ac.AccountCategoryUUID, nil
+	return ac.ID, nil
 }
 
 // CreateAccount creates an Account in db.
@@ -89,12 +89,12 @@ func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) (uuid.U
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&a.AccountUUID)
+		err = rows.Scan(&a.ID)
 		if err != nil {
 			return uuid.Nil, err
 		}
 	}
-	return a.AccountUUID, nil
+	return a.ID, nil
 }
 
 // GetAccountCategory retrieves the AccountCategory with acUUID from db.
