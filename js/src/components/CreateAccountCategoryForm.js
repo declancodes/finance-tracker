@@ -1,17 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
-import axios from 'axios'
-
-const API_URL = "http://localhost:8080/accountcategories"
 
 class CreateAccountCategoryForm extends React.Component {
-  createAccountCategory(accountCategory) {
-    axios.post(API_URL, accountCategory).then(response => response.data)
-    .then((data) => {
-      console.log(data)
-    })
-  }
-
   render() {
     return (
       <div>

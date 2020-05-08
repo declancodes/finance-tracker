@@ -18,30 +18,30 @@ class AccountCategoryPage extends React.Component {
 
   handleSubmit(values) {
     axios.post(API_URL, values)
-    .then(response => {
-      console.log(response.data);
-      return axios.get(API_URL);
-    })
-    .then(response => {
-      this.setState({ accountCategories: response.data })
-    })
+      .then(response => {
+        console.log(response.data);
+        return axios.get(API_URL);
+      })
+      .then(response => {
+        this.setState({ accountCategories: response.data })
+      })
   }
 
   handleClick(uuid) {
     const url = `${API_URL}/${uuid}`
 
     axios.delete(url)
-    .then(() => axios.get(API_URL))
-    .then(response => {
-      this.setState({ accountCategories: response.data })
-    })
+      .then(() => axios.get(API_URL))
+      .then(response => {
+        this.setState({ accountCategories: response.data })
+      })
   }
 
   componentDidMount() {
     axios.get(API_URL).then(response => response.data)
-    .then((data) => {
-      this.setState({ accountCategories: data })
-    })
+      .then((data) => {
+        this.setState({ accountCategories: data })
+      })
   }
 
   render() {
