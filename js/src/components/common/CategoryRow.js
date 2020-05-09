@@ -3,6 +3,19 @@ import DeleteButton from "./DeleteButton";
 import EditCategoryForm from "./EditCategoryForm";
 
 class CategoryRow extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEditing: false
+    };
+    this.handleUpdate = this.handleUpdate.bind(this);
+  }
+
+  handleUpdate(values) {
+    this.props.handleUpdate(values);
+    this.setState({ isEditing: false });
+  }
+
   render() {
     return (
       <tr>
@@ -10,21 +23,21 @@ class CategoryRow extends React.Component {
         <td>{this.props.category.description}</td>
         <td>
           <DeleteButton handleDelete={() => this.props.handleDelete()}/>
-          {this.props.isEditing ? (
+          {this.state.isEditing ? (
             <div>
               <EditCategoryForm
                 categoryType={this.props.categoryType}
                 category={this.props.category}
-                doUpdate={this.props.performUpdate}
+                doUpdate={this.handleUpdate}
               />
-              <button onClick={() => this.props.setIsEditing(false)}>
+              <button onClick={() => this.setState({ isEditing: false })}>
                 Cancel
               </button>
             </div>
           ) : (
             <button
               className="edit-button"
-              onClick={() => this.props.setIsEditing(true)}>
+              onClick={() => this.setState({ isEditing: true })}>
                 Edit
             </button>
           )}

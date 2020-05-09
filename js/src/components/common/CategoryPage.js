@@ -7,15 +7,14 @@ class CategoryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: [],
-      isEditing: false
+      categories: []
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.performUpdate = this.performUpdate.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
     this.apiUrl = `http://localhost:8080/${this.props.categoryType.toLowerCase()}categories`;
   }
 
-  handleSubmit(values) {
+  handleCreate(values) {
     axios.post(this.apiUrl, values)
       .then(response => {
         console.log(response.data);
@@ -36,7 +35,7 @@ class CategoryPage extends React.Component {
       })
   }
 
-  performUpdate(values) {
+  handleUpdate(values) {
     const url = `${this.apiUrl}/${values.uuid}`
 
     axios.put(url, values)
@@ -45,10 +44,7 @@ class CategoryPage extends React.Component {
         return axios.get(this.apiUrl);
       })
       .then(response => {
-        this.setState({
-          categories: response.data,
-          isEditing: false
-        })
+        this.setState({ categories: response.data })
       })
   }
 
@@ -77,12 +73,10 @@ class CategoryPage extends React.Component {
                 (
                   <CategoryRow
                     key={category.uuid}
-                    isEditing={this.state.isEditing}
                     categoryType={this.props.categoryType}
                     category={category}
-                    performUpdate={this.performUpdate}
+                    handleUpdate={this.handleUpdate}
                     handleDelete={() => this.handleDelete(category.uuid)}
-                    setIsEditing={(editing) => this.setState({ isEditing: editing })}
                   />
                 )
               ))
@@ -95,7 +89,7 @@ class CategoryPage extends React.Component {
         </table>
         <CreateCategoryForm
           categoryType={this.props.categoryType}
-          doSubmit={this.handleSubmit}
+          doSubmit={this.handleCreate}
         />
       </div>
     );
