@@ -1,7 +1,7 @@
 import React from "react";
 import {hot} from "react-hot-loader"
 import AccountsPage from "./components/accounts/AccountsPage";
-import CategoryPage from "./components/common/CategoryPage";
+import CategoryPage from "./components/categories/CategoryPage";
 import "./App.css";
 
 class App extends React.Component {

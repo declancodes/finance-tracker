@@ -1,5 +1,5 @@
 import React from "react";
-import DeleteButton from "./DeleteButton";
+import DeleteButton from "../common/DeleteButton";
 import EditCategoryForm from "./EditCategoryForm";
 
 class CategoryRow extends React.Component {

@@ -1,5 +1,5 @@
 import React from "react";
-import api from "./api";
+import api from "../common/api";
 import CreateCategoryForm from "./CreateCategoryForm";
 import CategoryRow from "./CategoryRow";
 
