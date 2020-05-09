@@ -13,7 +13,7 @@ class CategoryRow extends React.Component {
 
   handleUpdate(values) {
     this.props.handleUpdate(values);
-    this.setState({ isEditing: false });
+    this.setEditing(false);
   }
 
   setEditing(val) {

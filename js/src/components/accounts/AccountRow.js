@@ -1,6 +1,6 @@
 import React from "react";
+import AccountForm from "./AccountForm";
 import DeleteButton from "../common/DeleteButton";
-import EditAccountForm from "./EditAccountForm";
 
 class AccountRow extends React.Component {
   constructor(props) {
@@ -13,7 +13,11 @@ class AccountRow extends React.Component {
 
   handleUpdate(values) {
     this.props.handleUpdate(values);
-    this.setState({ isEditing: false });
+    this.setEditing(false);
+  }
+
+  setEditing(val) {
+    this.setState({ isEditing: val })
   }
 
   render() {
@@ -26,21 +30,22 @@ class AccountRow extends React.Component {
         <td>{a.description}</td>
         <td>${a.amount}</td>
         <td>
-          <DeleteButton handleDelete={() => this.props.handleDelete()}/>
+          <DeleteButton handleDelete={() => this.props.handleDelete(a.uuid)}/>
           {this.state.isEditing ? (
             <div>
-              <EditAccountForm
+              <AccountForm
+                isEditMode={true}
                 account={a}
-                doUpdate={this.handleUpdate}
+                doSubmit={this.handleUpdate}
               />
-              <button onClick={() => this.setState({ isEditing: false })}>
+              <button onClick={() => this.setEditing(false)}>
                 Cancel
               </button>
             </div>
           ) : (
             <button
               className="edit-button"
-              onClick={() => this.setState({ isEditing: true })}>
+              onClick={() => this.setEditing(true)}>
                 Edit
             </button>
           )}

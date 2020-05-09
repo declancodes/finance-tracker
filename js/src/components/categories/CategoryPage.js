@@ -14,24 +14,13 @@ class CategoryPage extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
   }
 
-  isAccountCategory() {
-    return this.props.categoryType === "Account"
-  }
-
-  getCategories(isAccountCategory) {
-    return isAccountCategory
-        ? api.getAccountCategories()
-        : api.getExpenseCategories()
-  }
-
   handleCreate(values) {
     const isAccountCategory = this.isAccountCategory()
     const p = isAccountCategory
       ? api.createAccountCategory(values)
       : api.createExpenseCategory(values)
 
-    p.then(() => this.getCategories(isAccountCategory))
-      .then(response => this.setState({ categories: response.data }))
+    p.then(() => this.setCategories(isAccountCategory))
   }
 
   handleDelete(uuid) {
@@ -40,8 +29,7 @@ class CategoryPage extends React.Component {
       ? api.deleteAccountCategory(uuid)
       : api.deleteExpenseCategory(uuid)
 
-    p.then(() => this.getCategories(isAccountCategory))
-      .then(response => this.setState({ categories: response.data }))
+    p.then(() => this.setCategories(isAccountCategory))
   }
 
   handleUpdate(values) {
@@ -50,14 +38,26 @@ class CategoryPage extends React.Component {
       ? api.updateAccountCategory(values)
       : api.updateExpenseCategory(values)
 
-    p.then(() => this.getCategories(isAccountCategory))
-      .then(response => this.setState({ categories: response.data }))
+    p.then(() => this.setCategories(isAccountCategory))
   }
 
   componentDidMount() {
-    this.getCategories(this.isAccountCategory())
-      .then(response => response.data)
-      .then(data => this.setState({ categories: data }))
+    this.setCategories(this.isAccountCategory())
+  }
+
+  setCategories(isAccountCategory) {
+    this.getCategories(isAccountCategory)
+      .then(response => this.setState({ categories: response.data }))
+  }
+
+  getCategories(isAccountCategory) {
+    return isAccountCategory
+        ? api.getAccountCategories()
+        : api.getExpenseCategories()
+  }
+
+  isAccountCategory() {
+    return this.props.categoryType === "Account"
   }
 
   render() {

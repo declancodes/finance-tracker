@@ -1,9 +1,7 @@
 import React from "react";
-import axios from "axios";
+import api from "../common/api"
+import AccountForm from "./AccountForm";
 import AccountRow from "./AccountRow";
-import CreateAccountForm from "./CreateAccountForm";
-
-const API_URL = "http://localhost:8080/accounts"
 
 class AccountsPage extends React.Component {
   constructor(props) {
@@ -13,47 +11,31 @@ class AccountsPage extends React.Component {
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleCreate(values) {
-    axios.post(API_URL, values)
-      .then(response => {
-        console.log(response.data);
-        return axios.get(API_URL);
-      })
-      .then(response => {
-        this.setState({ accounts: response.data })
-      })
+    api.createAccount(values)
+      .then(() => this.setAccounts())
   }
 
   handleDelete(uuid) {
-    const url = `${API_URL}/${uuid}`
-
-    axios.delete(url)
-      .then(() => axios.get(API_URL))
-      .then(response => {
-        this.setState({ accounts: response.data })
-      })
+    api.deleteAccount(uuid)
+      .then(() => this.setAccounts())
   }
 
   handleUpdate(values) {
-    const url = `${API_URL}/${values.uuid}`
-
-    axios.put(url, values)
-      .then(response => {
-        console.log(response.data);
-        return axios.get(API_URL);
-      })
-      .then(response => {
-        this.setState({ accounts: response.data })
-      })
+    api.updateAccount(values)
+      .then(() => this.setAccounts())
   }
 
   componentDidMount() {
-    axios.get(API_URL).then(response => response.data)
-      .then((data) => {
-        this.setState({ accounts: data })
-      })
+    this.setAccounts()
+  }
+
+  setAccounts() {
+    api.getAccounts()
+      .then(response => this.setState({ accounts: response.data }))
   }
 
   render() {
@@ -78,7 +60,7 @@ class AccountsPage extends React.Component {
                     key={account.uuid}
                     account={account}
                     handleUpdate={this.handleUpdate}
-                    handleDelete={() => this.handleDelete(account.uuid)}
+                    handleDelete={this.handleDelete}
                   />
                 )
               ))
@@ -89,7 +71,10 @@ class AccountsPage extends React.Component {
             )}
           </tbody>
         </table>
-        <CreateAccountForm doSubmit={this.handleCreate}/>
+        <AccountForm
+          isEditMode={false}
+          doSubmit={this.handleCreate}
+        />
       </div>
     );
   }
