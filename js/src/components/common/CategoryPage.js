@@ -1,18 +1,18 @@
 import React from "react";
 import axios from "axios";
 import CreateCategoryForm from "../common/CreateCategoryForm";
-import DeleteButton from "./DeleteButton";
-import EditCategoryForm from "./EditCategoryForm";
+import CategoryRow from "./CategoryRow";
 
 class CategoryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: []
+      categories: [],
+      isEditing: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.performUpdate = this.performUpdate.bind(this);
-    this.apiUrl = `http://localhost:8080/${this.props.categoryType.toLowerCase()}categories`
+    this.apiUrl = `http://localhost:8080/${this.props.categoryType.toLowerCase()}categories`;
   }
 
   handleSubmit(values) {
@@ -45,7 +45,10 @@ class CategoryPage extends React.Component {
         return axios.get(this.apiUrl);
       })
       .then(response => {
-        this.setState({ categories: response.data })
+        this.setState({
+          categories: response.data,
+          isEditing: false
+        })
       })
   }
 
@@ -72,31 +75,15 @@ class CategoryPage extends React.Component {
             {this.state.categories.length > 0 ? (
               this.state.categories.map(category => (
                 (
-                  <tr key={category.uuid}>
-                    <td>{category.name}</td>
-                    <td>{category.description}</td>
-                    <td>
-                      <DeleteButton handleDelete={() => this.handleDelete(category.uuid)}/>
-                      {this.state.isEditing ? (
-                        <div>
-                          <EditCategoryForm
-                            categoryType={this.props.categoryType}
-                            category={category}
-                            doUpdate={this.performUpdate}
-                          />
-                          <button onClick={() => this.setState({ isEditing : false })}>
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          className="edit-button"
-                          onClick={() => this.setState({ isEditing : true })}>
-                            Edit
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                  <CategoryRow
+                    key={category.uuid}
+                    isEditing={this.state.isEditing}
+                    categoryType={this.props.categoryType}
+                    category={category}
+                    performUpdate={this.performUpdate}
+                    handleDelete={() => this.handleDelete(category.uuid)}
+                    setIsEditing={(editing) => this.setState({ isEditing: editing })}
+                  />
                 )
               ))
             ) : (
