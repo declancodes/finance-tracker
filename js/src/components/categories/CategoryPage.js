@@ -1,6 +1,6 @@
 import React from "react";
 import api from "../common/api";
-import CreateCategoryForm from "./CreateCategoryForm";
+import CategoryForm from "./CategoryForm";
 import CategoryRow from "./CategoryRow";
 
 class CategoryPage extends React.Component {
@@ -92,7 +92,8 @@ class CategoryPage extends React.Component {
             )}
           </tbody>
         </table>
-        <CreateCategoryForm
+        <CategoryForm
+          isEditMode={false}
           categoryType={this.props.categoryType}
           doSubmit={this.handleCreate}
         />
