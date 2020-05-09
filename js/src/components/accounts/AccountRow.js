@@ -1,8 +1,8 @@
 import React from "react";
-import DeleteButton from "./DeleteButton";
-import EditCategoryForm from "./EditCategoryForm";
+import DeleteButton from "../common/DeleteButton";
+import EditAccountForm from "./EditAccountForm";
 
-class CategoryRow extends React.Component {
+class AccountRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,34 +16,31 @@ class CategoryRow extends React.Component {
     this.setState({ isEditing: false });
   }
 
-  setEditing(val) {
-    this.setState({ isEditing: val })
-  }
-
   render() {
-    const c = this.props.category;
+    const a = this.props.account;
 
     return (
       <tr>
-        <td>{c.name}</td>
-        <td>{c.description}</td>
+        <td>{a.name}</td>
+        <td>{a.category.name}</td>
+        <td>{a.description}</td>
+        <td>${a.amount}</td>
         <td>
-          <DeleteButton handleDelete={() => this.props.handleDelete(c.uuid)}/>
+          <DeleteButton handleDelete={() => this.props.handleDelete()}/>
           {this.state.isEditing ? (
             <div>
-              <EditCategoryForm
-                categoryType={this.props.categoryType}
-                category={c}
+              <EditAccountForm
+                account={a}
                 doUpdate={this.handleUpdate}
               />
-              <button onClick={() => this.setEditing(false)}>
+              <button onClick={() => this.setState({ isEditing: false })}>
                 Cancel
               </button>
             </div>
           ) : (
             <button
               className="edit-button"
-              onClick={() => this.setEditing(true)}>
+              onClick={() => this.setState({ isEditing: true })}>
                 Edit
             </button>
           )}
@@ -53,4 +50,4 @@ class CategoryRow extends React.Component {
   }
 }
 
-export default CategoryRow;
+export default AccountRow;

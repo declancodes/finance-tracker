@@ -1,0 +1,74 @@
+import axios from "axios";
+
+const API_URL = "http://localhost:8080"
+const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
+const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`
+const ACCOUNTS_URL = `${API_URL}/accounts`
+
+function create(url, values) {
+  return axios.post(url, values)
+}
+
+function get(url) {
+  return axios.get(url)
+}
+
+function update(url, values) {
+  return axios.put(url, values)
+}
+
+function remove(url) {
+  return axios.delete(url)
+}
+
+const api = {
+  createAccountCategory(values) {
+    return create(ACCOUNT_CATEGORIES_URL, values);
+  },
+
+  getAccountCategories() {
+    return get(ACCOUNT_CATEGORIES_URL);
+  },
+
+  updateAccountCategory(values) {
+    return update(`${ACCOUNT_CATEGORIES_URL}/${values.uuid}`, values)
+  },
+
+  deleteAccountCategory(uuid) {
+    return remove(`${ACCOUNT_CATEGORIES_URL}/${uuid}`)
+  },
+
+  createExpenseCategory(values) {
+    return create(EXPENSE_CATEGORIES_URL, values);
+  },
+
+  getExpenseCategories() {
+    return get(EXPENSE_CATEGORIES_URL);
+  },
+
+  updateExpenseCategory(values) {
+    return update(`${EXPENSE_CATEGORIES_URL}/${values.uuid}`, values)
+  },
+
+  deleteExpenseCategory(uuid) {
+    return remove(`${EXPENSE_CATEGORIES_URL}/${uuid}`)
+  },
+
+  createAccount(values) {
+    return create(ACCOUNTS_URL, values);
+  },
+
+  getAccounts() {
+    return get(ACCOUNTS_URL);
+  },
+
+  updateAccount(values) {
+    return update(`${ACCOUNTS_URL}/${values.uuid}`, values)
+  },
+
+  deleteAccount(uuid) {
+    return remove(`${ACCOUNTS_URL}/${uuid}`)
+  }
+}
+
+export default api;

@@ -1,6 +1,6 @@
 import React from "react";
-import axios from "axios";
-import CreateCategoryForm from "../common/CreateCategoryForm";
+import api from "./api";
+import CreateCategoryForm from "./CreateCategoryForm";
 import CategoryRow from "./CategoryRow";
 
 class CategoryPage extends React.Component {
@@ -11,48 +11,53 @@ class CategoryPage extends React.Component {
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.apiUrl = `http://localhost:8080/${this.props.categoryType.toLowerCase()}categories`;
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+
+  isAccountCategory() {
+    return this.props.categoryType === "Account"
+  }
+
+  getCategories(isAccountCategory) {
+    return isAccountCategory
+        ? api.getAccountCategories()
+        : api.getExpenseCategories()
   }
 
   handleCreate(values) {
-    axios.post(this.apiUrl, values)
-      .then(response => {
-        console.log(response.data);
-        return axios.get(this.apiUrl);
-      })
-      .then(response => {
-        this.setState({ categories: response.data })
-      })
+    const isAccountCategory = this.isAccountCategory()
+    const p = isAccountCategory
+      ? api.createAccountCategory(values)
+      : api.createExpenseCategory(values)
+
+    p.then(() => this.getCategories(isAccountCategory))
+      .then(response => this.setState({ categories: response.data }))
   }
 
   handleDelete(uuid) {
-    const url = `${this.apiUrl}/${uuid}`
+    const isAccountCategory = this.isAccountCategory()
+    const p = isAccountCategory
+      ? api.deleteAccountCategory(uuid)
+      : api.deleteExpenseCategory(uuid)
 
-    axios.delete(url)
-      .then(() => axios.get(this.apiUrl))
-      .then(response => {
-        this.setState({ categories: response.data })
-      })
+    p.then(() => this.getCategories(isAccountCategory))
+      .then(response => this.setState({ categories: response.data }))
   }
 
   handleUpdate(values) {
-    const url = `${this.apiUrl}/${values.uuid}`
+    const isAccountCategory = this.isAccountCategory()
+    const p = isAccountCategory
+      ? api.updateAccountCategory(values)
+      : api.updateExpenseCategory(values)
 
-    axios.put(url, values)
-      .then(response => {
-        console.log(response.data);
-        return axios.get(this.apiUrl);
-      })
-      .then(response => {
-        this.setState({ categories: response.data })
-      })
+    p.then(() => this.getCategories(isAccountCategory))
+      .then(response => this.setState({ categories: response.data }))
   }
 
   componentDidMount() {
-    axios.get(this.apiUrl).then(response => response.data)
-      .then((data) => {
-        this.setState({ categories: data })
-      })
+    this.getCategories(this.isAccountCategory())
+      .then(response => response.data)
+      .then(data => this.setState({ categories: data }))
   }
 
   render() {
@@ -76,7 +81,7 @@ class CategoryPage extends React.Component {
                     categoryType={this.props.categoryType}
                     category={category}
                     handleUpdate={this.handleUpdate}
-                    handleDelete={() => this.handleDelete(category.uuid)}
+                    handleDelete={this.handleDelete}
                   />
                 )
               ))
