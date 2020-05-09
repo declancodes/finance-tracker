@@ -1,5 +1,5 @@
 import React from "react";
-import DeleteButton from "../common/DeleteButton";
+import Button from "../common/Button";
 import CategoryForm from "./CategoryForm";
 
 class CategoryRow extends React.Component {
@@ -28,7 +28,10 @@ class CategoryRow extends React.Component {
         <td>{c.name}</td>
         <td>{c.description}</td>
         <td>
-          <DeleteButton handleDelete={() => this.props.handleDelete(c.uuid)}/>
+          <Button
+            name="Delete"
+            handleFunc={() => this.props.handleDelete(c.uuid)}
+          />
           {this.state.isEditing ? (
             <div>
               <CategoryForm
@@ -37,16 +40,16 @@ class CategoryRow extends React.Component {
                 category={c}
                 doSubmit={this.handleUpdate}
               />
-              <button onClick={() => this.setEditing(false)}>
-                Cancel
-              </button>
+              <Button
+                name="Cancel"
+                handleFunc={() => this.setEditing(false)}
+              />
             </div>
           ) : (
-            <button
-              className="edit-button"
-              onClick={() => this.setEditing(true)}>
-                Edit
-            </button>
+            <Button
+              name="Edit"
+              handleFunc={() => this.setEditing(true)}
+            />
           )}
         </td>
       </tr>

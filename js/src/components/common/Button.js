@@ -1,24 +1,24 @@
 import React from "react";
 
-class DeleteButton extends React.Component {
+class Button extends React.Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this)
   }
 
   handleClick() {
-    this.props.handleDelete();
+    this.props.handleFunc();
   }
 
   render() {
     return (
       <button
-        className="delete-button"
+        className={`${this.props.name.toLowerCase()}-button`}
         onClick={this.handleClick}>
-          Delete
+          {this.props.name}
       </button>
     );
   }
 }
 
-export default DeleteButton;
+export default Button;

@@ -1,6 +1,6 @@
 import React from "react";
 import AccountForm from "./AccountForm";
-import DeleteButton from "../common/DeleteButton";
+import Button from "../common/Button";
 
 class AccountRow extends React.Component {
   constructor(props) {
@@ -30,7 +30,10 @@ class AccountRow extends React.Component {
         <td>{a.description}</td>
         <td>${a.amount}</td>
         <td>
-          <DeleteButton handleDelete={() => this.props.handleDelete(a.uuid)}/>
+          <Button
+            name="Delete"
+            handleFunc={() => this.props.handleDelete(a.uuid)}
+          />
           {this.state.isEditing ? (
             <div>
               <AccountForm
@@ -38,16 +41,16 @@ class AccountRow extends React.Component {
                 account={a}
                 doSubmit={this.handleUpdate}
               />
-              <button onClick={() => this.setEditing(false)}>
-                Cancel
-              </button>
+              <Button
+                name="Cancel"
+                handleFunc={() => this.setEditing(false)}
+              />
             </div>
           ) : (
-            <button
-              className="edit-button"
-              onClick={() => this.setEditing(true)}>
-                Edit
-            </button>
+            <Button
+              name="Edit"
+              handleFunc={() => this.setEditing(true)}
+            />
           )}
         </td>
       </tr>
