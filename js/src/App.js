@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import AccountsPage from "./components/accounts/AccountsPage";
 import CategoryPage from "./components/categories/CategoryPage";
+import ExpensesPage from "./components/expenses/ExpensesPage";
 import "./App.css";
 
 class App extends React.Component {
@@ -24,6 +25,9 @@ class App extends React.Component {
                 <Link to="/accountcategories">Account Categories</Link>
               </li>
               <li>
+                <Link to="/expenses">Expenses</Link>
+              </li>
+              <li>
                 <Link to="/expensecategories">Expense Categories</Link>
               </li>
             </ul>
@@ -37,6 +41,9 @@ class App extends React.Component {
             </Route>
             <Route path="/accounts">
               <AccountsPage/>
+            </Route>
+            <Route path="/expenses">
+              <ExpensesPage/>
             </Route>
           </Switch>
         </div>

@@ -4,6 +4,7 @@ const API_URL = "http://localhost:8080"
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
 const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`
 const ACCOUNTS_URL = `${API_URL}/accounts`
+const EXPENSES_URL = `${API_URL}/expenses`
 
 function create(url, values) {
   return axios.post(url, values)
@@ -38,6 +39,22 @@ const api = {
     return remove(`${ACCOUNT_CATEGORIES_URL}/${uuid}`)
   },
 
+  createAccount(values) {
+    return create(ACCOUNTS_URL, values);
+  },
+
+  getAccounts() {
+    return get(ACCOUNTS_URL);
+  },
+
+  updateAccount(values) {
+    return update(`${ACCOUNTS_URL}/${values.uuid}`, values)
+  },
+
+  deleteAccount(uuid) {
+    return remove(`${ACCOUNTS_URL}/${uuid}`)
+  },
+
   createExpenseCategory(values) {
     return create(EXPENSE_CATEGORIES_URL, values);
   },
@@ -54,21 +71,21 @@ const api = {
     return remove(`${EXPENSE_CATEGORIES_URL}/${uuid}`)
   },
 
-  createAccount(values) {
-    return create(ACCOUNTS_URL, values);
+  createExpense(values) {
+    return create(EXPENSES_URL, values);
   },
 
-  getAccounts() {
-    return get(ACCOUNTS_URL);
+  getExpenses() {
+    return get(EXPENSES_URL);
   },
 
-  updateAccount(values) {
-    return update(`${ACCOUNTS_URL}/${values.uuid}`, values)
+  updateExpense(values) {
+    return update(`${EXPENSES_URL}/${values.uuid}`, values)
   },
 
-  deleteAccount(uuid) {
-    return remove(`${ACCOUNTS_URL}/${uuid}`)
-  }
+  deleteExpense(uuid) {
+    return remove(`${EXPENSES_URL}/${uuid}`)
+  },
 }
 
 export default api;

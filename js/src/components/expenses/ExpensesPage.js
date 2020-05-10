@@ -1,13 +1,13 @@
 import React from "react";
 import api from "../common/api"
-import AccountForm from "./AccountForm";
-import AccountRow from "./AccountRow";
+import ExpenseForm from "./ExpenseForm";
+import ExpenseRow from "./ExpenseRow";
 
-class AccountsPage extends React.Component {
+class ExpensesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      accounts: []
+      expenses: []
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -15,55 +15,56 @@ class AccountsPage extends React.Component {
   }
 
   handleCreate(values) {
-    api.createAccount(values)
-      .then(() => this.setAccounts())
+    api.createExpense(values)
+      .then(() => this.setExpenses())
   }
 
   handleDelete(uuid) {
-    api.deleteAccount(uuid)
-      .then(() => this.setAccounts())
+    api.deleteExpense(uuid)
+      .then(() => this.setExpenses())
   }
 
   handleUpdate(values) {
-    api.updateAccount(values)
-      .then(() => this.setAccounts())
+    api.updateExpense(values)
+      .then(() => this.setExpenses())
   }
 
   componentDidMount() {
-    this.setAccounts()
+    this.setExpenses()
   }
 
-  setAccounts() {
-    api.getAccounts()
+  setExpenses() {
+    api.getExpenses()
       .then(response => {
-        var accounts = (response.data === null || response.data === undefined)
+        var expenses = (response.data === null || response.data === undefined)
           ? []
           : response.data
-        this.setState({ accounts: accounts })
+        this.setState({ expenses: expenses })
       })
   }
 
   render() {
     return (
       <div>
-        <h1>Accounts</h1>
+        <h1>Expenses</h1>
         <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Category</th>
               <th>Description</th>
+              <th>Date</th>
               <th>Amount</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {this.state.accounts.length > 0 ? (
-              this.state.accounts.map(account => (
+            {this.state.expenses.length > 0 ? (
+              this.state.expenses.map(expense => (
                 (
-                  <AccountRow
-                    key={account.uuid}
-                    account={account}
+                  <ExpenseRow
+                    key={expense.uuid}
+                    expense={expense}
                     handleUpdate={this.handleUpdate}
                     handleDelete={this.handleDelete}
                   />
@@ -71,12 +72,12 @@ class AccountsPage extends React.Component {
               ))
             ) : (
               <tr>
-                <td colSpan={5}>No Accounts</td>
+                <td colSpan={6}>No Expenses</td>
               </tr>
             )}
           </tbody>
         </table>
-        <AccountForm
+        <ExpenseForm
           isEditMode={false}
           doSubmit={this.handleCreate}
         />
@@ -85,4 +86,4 @@ class AccountsPage extends React.Component {
   }
 }
 
-export default AccountsPage;
+export default ExpensesPage;

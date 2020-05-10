@@ -47,7 +47,12 @@ class CategoryPage extends React.Component {
 
   setCategories(isAccountCategory) {
     this.getCategories(isAccountCategory)
-      .then(response => this.setState({ categories: response.data }))
+      .then(response => {
+        var categories = (response.data === null || response.data === undefined)
+          ? []
+          : response.data
+        this.setState({ categories: categories })
+      })
   }
 
   getCategories(isAccountCategory) {
