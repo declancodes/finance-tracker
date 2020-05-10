@@ -1,0 +1,4 @@
+.git*
+js/
+docker-compose.*
+*.md
