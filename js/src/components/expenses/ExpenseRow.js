@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "../common/Button";
 import ExpenseForm from "./ExpenseForm";
+import ModifyRowPanel from "../common/ModifyRowPanel";
 
 class ExpenseRow extends React.Component {
   constructor(props) {
@@ -31,10 +32,6 @@ class ExpenseRow extends React.Component {
         <td>{e.date}</td>
         <td>${e.amount}</td>
         <td>
-          <Button
-            name="Delete"
-            handleFunc={() => this.props.handleDelete(e.uuid)}
-          />
           {this.state.isEditing ? (
             <div>
               <ExpenseForm
@@ -48,9 +45,9 @@ class ExpenseRow extends React.Component {
               />
             </div>
           ) : (
-            <Button
-              name="Edit"
-              handleFunc={() => this.setEditing(true)}
+            <ModifyRowPanel
+              handleEdit={() => this.setEditing(true)}
+              handleDelete={() => this.props.handleDelete(e.uuid)}
             />
           )}
         </td>

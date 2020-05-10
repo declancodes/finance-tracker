@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "../common/Button";
 import CategoryForm from "./CategoryForm";
+import ModifyRowPanel from "../common/ModifyRowPanel";
 
 class CategoryRow extends React.Component {
   constructor(props) {
@@ -28,10 +29,6 @@ class CategoryRow extends React.Component {
         <td>{c.name}</td>
         <td>{c.description}</td>
         <td>
-          <Button
-            name="Delete"
-            handleFunc={() => this.props.handleDelete(c.uuid)}
-          />
           {this.state.isEditing ? (
             <div>
               <CategoryForm
@@ -46,9 +43,9 @@ class CategoryRow extends React.Component {
               />
             </div>
           ) : (
-            <Button
-              name="Edit"
-              handleFunc={() => this.setEditing(true)}
+            <ModifyRowPanel
+              handleEdit={() => this.setEditing(true)}
+              handleDelete={() => this.props.handleDelete(c.uuid)}
             />
           )}
         </td>

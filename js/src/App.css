@@ -12,3 +12,7 @@ th, td {
   text-align: left;
   padding: 0.5rem;
 }
+input, select {
+  display: block;
+  margin-bottom: 5px;
+}
