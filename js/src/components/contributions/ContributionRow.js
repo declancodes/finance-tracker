@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import Button from "../common/Button";
 import ContributionForm from "./ContributionForm";
 import ModifyRowPanel from "../common/ModifyRowPanel";
@@ -29,7 +30,7 @@ class ContributionRow extends React.Component {
         <td>{c.name}</td>
         <td>{c.account.name}</td>
         <td>{c.description}</td>
-        <td>{c.date}</td>
+        <td>{moment(c.date).format("MM-DD-YYYY")}</td>
         <td>${c.amount}</td>
         <td>
           {this.state.isEditing ? (
