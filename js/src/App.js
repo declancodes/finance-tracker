@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import AccountsPage from "./components/accounts/AccountsPage";
 import CategoryPage from "./components/categories/CategoryPage";
+import ContributionsPage from "./components/contributions/ContributionsPage";
 import ExpensesPage from "./components/expenses/ExpensesPage";
 import "./App.css";
 
@@ -25,6 +26,9 @@ class App extends React.Component {
                 <Link to="/accountcategories">Account Categories</Link>
               </li>
               <li>
+                <Link to="/contributions">Contributions</Link>
+              </li>
+              <li>
                 <Link to="/expenses">Expenses</Link>
               </li>
               <li>
@@ -33,17 +37,20 @@ class App extends React.Component {
             </ul>
           </nav>
           <Switch>
-            <Route path="/accountcategories">
-              <CategoryPage categoryType="Account"/>
-            </Route>
-            <Route path="/expensecategories">
-              <CategoryPage categoryType="Expense"/>
-            </Route>
             <Route path="/accounts">
               <AccountsPage/>
             </Route>
+            <Route path="/accountcategories">
+              <CategoryPage categoryType="Account"/>
+            </Route>
+            <Route path="/contributions">
+              <ContributionsPage/>
+            </Route>
             <Route path="/expenses">
               <ExpensesPage/>
+            </Route>
+            <Route path="/expensecategories">
+              <CategoryPage categoryType="Expense"/>
             </Route>
           </Switch>
         </div>

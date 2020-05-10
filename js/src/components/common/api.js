@@ -2,8 +2,9 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080"
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
-const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`
 const ACCOUNTS_URL = `${API_URL}/accounts`
+const CONTRIBUTIONS_URL = `${API_URL}/contributions`
+const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`
 const EXPENSES_URL = `${API_URL}/expenses`
 
 function create(url, values) {
@@ -53,6 +54,22 @@ const api = {
 
   deleteAccount(uuid) {
     return remove(`${ACCOUNTS_URL}/${uuid}`)
+  },
+
+  createContribution(values) {
+    return create(CONTRIBUTIONS_URL, values);
+  },
+
+  getContributions() {
+    return get(CONTRIBUTIONS_URL);
+  },
+
+  updateContribution(values) {
+    return update(`${CONTRIBUTIONS_URL}/${values.uuid}`, values)
+  },
+
+  deleteContribution(uuid) {
+    return remove(`${CONTRIBUTIONS_URL}/${uuid}`)
   },
 
   createExpenseCategory(values) {
