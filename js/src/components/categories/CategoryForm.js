@@ -27,9 +27,9 @@ class CategoryForm extends React.Component {
         >
           <Form>
             <label htmlFor="name">Name</label>
-            <Field name="name" type="text" />
+            <Field name="name" type="text"/>
             <label htmlFor="description">Description</label>
-            <Field name="description" type="text" />
+            <Field name="description" type="text"/>
             <button type="submit">
               {this.props.isEditMode ? "Update" : "Create"}
             </button>

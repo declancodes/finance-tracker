@@ -1,6 +1,8 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
+import moment from "moment";
 import api from "../common/api";
+import DatePickerField from '../common/DatePickerField';
 
 class ContributionForm extends React.Component {
   constructor(props) {
@@ -30,7 +32,7 @@ class ContributionForm extends React.Component {
             name: c ? c.name : '',
             account: c ? c.account.uuid : '',
             description: c ? c.description : '',
-            date: c ? c.date : '',
+            date: c ? moment(c.date).format("MM/DD/YYYY") : '',
             amount: c ? c.amount : 0
           }}
           onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -43,6 +45,9 @@ class ContributionForm extends React.Component {
               uuid: aUuid
             };
 
+            var dateToSubmit = moment(values.date).toISOString();
+            values.date = dateToSubmit;
+
             this.props.doSubmit(values);
             setSubmitting(false);
             resetForm();
@@ -50,7 +55,7 @@ class ContributionForm extends React.Component {
         >
           <Form>
             <label htmlFor="name">Name</label>
-            <Field name="name" type="text" />
+            <Field name="name" type="text"/>
             <label htmlFor="account">Account</label>
             <Field name="account" as="select">
               <option defaultValue="">Select Account</option>
@@ -64,11 +69,11 @@ class ContributionForm extends React.Component {
               ))}
             </Field>
             <label htmlFor="description">Description</label>
-            <Field name="description" type="text" />
+            <Field name="description" type="text"/>
             <label htmlFor="date">Date</label>
-            <Field name="date" type="text" />
+            <DatePickerField name="date"/>
             <label htmlFor="amount">Amount</label>
-            <Field name="amount" type="number" />
+            <Field name="amount" type="number"/>
             <button type="submit">
               {this.props.isEditMode ? "Update" : "Create"}
             </button>

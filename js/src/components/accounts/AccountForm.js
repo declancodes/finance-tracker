@@ -49,7 +49,7 @@ class AccountForm extends React.Component {
         >
           <Form>
             <label htmlFor="name">Name</label>
-            <Field name="name" type="text" />
+            <Field name="name" type="text"/>
             <label htmlFor="category">Category</label>
             <Field name="category" as="select">
               <option defaultValue="">Select Category</option>
@@ -63,9 +63,9 @@ class AccountForm extends React.Component {
               ))}
             </Field>
             <label htmlFor="description">Description</label>
-            <Field name="description" type="text" />
+            <Field name="description" type="text"/>
             <label htmlFor="amount">Amount</label>
-            <Field name="amount" type="number" />
+            <Field name="amount" type="number"/>
             <button type="submit">
               {this.props.isEditMode ? "Update" : "Create"}
             </button>
