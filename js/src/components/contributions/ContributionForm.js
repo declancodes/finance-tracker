@@ -14,8 +14,12 @@ class ContributionForm extends React.Component {
 
   componentDidMount() {
     api.getAccounts()
-      .then(response => response.data)
-      .then(data => this.setState({ accounts: data }))
+      .then(response => {
+        var accounts = (response.data === null || response.data === undefined)
+          ? []
+          : response.data
+        this.setState({ accounts: accounts })
+      })
   }
 
   render() {
@@ -59,14 +63,20 @@ class ContributionForm extends React.Component {
             <label htmlFor="account">Account</label>
             <Field name="account" as="select">
               <option defaultValue="">Select Account</option>
-              {this.state.accounts.map(account => (
-                <option
-                  key={account.uuid}
-                  value={account.uuid}
-                >
-                  {account.name}
-                </option>
-              ))}
+              {this.state.accounts.length > 0 ? (
+                this.state.accounts.map(account => (
+                  (
+                    <option
+                      key={account.uuid}
+                      value={account.uuid}
+                    >
+                      {account.name}
+                    </option>
+                  )
+                ))
+              ) : (
+                  <option value="">Must create Account first</option>
+              )}
             </Field>
             <label htmlFor="description">Description</label>
             <Field name="description" type="text"/>

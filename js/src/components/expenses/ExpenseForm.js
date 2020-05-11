@@ -14,8 +14,12 @@ class ExpenseForm extends React.Component {
 
   componentDidMount() {
     api.getExpenseCategories()
-      .then(response => response.data)
-      .then(data => this.setState({ expenseCategories: data }))
+      .then(response => {
+        var expenseCategories = (response.data === null || response.data === undefined)
+          ? []
+          : response.data
+        this.setState({ expenseCategories: expenseCategories })
+      })
   }
 
   render() {
@@ -59,14 +63,20 @@ class ExpenseForm extends React.Component {
             <label htmlFor="category">Category</label>
             <Field name="category" as="select">
               <option defaultValue="">Select Category</option>
-              {this.state.expenseCategories.map(expenseCategory => (
-                <option
-                  key={expenseCategory.uuid}
-                  value={expenseCategory.uuid}
-                >
-                  {expenseCategory.name}
-                </option>
-              ))}
+              {this.state.expenseCategories.length > 0 ? (
+                this.state.expenseCategories.map(expenseCategory => (
+                  (
+                    <option
+                      key={expenseCategory.uuid}
+                      value={expenseCategory.uuid}
+                    >
+                      {expenseCategory.name}
+                    </option>
+                  )
+                ))
+              ) : (
+                  <option value="">Must create Expense Category first</option>
+              )}
             </Field>
             <label htmlFor="description">Description</label>
             <Field name="description" type="text"/>

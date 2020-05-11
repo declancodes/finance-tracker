@@ -12,8 +12,12 @@ class AccountForm extends React.Component {
 
   componentDidMount() {
     api.getAccountCategories()
-      .then(response => response.data)
-      .then(data => this.setState({ accountCategories: data }))
+      .then(response => {
+        var accountCategories = (response.data === null || response.data === undefined)
+          ? []
+          : response.data
+        this.setState({ accountCategories: accountCategories })
+      })
   }
 
   render() {
@@ -53,14 +57,20 @@ class AccountForm extends React.Component {
             <label htmlFor="category">Category</label>
             <Field name="category" as="select">
               <option defaultValue="">Select Category</option>
-              {this.state.accountCategories.map(accountCategory => (
-                <option
-                  key={accountCategory.uuid}
-                  value={accountCategory.uuid}
-                >
-                  {accountCategory.name}
-                </option>
-              ))}
+              {this.state.accountCategories.length > 0 ? (
+                this.state.accountCategories.map(accountCategory => (
+                  (
+                    <option
+                      key={accountCategory.uuid}
+                      value={accountCategory.uuid}
+                    >
+                      {accountCategory.name}
+                    </option>
+                  )
+                ))
+              ) : (
+                  <option value="">Must create Account Category first</option>
+              )}
             </Field>
             <label htmlFor="description">Description</label>
             <Field name="description" type="text"/>
