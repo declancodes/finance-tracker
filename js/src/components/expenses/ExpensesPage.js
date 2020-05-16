@@ -1,5 +1,7 @@
 import React from "react";
 import api from "../common/api"
+import moment from "moment";
+import DateRangePanel from "../common/DateRangePanel";
 import ExpenseForm from "./ExpenseForm";
 import ExpenseRow from "./ExpenseRow";
 
@@ -7,11 +9,15 @@ class ExpensesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expenses: []
+      expenses: [],
+      start: moment().startOf("month").toDate(),
+      end: moment().endOf("month").toDate()
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleStartDateSet = this.handleStartDateSet.bind(this);
+    this.handleEndDateSet = this.handleEndDateSet.bind(this);
   }
 
   handleCreate(values) {
@@ -29,24 +35,42 @@ class ExpensesPage extends React.Component {
       .then(() => this.setExpenses())
   }
 
+  handleStartDateSet(value) {
+    this.setState(
+      { start: value },
+      () => this.setExpenses());
+  }
+
+  handleEndDateSet(value) {
+    this.setState(
+      { end: value },
+      () => this.setExpenses());
+  }
+
   componentDidMount() {
     this.setExpenses()
   }
 
   setExpenses() {
-    api.getExpenses()
+    api.getExpenses(this.state.start.toISOString(), this.state.end.toISOString())
       .then(response => {
         var expenses = (response.data === null || response.data === undefined)
           ? []
-          : response.data
-        this.setState({ expenses: expenses })
-      })
+          : response.data;
+        this.setState({ expenses: expenses });
+      });
   }
 
   render() {
     return (
       <div>
         <h1>Expenses</h1>
+        <DateRangePanel
+          start={this.state.start}
+          end={this.state.end}
+          setStart={this.handleStartDateSet}
+          setEnd={this.handleEndDateSet}
+        />
         <table>
           <thead>
             <tr>

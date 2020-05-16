@@ -1,17 +1,23 @@
 import React from "react";
+import moment from "moment";
 import api from "../common/api"
 import ContributionForm from "./ContributionForm";
 import ContributionRow from "./ContributionRow";
+import DateRangePanel from "../common/DateRangePanel";
 
 class ContributionsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contributions: []
+      contributions: [],
+      start: moment().startOf("month").toDate(),
+      end: moment().endOf("month").toDate()
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleStartDateSet = this.handleStartDateSet.bind(this);
+    this.handleEndDateSet = this.handleEndDateSet.bind(this);
   }
 
   handleCreate(values) {
@@ -29,24 +35,42 @@ class ContributionsPage extends React.Component {
       .then(() => this.setContributions())
   }
 
+  handleStartDateSet(value) {
+    this.setState(
+      { start: value },
+      () => this.setContributions());
+  }
+
+  handleEndDateSet(value) {
+    this.setState(
+      { end: value },
+      () => this.setContributions());
+  }
+
   componentDidMount() {
     this.setContributions()
   }
 
   setContributions() {
-    api.getContributions()
+    api.getContributions(this.state.start.toISOString(), this.state.end.toISOString())
       .then(response => {
         var contributions = (response.data === null || response.data === undefined)
           ? []
-          : response.data
-        this.setState({ contributions: contributions })
-      })
+          : response.data;
+        this.setState({ contributions: contributions });
+      });
   }
 
   render() {
     return (
       <div>
         <h1>Contributions</h1>
+        <DateRangePanel
+          start={this.state.start}
+          end={this.state.end}
+          setStart={this.handleStartDateSet}
+          setEnd={this.handleEndDateSet}
+        />
         <table>
           <thead>
             <tr>

@@ -1,6 +1,5 @@
 import React from "react";
 import { useField, useFormikContext } from "formik";
-import moment from "moment";
 import DatePicker from "react-datepicker";
 import "../../../node_modules/react-datepicker/dist/react-datepicker.css";
 

@@ -77,9 +77,7 @@ func errorExecuting(w http.ResponseWriter, m string, err error) {
 }
 
 func getTime(s string) time.Time {
-	const dateFormat = "2006-_1-_2"
-
-	t, err := time.Parse(dateFormat, s)
+	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {
 		return time.Time{}
 	}

@@ -11,7 +11,31 @@ function create(url, values) {
   return axios.post(url, values)
 }
 
-function get(url) {
+function get(url, start, end, category) {
+  var startQuery = `start=${start}`;
+  var endQuery = `end=${end}`;
+  var categoryQuery = `category=${category}`
+
+  var hasStart = typeof start !== "undefined";
+  var hasEnd = typeof end !== "undefined";
+  var hasCategory = typeof category !== "undefined";
+
+  if (hasStart && hasEnd && hasCategory) {
+    url += `?${startQuery}&${endQuery}&${categoryQuery}`;
+  } else if (hasStart && hasEnd) {
+    url += `?${startQuery}&${endQuery}`;
+  } else if (hasStart && hasCategory) {
+    url += `?${startQuery}&${categoryQuery}`;
+  } else if (hasEnd && hasCategory) {
+    url += `?${endQuery}&${categoryQuery}`;
+  } else if (hasStart) {
+    url += `?${startQuery}`;
+  } else if (hasEnd) {
+    url += `?${endQuery}`;
+  } else if (hasCategory) {
+    url += `?${categoryQuery}`;
+  }
+
   return axios.get(url)
 }
 
@@ -60,8 +84,8 @@ const api = {
     return create(CONTRIBUTIONS_URL, values);
   },
 
-  getContributions() {
-    return get(CONTRIBUTIONS_URL);
+  getContributions(start, end) {
+    return get(CONTRIBUTIONS_URL, start, end);
   },
 
   updateContribution(values) {
@@ -92,8 +116,8 @@ const api = {
     return create(EXPENSES_URL, values);
   },
 
-  getExpenses() {
-    return get(EXPENSES_URL);
+  getExpenses(start, end) {
+    return get(EXPENSES_URL, start, end);
   },
 
   updateExpense(values) {
