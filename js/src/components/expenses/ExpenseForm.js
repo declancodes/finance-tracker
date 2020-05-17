@@ -17,7 +17,7 @@ class ExpenseForm extends React.Component {
       .then(response => {
         var expenseCategories = (response.data === null || response.data === undefined)
           ? []
-          : response.data
+          : response.data.sort((a, b) => a.name.localeCompare(b.name))
         this.setState({ expenseCategories: expenseCategories })
       })
   }

@@ -56,7 +56,8 @@ class ContributionsPage extends React.Component {
       .then(response => {
         var contributions = (response.data === null || response.data === undefined)
           ? []
-          : response.data;
+          : response.data
+            .sort((a, b) => a.date.localeCompare(b.date));
         this.setState({ contributions: contributions });
       });
   }

@@ -39,7 +39,8 @@ class AccountsPage extends React.Component {
         var accounts = (response.data === null || response.data === undefined)
           ? []
           : response.data
-        this.setState({ accounts: accounts })
+            .sort((a, b) => a.category.name.localeCompare(b.category.name));
+        this.setState({ accounts: accounts });
       })
   }
 

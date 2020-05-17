@@ -41,7 +41,7 @@ class App extends React.Component {
               <AccountsPage/>
             </Route>
             <Route path="/accountcategories">
-              <CategoryPage categoryType="Account"/>
+              <CategoryPage key="1" categoryType="Account"/>
             </Route>
             <Route path="/contributions">
               <ContributionsPage/>
@@ -50,7 +50,7 @@ class App extends React.Component {
               <ExpensesPage/>
             </Route>
             <Route path="/expensecategories">
-              <CategoryPage categoryType="Expense"/>
+              <CategoryPage key="2" categoryType="Expense"/>
             </Route>
           </Switch>
         </div>

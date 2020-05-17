@@ -15,8 +15,8 @@ class AccountForm extends React.Component {
       .then(response => {
         var accountCategories = (response.data === null || response.data === undefined)
           ? []
-          : response.data
-        this.setState({ accountCategories: accountCategories })
+          : response.data.sort((a, b) => a.name.localeCompare(b.name));
+        this.setState({ accountCategories: accountCategories });
       })
   }
 

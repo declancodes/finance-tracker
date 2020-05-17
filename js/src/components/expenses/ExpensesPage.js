@@ -56,7 +56,7 @@ class ExpensesPage extends React.Component {
       .then(response => {
         var expenses = (response.data === null || response.data === undefined)
           ? []
-          : response.data;
+          : response.data.sort((a, b) => a.date.localeCompare(b.date));
         this.setState({ expenses: expenses });
       });
   }

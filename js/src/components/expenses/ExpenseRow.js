@@ -30,7 +30,7 @@ class ExpenseRow extends React.Component {
         <td>{e.name}</td>
         <td>{e.category.name}</td>
         <td>{e.description}</td>
-        <td>{moment(e.date).format("MM-DD-YYYY")}</td>
+        <td>{moment(e.date).format("MM/DD/YYYY")}</td>
         <td>${e.amount}</td>
         <td>
           {this.state.isEditing ? (

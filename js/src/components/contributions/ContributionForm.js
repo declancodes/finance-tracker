@@ -17,7 +17,7 @@ class ContributionForm extends React.Component {
       .then(response => {
         var accounts = (response.data === null || response.data === undefined)
           ? []
-          : response.data
+          : response.data.sort((a, b) => a.name.localeCompare(b.name))
         this.setState({ accounts: accounts })
       })
   }
