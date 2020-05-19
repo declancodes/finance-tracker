@@ -17,5 +17,3 @@ export const DatePickerField = ({ ...props }) => {
     />
   );
 };
-
-export default DatePickerField;
