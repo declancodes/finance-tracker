@@ -36,7 +36,7 @@ class AccountsPage extends React.Component {
   setAccounts() {
     api.getAccounts()
       .then(response => {
-        var accounts = (response.data === null || response.data === undefined)
+        let accounts = (response.data === null || response.data === undefined)
           ? []
           : response.data
             .sort((a, b) => a.category.name.localeCompare(b.category.name));

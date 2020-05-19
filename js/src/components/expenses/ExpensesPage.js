@@ -54,7 +54,7 @@ class ExpensesPage extends React.Component {
   setExpenses() {
     api.getExpenses(this.state.start.toISOString(), this.state.end.toISOString())
       .then(response => {
-        var expenses = (response.data === null || response.data === undefined)
+        let expenses = (response.data === null || response.data === undefined)
           ? []
           : response.data.sort((a, b) => a.date.localeCompare(b.date));
         this.setState({ expenses: expenses });

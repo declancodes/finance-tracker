@@ -15,7 +15,7 @@ class ExpenseForm extends React.Component {
   componentDidMount() {
     api.getExpenseCategories()
       .then(response => {
-        var expenseCategories = (response.data === null || response.data === undefined)
+        let expenseCategories = (response.data === null || response.data === undefined)
           ? []
           : response.data.sort((a, b) => a.name.localeCompare(b.name))
         this.setState({ expenseCategories: expenseCategories })
@@ -44,12 +44,12 @@ class ExpenseForm extends React.Component {
               delete values.uuid;
             }
 
-            var acUuid = values.category;
+            let acUuid = values.category;
             values.category = {
               uuid: acUuid
             };
 
-            var dateToSubmit = moment(values.date).toISOString();
+            let dateToSubmit = moment(values.date).toISOString();
             values.date = dateToSubmit;
 
             this.props.doSubmit(values);

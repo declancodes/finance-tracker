@@ -13,7 +13,7 @@ class AccountForm extends React.Component {
   componentDidMount() {
     api.getAccountCategories()
       .then(response => {
-        var accountCategories = (response.data === null || response.data === undefined)
+        let accountCategories = (response.data === null || response.data === undefined)
           ? []
           : response.data.sort((a, b) => a.name.localeCompare(b.name));
         this.setState({ accountCategories: accountCategories });
@@ -41,7 +41,7 @@ class AccountForm extends React.Component {
               delete values.uuid;
             }
 
-            var acUuid = values.category;
+            let acUuid = values.category;
             values.category = {
               uuid: acUuid
             };

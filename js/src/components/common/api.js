@@ -12,13 +12,13 @@ function create(url, values) {
 }
 
 function get(url, start, end, category) {
-  var startQuery = `start=${start}`;
-  var endQuery = `end=${end}`;
-  var categoryQuery = `category=${category}`
+  let startQuery = `start=${start}`;
+  let endQuery = `end=${end}`;
+  let categoryQuery = `category=${category}`
 
-  var hasStart = typeof start !== "undefined";
-  var hasEnd = typeof end !== "undefined";
-  var hasCategory = typeof category !== "undefined";
+  let hasStart = typeof start !== "undefined";
+  let hasEnd = typeof end !== "undefined";
+  let hasCategory = typeof category !== "undefined";
 
   if (hasStart && hasEnd && hasCategory) {
     url += `?${startQuery}&${endQuery}&${categoryQuery}`;

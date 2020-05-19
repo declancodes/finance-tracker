@@ -15,7 +15,7 @@ class ContributionForm extends React.Component {
   componentDidMount() {
     api.getAccounts()
       .then(response => {
-        var accounts = (response.data === null || response.data === undefined)
+        let accounts = (response.data === null || response.data === undefined)
           ? []
           : response.data.sort((a, b) => a.name.localeCompare(b.name))
         this.setState({ accounts: accounts })
@@ -44,12 +44,12 @@ class ContributionForm extends React.Component {
               delete values.uuid;
             }
 
-            var aUuid = values.account;
+            let aUuid = values.account;
             values.account = {
               uuid: aUuid
             };
 
-            var dateToSubmit = moment(values.date).toISOString();
+            let dateToSubmit = moment(values.date).toISOString();
             values.date = dateToSubmit;
 
             this.props.doSubmit(values);
