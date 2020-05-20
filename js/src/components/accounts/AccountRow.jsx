@@ -1,10 +1,9 @@
 import React from "react";
-import moment from "moment";
+import AccountForm from "./AccountForm";
 import { Button } from "../common/Button";
-import ExpenseForm from "./ExpenseForm";
 import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
-class ExpenseRow extends React.Component {
+class AccountRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,21 +22,20 @@ class ExpenseRow extends React.Component {
   }
 
   render() {
-    const e = this.props.expense;
+    const a = this.props.account;
 
     return (
       <tr>
-        <td>{e.name}</td>
-        <td>{e.category.name}</td>
-        <td>{e.description}</td>
-        <td>{moment(e.date).format("MM/DD/YYYY")}</td>
-        <td>${e.amount}</td>
+        <td>{a.name}</td>
+        <td>{a.category.name}</td>
+        <td>{a.description}</td>
+        <td>${a.amount}</td>
         <td>
           {this.state.isEditing ? (
             <div>
-              <ExpenseForm
-                isEditMode={true}
-                expense={e}
+              <AccountForm
+                account={a}
+                isCreateMode={false}
                 doSubmit={this.handleUpdate}
               />
               <Button
@@ -48,7 +46,7 @@ class ExpenseRow extends React.Component {
           ) : (
             <ModifyRowPanel
               handleEdit={() => this.setEditing(true)}
-              handleDelete={() => this.props.handleDelete(e.uuid)}
+              handleDelete={() => this.props.handleDelete(a.uuid)}
             />
           )}
         </td>
@@ -57,4 +55,4 @@ class ExpenseRow extends React.Component {
   }
 }
 
-export default ExpenseRow;
+export default AccountRow;

@@ -1,9 +1,9 @@
-import React from "react";
-import AccountForm from "./AccountForm";
-import { Button } from "../common/Button";
-import { ModifyRowPanel } from "../common/ModifyRowPanel";
+import React from 'react';
+import { Button } from '../common/Button';
+import { CategoryForm } from './CategoryForm';
+import { ModifyRowPanel } from '../common/ModifyRowPanel';
 
-class AccountRow extends React.Component {
+class CategoryRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,31 +22,29 @@ class AccountRow extends React.Component {
   }
 
   render() {
-    const a = this.props.account;
+    const c = this.props.category;
 
     return (
       <tr>
-        <td>{a.name}</td>
-        <td>{a.category.name}</td>
-        <td>{a.description}</td>
-        <td>${a.amount}</td>
+        <td>{c.name}</td>
+        <td>{c.description}</td>
         <td>
           {this.state.isEditing ? (
             <div>
-              <AccountForm
-                isEditMode={true}
-                account={a}
+              <CategoryForm
+                category={c}
+                categoryType={this.props.categoryType}
                 doSubmit={this.handleUpdate}
               />
               <Button
-                name="Cancel"
+                name='Cancel'
                 handleFunc={() => this.setEditing(false)}
               />
             </div>
           ) : (
             <ModifyRowPanel
               handleEdit={() => this.setEditing(true)}
-              handleDelete={() => this.props.handleDelete(a.uuid)}
+              handleDelete={() => this.props.handleDelete(c.uuid)}
             />
           )}
         </td>
@@ -55,4 +53,4 @@ class AccountRow extends React.Component {
   }
 }
 
-export default AccountRow;
+export default CategoryRow;

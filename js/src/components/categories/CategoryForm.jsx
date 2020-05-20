@@ -1,34 +1,19 @@
 import React from 'react';
-import { Formik } from 'formik';
-import { EntityForm } from '../common/forms/EntityForm';
+import { EntityFormik } from '../common/forms/EntityFormik';
 
-export const CategoryForm = ({ category, categoryType, doSubmit, isEditMode}) => {
+export const CategoryForm = ({ category, categoryType, doSubmit}) => {
+  const isCreateMode = typeof category === 'undefined';
   const initialCategoryValues = {
-    uuid: category ? category.uuid : '',
-    name: category ? category.name : '',
-    description: category ? category.description : ''
+    uuid: isCreateMode ? '' : category.uuid,
+    name: isCreateMode ? '' : category.name,
+    description: isCreateMode ? '' : category.description
   };
   return (
-    <div>
-      <h2>
-        {isEditMode ? 'Edit' : 'Create'} {categoryType} Category
-      </h2>
-      <Formik
-        initialValues={initialCategoryValues}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          if (!category) {
-            delete values.uuid;
-          }
-          doSubmit(values);
-          setSubmitting(false);
-          resetForm();
-        }}
-      >
-        <EntityForm
-          entity={initialCategoryValues}
-          isEditMode={isEditMode}
-        />
-      </Formik>
-    </div>
+    <EntityFormik
+      entityName={`${categoryType} Category`}
+      entity={initialCategoryValues}
+      isCreateMode={isCreateMode}
+      doSubmit={doSubmit}
+    />
   );
 };

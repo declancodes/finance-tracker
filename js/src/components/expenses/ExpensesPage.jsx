@@ -102,7 +102,7 @@ class ExpensesPage extends React.Component {
           </tbody>
         </table>
         <ExpenseForm
-          isEditMode={false}
+          isCreateMode={true}
           doSubmit={this.handleCreate}
         />
       </div>

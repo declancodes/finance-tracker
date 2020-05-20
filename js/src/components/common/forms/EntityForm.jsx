@@ -3,7 +3,7 @@ import { Form } from 'formik';
 import { DatePickerField } from './DatePickerField';
 import { LabeledField } from './LabeledField';
 
-export const EntityForm = ({ entity, options, isEditMode}) => (
+export const EntityForm = ({ entity, options, isCreateMode}) => (
   <Form>
     {entity.hasOwnProperty('name') && <LabeledField name='name' fieldType='text'/>}
     {entity.hasOwnProperty('category') && <LabeledField name='category' options={options}/>}
@@ -12,7 +12,7 @@ export const EntityForm = ({ entity, options, isEditMode}) => (
     {entity.hasOwnProperty('date') && <DatePickerField name='date'/>}
     {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
     <button type='submit'>
-      {isEditMode ? 'Update' : 'Create'}
+      {isCreateMode ? 'Create' : 'Update'}
     </button>
   </Form>
 );

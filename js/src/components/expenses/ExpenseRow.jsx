@@ -1,10 +1,10 @@
 import React from "react";
 import moment from "moment";
 import { Button } from "../common/Button";
-import ContributionForm from "./ContributionForm";
+import ExpenseForm from "./ExpenseForm";
 import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
-class ContributionRow extends React.Component {
+class ExpenseRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,21 +23,21 @@ class ContributionRow extends React.Component {
   }
 
   render() {
-    const c = this.props.contribution;
+    const e = this.props.expense;
 
     return (
       <tr>
-        <td>{c.name}</td>
-        <td>{c.account.name}</td>
-        <td>{c.description}</td>
-        <td>{moment(c.date).format("MM/DD/YYYY")}</td>
-        <td>${c.amount}</td>
+        <td>{e.name}</td>
+        <td>{e.category.name}</td>
+        <td>{e.description}</td>
+        <td>{moment(e.date).format("MM/DD/YYYY")}</td>
+        <td>${e.amount}</td>
         <td>
           {this.state.isEditing ? (
             <div>
-              <ContributionForm
-                isEditMode={true}
-                contribution={c}
+              <ExpenseForm
+                expense={e}
+                isCreateMode={false}
                 doSubmit={this.handleUpdate}
               />
               <Button
@@ -48,7 +48,7 @@ class ContributionRow extends React.Component {
           ) : (
             <ModifyRowPanel
               handleEdit={() => this.setEditing(true)}
-              handleDelete={() => this.props.handleDelete(c.uuid)}
+              handleDelete={() => this.props.handleDelete(e.uuid)}
             />
           )}
         </td>
@@ -57,4 +57,4 @@ class ContributionRow extends React.Component {
   }
 }
 
-export default ContributionRow;
+export default ExpenseRow;

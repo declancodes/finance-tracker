@@ -98,7 +98,6 @@ class CategoryPage extends React.Component {
           </tbody>
         </table>
         <CategoryForm
-          isEditMode={false}
           categoryType={this.props.categoryType}
           doSubmit={this.handleCreate}
         />

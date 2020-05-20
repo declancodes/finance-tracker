@@ -1,9 +1,10 @@
-import React from 'react';
-import { Button } from '../common/Button';
-import { CategoryForm } from './CategoryForm';
-import { ModifyRowPanel } from '../common/ModifyRowPanel';
+import React from "react";
+import moment from "moment";
+import { Button } from "../common/Button";
+import ContributionForm from "./ContributionForm";
+import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
-class CategoryRow extends React.Component {
+class ContributionRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,23 +23,25 @@ class CategoryRow extends React.Component {
   }
 
   render() {
-    const c = this.props.category;
+    const c = this.props.contribution;
 
     return (
       <tr>
         <td>{c.name}</td>
+        <td>{c.account.name}</td>
         <td>{c.description}</td>
+        <td>{moment(c.date).format("MM/DD/YYYY")}</td>
+        <td>${c.amount}</td>
         <td>
           {this.state.isEditing ? (
             <div>
-              <CategoryForm
-                isEditMode={true}
-                categoryType={this.props.categoryType}
-                category={c}
+              <ContributionForm
+                contribution={c}
+                isCreateMode={false}
                 doSubmit={this.handleUpdate}
               />
               <Button
-                name='Cancel'
+                name="Cancel"
                 handleFunc={() => this.setEditing(false)}
               />
             </div>
@@ -54,4 +57,4 @@ class CategoryRow extends React.Component {
   }
 }
 
-export default CategoryRow;
+export default ContributionRow;

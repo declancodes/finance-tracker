@@ -1,8 +1,7 @@
 import React from 'react';
-import { Formik } from 'formik';
-import { EntityForm } from '../common/forms/EntityForm'
-import moment from 'moment';
+import { EntityFormik } from '../common/forms/EntityFormik';
 import api from '../common/api';
+import moment from 'moment';
 
 class ContributionForm extends React.Component {
   constructor(props) {
@@ -10,6 +9,22 @@ class ContributionForm extends React.Component {
     this.state = {
       accounts: []
     };
+    this.doExtraModifications = this.doExtraModifications.bind(this);
+    this.doSubmit = this.doSubmit.bind(this);
+  }
+
+  doExtraModifications(values) {
+    const aUuid = values.account;
+    values.account = {
+      uuid: aUuid
+    };
+
+    const dateToSubmit = moment(values.date).toISOString();
+    values.date = dateToSubmit;
+  }
+
+  doSubmit(values) {
+    this.props.doSubmit(values);
   }
 
   componentDidMount() {
@@ -23,48 +38,26 @@ class ContributionForm extends React.Component {
   }
 
   render() {
+    const isCreating = this.props.isCreateMode;
     const c = this.props.contribution;
-    const initialContributionValues = {
-      uuid: c ? c.uuid : '',
-      name: c ? c.name : '',
-      account: c ? c.account.uuid : '',
-      description: c ? c.description : '',
-      date: c ? moment(c.date).format('MM/DD/YYYY') : '',
-      amount: c ? c.amount : 0
+    const entity = {
+      uuid: isCreating ? '' : c.uuid,
+      name: isCreating ? '' : c.name,
+      account: isCreating ? '' : c.account.uuid,
+      description: isCreating ? '' : c.description,
+      date: isCreating ? '' : moment(c.date).format('MM/DD/YYYY'),
+      amount: isCreating ? 0 : c.amount
     };
 
     return (
-      <div>
-        <h2>
-          {this.props.isEditMode ? 'Edit' : 'Create'} Contribution
-        </h2>
-        <Formik
-          initialValues={initialContributionValues}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
-            if (!this.props.isEditMode) {
-              delete values.uuid;
-            }
-
-            let aUuid = values.account;
-            values.account = {
-              uuid: aUuid
-            };
-
-            let dateToSubmit = moment(values.date).toISOString();
-            values.date = dateToSubmit;
-
-            this.props.doSubmit(values);
-            setSubmitting(false);
-            resetForm();
-          }}
-        >
-          <EntityForm
-            entity={initialContributionValues}
-            options={this.state.accounts}
-            isEditMode={this.props.isEditMode}
-          />
-        </Formik>
-      </div>
+      <EntityFormik
+        entityName='Contribution'
+        entity={entity}
+        isCreateMode={isCreating}
+        options={this.state.accounts}
+        doExtraModifications={this.doExtraModifications}
+        doSubmit={this.doSubmit}
+      />
     );
   }
 }

@@ -1,17 +1,17 @@
-import React from "react";
-import moment from "moment";
-import api from "../common/api"
-import ContributionForm from "./ContributionForm";
-import ContributionRow from "./ContributionRow";
-import { DateRangePanel } from "../common/DateRangePanel";
+import React from 'react';
+import moment from 'moment';
+import api from '../common/api'
+import ContributionForm from './ContributionForm';
+import ContributionRow from './ContributionRow';
+import { DateRangePanel } from '../common/DateRangePanel';
 
 class ContributionsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       contributions: [],
-      start: moment().startOf("month").toDate(),
-      end: moment().endOf("month").toDate()
+      start: moment().startOf('month').toDate(),
+      end: moment().endOf('month').toDate()
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -103,7 +103,7 @@ class ContributionsPage extends React.Component {
           </tbody>
         </table>
         <ContributionForm
-          isEditMode={false}
+          isCreateMode={true}
           doSubmit={this.handleCreate}
         />
       </div>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Formik } from 'formik';
-import { EntityForm } from '../common/forms/EntityForm';
+import { EntityFormik } from '../common/forms/EntityFormik';
 import api from '../common/api';
 
 class AccountForm extends React.Component {
@@ -9,6 +8,19 @@ class AccountForm extends React.Component {
     this.state = {
       accountCategories: []
     };
+    this.doExtraModifications = this.doExtraModifications.bind(this);
+    this.doSubmit = this.doSubmit.bind(this);
+  }
+
+  doExtraModifications(values) {
+    const acUuid = values.category;
+    values.category = {
+      uuid: acUuid
+    };
+  }
+
+  doSubmit(values) {
+    this.props.doSubmit(values);
   }
 
   componentDidMount() {
@@ -22,44 +34,25 @@ class AccountForm extends React.Component {
   }
 
   render() {
+    const isCreating = this.props.isCreateMode;
     const a = this.props.account;
-    const initialAccountValues = {
-      uuid: a ? a.uuid : '',
-      name: a ? a.name : '',
-      category: a ? a.category.uuid : '',
-      description: a ? a.description : '',
-      amount: a ? a.amount : 0
+    const entity = {
+      uuid: isCreating ? '' : a.uuid,
+      name: isCreating ? '' : a.name,
+      category: isCreating ? '' : a.category.uuid,
+      description: isCreating ? '' : a.description,
+      amount: isCreating ? 0 : a.amount
     };
 
     return (
-      <div>
-        <h2>
-          {this.props.isEditMode ? 'Edit' : 'Create'} Account
-        </h2>
-        <Formik
-          initialValues={initialAccountValues}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
-            if (!this.props.isEditMode) {
-              delete values.uuid;
-            }
-
-            let acUuid = values.category;
-            values.category = {
-              uuid: acUuid
-            };
-
-            this.props.doSubmit(values);
-            setSubmitting(false);
-            resetForm();
-          }}
-        >
-          <EntityForm
-            entity={initialAccountValues}
-            options={this.state.accountCategories}
-            isEditMode={this.props.isEditMode}
-          />
-        </Formik>
-      </div>
+      <EntityFormik
+        entityName='Account'
+        entity={entity}
+        isCreateMode={isCreating}
+        options={this.state.accountCategories}
+        doExtraModifications={this.doExtraModifications}
+        doSubmit={this.doSubmit}
+      />
     );
   }
 }
