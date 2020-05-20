@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
-import moment from "moment";
-import api from "../common/api";
+import moment from 'moment';
+import api from '../common/api';
 import { EntityForm } from '../common/forms/EntityForm';
 
 class ExpenseForm extends React.Component {
@@ -29,14 +29,14 @@ class ExpenseForm extends React.Component {
       name: e ? e.name : '',
       category: e ? e.category.uuid : '',
       description: e ? e.description : '',
-      date: e ? moment(e.date).format("MM/DD/YYYY") : '',
+      date: e ? moment(e.date).format('MM/DD/YYYY') : '',
       amount: e ? e.amount : 0
     };
 
     return (
       <div>
         <h2>
-          {this.props.isEditMode ? "Edit" : "Create"} Expense
+          {this.props.isEditMode ? 'Edit' : 'Create'} Expense
         </h2>
         <Formik
           initialValues={initialExpenseValues}

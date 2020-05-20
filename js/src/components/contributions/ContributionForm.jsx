@@ -1,8 +1,8 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { EntityForm } from "../common/forms/EntityForm"
-import moment from "moment";
-import api from "../common/api";
+import { EntityForm } from '../common/forms/EntityForm'
+import moment from 'moment';
+import api from '../common/api';
 
 class ContributionForm extends React.Component {
   constructor(props) {
@@ -29,14 +29,14 @@ class ContributionForm extends React.Component {
       name: c ? c.name : '',
       account: c ? c.account.uuid : '',
       description: c ? c.description : '',
-      date: c ? moment(c.date).format("MM/DD/YYYY") : '',
+      date: c ? moment(c.date).format('MM/DD/YYYY') : '',
       amount: c ? c.amount : 0
     };
 
     return (
       <div>
         <h2>
-          {this.props.isEditMode ? "Edit" : "Create"} Contribution
+          {this.props.isEditMode ? 'Edit' : 'Create'} Contribution
         </h2>
         <Formik
           initialValues={initialContributionValues}

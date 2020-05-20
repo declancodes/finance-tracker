@@ -1,7 +1,7 @@
-import React from "react";
-import api from "../common/api";
-import CategoryForm from "./CategoryForm";
-import CategoryRow from "./CategoryRow";
+import React from 'react';
+import api from '../common/api';
+import { CategoryForm } from './CategoryForm';
+import CategoryRow from './CategoryRow';
 
 class CategoryPage extends React.Component {
   constructor(props) {
@@ -62,7 +62,7 @@ class CategoryPage extends React.Component {
   }
 
   isAccountCategory() {
-    return this.props.categoryType === "Account"
+    return this.props.categoryType === 'Account'
   }
 
   render() {

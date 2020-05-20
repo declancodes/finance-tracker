@@ -1,6 +1,6 @@
-import React from "react";
-import DatePicker from "react-datepicker";
-import "../../../node_modules/react-datepicker/dist/react-datepicker.css";
+import React from 'react';
+import DatePicker from 'react-datepicker';
+import '../../../node_modules/react-datepicker/dist/react-datepicker.css';
 
 export const DateRangePanel = ({
   start,
@@ -8,16 +8,16 @@ export const DateRangePanel = ({
   setStart,
   setEnd
 }) => (
-  <div className="date-range-panel">
-    <label htmlFor="start">From</label>
+  <div className='date-range-panel'>
+    <label htmlFor='start'>From</label>
     <DatePicker
-      name="start"
+      name='start'
       selected={start}
       onChange={val => setStart(val)}
     />
-    <label htmlFor="end">To</label>
+    <label htmlFor='end'>To</label>
     <DatePicker
-      name="end"
+      name='end'
       selected={end}
       onChange={val => setEnd(val)}
     />

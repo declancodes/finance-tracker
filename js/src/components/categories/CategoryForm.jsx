@@ -2,39 +2,33 @@ import React from 'react';
 import { Formik } from 'formik';
 import { EntityForm } from '../common/forms/EntityForm';
 
-class CategoryForm extends React.Component {
-  render() {
-    const c = this.props.category;
-    const initialCategoryValues = {
-      uuid: c ? c.uuid : '',
-      name: c ? c.name : '',
-      description: c ? c.description : ''
-    };
-
-    return (
-      <div>
-        <h2>
-          {this.props.isEditMode ? "Edit" : "Create"} {this.props.categoryType} Category
-        </h2>
-        <Formik
-          initialValues={initialCategoryValues}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
-            if (!c) {
-              delete values.uuid;
-            }
-            this.props.doSubmit(values);
-            setSubmitting(false);
-            resetForm();
-          }}
-        >
-          <EntityForm
-            entity={initialCategoryValues}
-            isEditMode={this.props.isEditMode}
-          />
-        </Formik>
-      </div>
-    );
-  }
-}
-
-export default CategoryForm;
+export const CategoryForm = ({ category, categoryType, doSubmit, isEditMode}) => {
+  const initialCategoryValues = {
+    uuid: category ? category.uuid : '',
+    name: category ? category.name : '',
+    description: category ? category.description : ''
+  };
+  return (
+    <div>
+      <h2>
+        {isEditMode ? 'Edit' : 'Create'} {categoryType} Category
+      </h2>
+      <Formik
+        initialValues={initialCategoryValues}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          if (!category) {
+            delete values.uuid;
+          }
+          doSubmit(values);
+          setSubmitting(false);
+          resetForm();
+        }}
+      >
+        <EntityForm
+          entity={initialCategoryValues}
+          isEditMode={isEditMode}
+        />
+      </Formik>
+    </div>
+  );
+};

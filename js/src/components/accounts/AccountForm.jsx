@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import { EntityForm } from '../common/forms/EntityForm';
-import api from "../common/api";
+import api from '../common/api';
 
 class AccountForm extends React.Component {
   constructor(props) {
@@ -34,7 +34,7 @@ class AccountForm extends React.Component {
     return (
       <div>
         <h2>
-          {this.props.isEditMode ? "Edit" : "Create"} Account
+          {this.props.isEditMode ? 'Edit' : 'Create'} Account
         </h2>
         <Formik
           initialValues={initialAccountValues}

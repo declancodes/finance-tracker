@@ -1,7 +1,7 @@
-import React from "react";
-import { Button } from "../common/Button";
-import CategoryForm from "./CategoryForm";
-import { ModifyRowPanel } from "../common/ModifyRowPanel";
+import React from 'react';
+import { Button } from '../common/Button';
+import { CategoryForm } from './CategoryForm';
+import { ModifyRowPanel } from '../common/ModifyRowPanel';
 
 class CategoryRow extends React.Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class CategoryRow extends React.Component {
                 doSubmit={this.handleUpdate}
               />
               <Button
-                name="Cancel"
+                name='Cancel'
                 handleFunc={() => this.setEditing(false)}
               />
             </div>

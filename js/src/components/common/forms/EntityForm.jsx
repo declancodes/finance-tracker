@@ -5,14 +5,14 @@ import { LabeledField } from './LabeledField';
 
 export const EntityForm = ({ entity, options, isEditMode}) => (
   <Form>
-    {entity.hasOwnProperty("name") && <LabeledField name="name" fieldType="text"/>}
-    {entity.hasOwnProperty("category") && <LabeledField name="category" options={options}/>}
-    {entity.hasOwnProperty("account") && <LabeledField name="account" options={options}/>}
-    {entity.hasOwnProperty("description") && <LabeledField name="description" fieldType="text"/>}
-    {entity.hasOwnProperty("date") && <DatePickerField name="date"/>}
-    {entity.hasOwnProperty("amount") && <LabeledField name="amount" fieldType="number"/>}
-    <button type="submit">
-      {isEditMode ? "Update" : "Create"}
+    {entity.hasOwnProperty('name') && <LabeledField name='name' fieldType='text'/>}
+    {entity.hasOwnProperty('category') && <LabeledField name='category' options={options}/>}
+    {entity.hasOwnProperty('account') && <LabeledField name='account' options={options}/>}
+    {entity.hasOwnProperty('description') && <LabeledField name='description' fieldType='text'/>}
+    {entity.hasOwnProperty('date') && <DatePickerField name='date'/>}
+    {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
+    <button type='submit'>
+      {isEditMode ? 'Update' : 'Create'}
     </button>
   </Form>
 );
