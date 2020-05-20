@@ -1,8 +1,8 @@
 import React from "react";
 import moment from "moment";
-import Button from "../common/Button";
+import { Button } from "../common/Button";
 import ExpenseForm from "./ExpenseForm";
-import ModifyRowPanel from "../common/ModifyRowPanel";
+import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
 class ExpenseRow extends React.Component {
   constructor(props) {

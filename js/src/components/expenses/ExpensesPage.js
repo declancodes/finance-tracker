@@ -1,7 +1,7 @@
 import React from "react";
 import api from "../common/api"
 import moment from "moment";
-import DateRangePanel from "../common/DateRangePanel";
+import { DateRangePanel } from "../common/DateRangePanel";
 import ExpenseForm from "./ExpenseForm";
 import ExpenseRow from "./ExpenseRow";
 

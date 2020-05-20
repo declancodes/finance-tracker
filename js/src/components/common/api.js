@@ -1,4 +1,5 @@
 import axios from "axios";
+import querystring from "query-string";
 
 const API_URL = "http://localhost:8080"
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
@@ -11,32 +12,19 @@ function create(url, values) {
   return axios.post(url, values)
 }
 
-function get(url, start, end, category) {
-  let startQuery = `start=${start}`;
-  let endQuery = `end=${end}`;
-  let categoryQuery = `category=${category}`
+function get(baseUrl, start, end, category) {
+  const params = {
+    start: start,
+    end: end,
+    category: category
+  };
 
-  let hasStart = typeof start !== "undefined";
-  let hasEnd = typeof end !== "undefined";
-  let hasCategory = typeof category !== "undefined";
+  const url = querystring.stringifyUrl(
+    { url: baseUrl, query: params },
+    { skipNull: true }
+  );
 
-  if (hasStart && hasEnd && hasCategory) {
-    url += `?${startQuery}&${endQuery}&${categoryQuery}`;
-  } else if (hasStart && hasEnd) {
-    url += `?${startQuery}&${endQuery}`;
-  } else if (hasStart && hasCategory) {
-    url += `?${startQuery}&${categoryQuery}`;
-  } else if (hasEnd && hasCategory) {
-    url += `?${endQuery}&${categoryQuery}`;
-  } else if (hasStart) {
-    url += `?${startQuery}`;
-  } else if (hasEnd) {
-    url += `?${endQuery}`;
-  } else if (hasCategory) {
-    url += `?${categoryQuery}`;
-  }
-
-  return axios.get(url)
+  return axios.get(url);
 }
 
 function update(url, values) {

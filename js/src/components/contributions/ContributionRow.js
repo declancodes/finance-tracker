@@ -1,8 +1,8 @@
 import React from "react";
 import moment from "moment";
-import Button from "../common/Button";
+import { Button } from "../common/Button";
 import ContributionForm from "./ContributionForm";
-import ModifyRowPanel from "../common/ModifyRowPanel";
+import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
 class ContributionRow extends React.Component {
   constructor(props) {

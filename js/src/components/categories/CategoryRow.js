@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "../common/Button";
+import { Button } from "../common/Button";
 import CategoryForm from "./CategoryForm";
-import ModifyRowPanel from "../common/ModifyRowPanel";
+import { ModifyRowPanel } from "../common/ModifyRowPanel";
 
 class CategoryRow extends React.Component {
   constructor(props) {

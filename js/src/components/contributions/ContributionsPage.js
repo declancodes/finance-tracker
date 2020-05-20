@@ -3,7 +3,7 @@ import moment from "moment";
 import api from "../common/api"
 import ContributionForm from "./ContributionForm";
 import ContributionRow from "./ContributionRow";
-import DateRangePanel from "../common/DateRangePanel";
+import { DateRangePanel } from "../common/DateRangePanel";
 
 class ContributionsPage extends React.Component {
   constructor(props) {

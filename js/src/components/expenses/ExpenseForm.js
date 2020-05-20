@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import moment from "moment";
 import api from "../common/api";
-import DatePickerField from '../common/DatePickerField';
+import { DatePickerField } from '../common/DatePickerField';
 
 class ExpenseForm extends React.Component {
   constructor(props) {
