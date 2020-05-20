@@ -1,9 +1,15 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik } from 'formik';
+import { EntityForm } from '../common/forms/EntityForm';
 
 class CategoryForm extends React.Component {
   render() {
     const c = this.props.category;
+    const initialCategoryValues = {
+      uuid: c ? c.uuid : '',
+      name: c ? c.name : '',
+      description: c ? c.description : ''
+    };
 
     return (
       <div>
@@ -11,11 +17,7 @@ class CategoryForm extends React.Component {
           {this.props.isEditMode ? "Edit" : "Create"} {this.props.categoryType} Category
         </h2>
         <Formik
-          initialValues={{
-            uuid: c ? c.uuid : '',
-            name: c ? c.name : '',
-            description: c ? c.description : ''
-          }}
+          initialValues={initialCategoryValues}
           onSubmit={(values, { setSubmitting, resetForm }) => {
             if (!c) {
               delete values.uuid;
@@ -25,15 +27,10 @@ class CategoryForm extends React.Component {
             resetForm();
           }}
         >
-          <Form>
-            <label htmlFor="name">Name</label>
-            <Field name="name" type="text"/>
-            <label htmlFor="description">Description</label>
-            <Field name="description" type="text"/>
-            <button type="submit">
-              {this.props.isEditMode ? "Update" : "Create"}
-            </button>
-          </Form>
+          <EntityForm
+            entity={initialCategoryValues}
+            isEditMode={this.props.isEditMode}
+          />
         </Formik>
       </div>
     );
