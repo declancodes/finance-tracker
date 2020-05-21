@@ -1,16 +1,23 @@
 import React from 'react';
-import { EntityFormik } from '../common/forms/EntityFormik';
+import EntityFormik from '../common/forms/EntityFormik';
 import api from '../common/api';
 import moment from 'moment';
 
 class ContributionForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      accounts: []
-    };
+    this.getOptions = this.getOptions.bind(this);
     this.doExtraModifications = this.doExtraModifications.bind(this);
     this.doSubmit = this.doSubmit.bind(this);
+  }
+
+  getOptions() {
+    return api.getAccounts()
+      .then(response => {
+        return (response.data === null || response.data === undefined)
+          ? []
+          : response.data.sort((a, b) => a.name.localeCompare(b.name));
+      });
   }
 
   doExtraModifications(values) {
@@ -25,16 +32,6 @@ class ContributionForm extends React.Component {
 
   doSubmit(values) {
     this.props.doSubmit(values);
-  }
-
-  componentDidMount() {
-    api.getAccounts()
-      .then(response => {
-        let accounts = (response.data === null || response.data === undefined)
-          ? []
-          : response.data.sort((a, b) => a.name.localeCompare(b.name))
-        this.setState({ accounts: accounts })
-      })
   }
 
   render() {
@@ -54,7 +51,7 @@ class ContributionForm extends React.Component {
         entityName='Contribution'
         entity={entity}
         isCreateMode={isCreating}
-        options={this.state.accounts}
+        getOptions={this.getOptions}
         doExtraModifications={this.doExtraModifications}
         doSubmit={this.doSubmit}
       />

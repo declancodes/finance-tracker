@@ -2,7 +2,6 @@ import React from "react";
 import api from "../common/api"
 import AccountForm from "./AccountForm";
 import AccountRow from "./AccountRow";
-import EntityFormik from "../common/forms/EntityFormik";
 
 class AccountsPage extends React.Component {
   constructor(props) {

@@ -6,7 +6,7 @@ export const LabeledField = ({ name, fieldType, options }) => {
   return (
     <div>
       <label htmlFor={name}>{displayName}</label>
-      {typeof options === 'undefined' ? (
+      {options === undefined ? (
         <Field name={name} type={fieldType} />
       ) : (
         <Field name={name} as='select'>
