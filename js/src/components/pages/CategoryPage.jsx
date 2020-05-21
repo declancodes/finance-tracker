@@ -1,6 +1,6 @@
 import React from 'react';
 import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
-import EntityFormik from '../common/forms/EntityFormik';
+import EntityForm from '../common/forms/EntityForm';
 import { EntityHeader } from '../common/tables/EntityHeader';
 import EntityRow from '../common/tables/EntityRow';
 import api from '../../api';
@@ -99,7 +99,7 @@ class CategoryPage extends React.Component {
             )}
           </tbody>
         </table>
-        <EntityFormik
+        <EntityForm
           entityName={entityName}
           entity={blankEntity}
           isCreateMode={true}

@@ -3,7 +3,7 @@ import { Form, Formik } from 'formik';
 import { DatePickerField } from './DatePickerField';
 import { LabeledField } from './LabeledField';
 
-class EntityFormik extends React.Component {
+class EntityForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,4 +62,4 @@ class EntityFormik extends React.Component {
   }
 }
 
-export default EntityFormik;
+export default EntityForm;

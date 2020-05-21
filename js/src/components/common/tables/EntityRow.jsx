@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../Button';
-import EntityFormik from '../forms/EntityFormik';
+import EntityForm from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import moment from 'moment';
 
@@ -46,7 +46,7 @@ class EntityRow extends React.Component {
         <td>
           {this.state.isEditing ? (
             <div>
-              <EntityFormik
+              <EntityForm
                 entityName={this.props.entityName}
                 entity={e}
                 initialValues={this.props.initialValues}
