@@ -1,9 +1,11 @@
 import React from 'react';
-import moment from 'moment';
-import api from '../common/api'
-import ContributionForm from './ContributionForm';
-import ContributionRow from './ContributionRow';
 import { DateRangePanel } from '../common/DateRangePanel';
+import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
+import EntityFormik from '../common/forms/EntityFormik';
+import { EntityHeader } from '../common/tables/EntityHeader';
+import EntityRow from '../common/tables/EntityRow';
+import api from '../../api';
+import moment from 'moment';
 
 class ContributionsPage extends React.Component {
   constructor(props) {
@@ -13,11 +15,32 @@ class ContributionsPage extends React.Component {
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate()
     };
+    this.getOptions = this.getOptions.bind(this);
+    this.doExtraModifications = this.doExtraModifications.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleStartDateSet = this.handleStartDateSet.bind(this);
     this.handleEndDateSet = this.handleEndDateSet.bind(this);
+  }
+
+  getOptions() {
+    return api.getAccounts()
+      .then(response => {
+        return (response.data === null || response.data === undefined)
+          ? []
+          : response.data.sort((a, b) => a.name.localeCompare(b.name));
+      });
+  }
+
+  doExtraModifications(values) {
+    const aUuid = values.account;
+    values.account = {
+      uuid: aUuid
+    };
+
+    const dateToSubmit = moment(values.date).toISOString();
+    values.date = dateToSubmit;
   }
 
   handleCreate(values) {
@@ -63,9 +86,20 @@ class ContributionsPage extends React.Component {
   }
 
   render() {
+    const entityName = 'Contribution';
+    const entityPlural = `${entityName}s`;
+    const blankEntity = {
+      uuid: '',
+      name: '',
+      account: '',
+      description: '',
+      date: '',
+      amount: 0
+    };
+
     return (
       <div>
-        <h1>Contributions</h1>
+        <h1>{entityPlural}</h1>
         <DateRangePanel
           start={this.state.start}
           end={this.state.end}
@@ -73,37 +107,38 @@ class ContributionsPage extends React.Component {
           setEnd={this.handleEndDateSet}
         />
         <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Account</th>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+          <EntityHeader entity={blankEntity}/>
           <tbody>
             {this.state.contributions.length > 0 ? (
-              this.state.contributions.map(contribution => (
-                (
-                  <ContributionRow
+              this.state.contributions.map(contribution => {
+                let initialVals = JSON.parse(JSON.stringify(contribution));
+                initialVals.account = contribution.account.uuid;
+                initialVals.date = moment(contribution.date).format('MM/DD/YYYY')
+
+                return (
+                  <EntityRow
                     key={contribution.uuid}
-                    contribution={contribution}
+                    entityName={entityName}
+                    entity={contribution}
+                    initialValues={initialVals}
+                    getOptions={this.getOptions}
+                    doExtraModifications={this.doExtraModifications}
                     handleUpdate={this.handleUpdate}
                     handleDelete={this.handleDelete}
                   />
-                )
-              ))
+                );
+              })
             ) : (
-              <tr>
-                <td colSpan={6}>No Contributions</td>
-              </tr>
+              <EmptyEntityRow columnLength={6} entityPlural={entityPlural}/>
             )}
           </tbody>
         </table>
-        <ContributionForm
+        <EntityFormik
+          entityName={entityName}
+          entity={blankEntity}
           isCreateMode={true}
+          getOptions={this.getOptions}
+          doExtraModifications={this.doExtraModifications}
           doSubmit={this.handleCreate}
         />
       </div>

@@ -26,16 +26,20 @@ class EntityFormik extends React.Component {
           {this.props.isCreateMode ? 'Create' : 'Edit'} {this.props.entityName}
         </h2>
         <Formik
-          initialValues={e}
+          initialValues={
+            this.props.initialValues === undefined
+              ? e
+              : this.props.initialValues
+          }
           onSubmit={(values, { setSubmitting, resetForm }) => {
             if (this.props.isCreateMode) {
               delete values.uuid;
             }
-  
+
             if (this.props.doExtraModifications !== undefined) {
               this.props.doExtraModifications(values);
             }
-  
+
             this.props.doSubmit(values);
             setSubmitting(false);
             resetForm();

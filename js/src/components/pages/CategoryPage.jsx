@@ -1,7 +1,9 @@
 import React from 'react';
-import api from '../common/api';
-import { CategoryForm } from './CategoryForm';
-import CategoryRow from './CategoryRow';
+import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
+import EntityFormik from '../common/forms/EntityFormik';
+import { EntityHeader } from '../common/tables/EntityHeader';
+import EntityRow from '../common/tables/EntityRow';
+import api from '../../api';
 
 class CategoryPage extends React.Component {
   constructor(props) {
@@ -66,39 +68,41 @@ class CategoryPage extends React.Component {
   }
 
   render() {
+    const entityName = `${this.props.categoryType} Category`;
+    const entityPlural = `${this.props.categoryType} Categories`;
+    const blankEntity = {
+      uuid: '',
+      name: '',
+      description: ''
+    };
+
     return (
       <div>
-        <h1>{this.props.categoryType} Categories</h1>
+        <h1>{entityPlural}</h1>
         <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+          <EntityHeader entity={blankEntity}/>
           <tbody>
             {this.state.categories.length > 0 ? (
               this.state.categories.map(category => (
                 (
-                  <CategoryRow
+                  <EntityRow
                     key={category.uuid}
-                    categoryType={this.props.categoryType}
-                    category={category}
+                    entityName={entityName}
+                    entity={category}
                     handleUpdate={this.handleUpdate}
                     handleDelete={this.handleDelete}
                   />
                 )
               ))
             ) : (
-              <tr>
-                <td colSpan={3}>No {this.props.categoryType} Categories</td>
-              </tr>
+              <EmptyEntityRow columnLength={3} entityPlural={entityPlural}/>
             )}
           </tbody>
         </table>
-        <CategoryForm
-          categoryType={this.props.categoryType}
+        <EntityFormik
+          entityName={entityName}
+          entity={blankEntity}
+          isCreateMode={true}
           doSubmit={this.handleCreate}
         />
       </div>

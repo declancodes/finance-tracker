@@ -6,10 +6,10 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import AccountsPage from "./components/accounts/AccountsPage";
-import CategoryPage from "./components/categories/CategoryPage";
-import ContributionsPage from "./components/contributions/ContributionsPage";
-import ExpensesPage from "./components/expenses/ExpensesPage";
+import AccountsPage from "./components/pages/AccountsPage";
+import CategoryPage from "./components/pages/CategoryPage";
+import ContributionsPage from "./components/pages/ContributionsPage";
+import ExpensesPage from "./components/pages/ExpensesPage";
 import "./App.css";
 
 class App extends React.Component {
