@@ -1,10 +1,10 @@
 import React from 'react';
 import { DateRangePanel } from './DateRangePanel';
-import { EmptyEntityRow } from './tables/EmptyEntityRow';
 import EntityForm from './forms/EntityForm';
 import { EntityHeader } from './tables/EntityHeader';
 import EntityRow from './tables/EntityRow';
 import moment from 'moment';
+import size from 'lodash.size';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -88,10 +88,11 @@ class EntityPage extends React.Component {
                 />
               ))
             ) : (
-              <EmptyEntityRow
-                columnLength={this.props.columnLength}
-                entityPlural={this.props.entityPlural}
-              />
+              <tr>
+                <td colSpan={size(this.props.blankEntity)}>
+                  No {this.props.entityPlural}
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

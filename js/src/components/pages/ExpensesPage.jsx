@@ -25,7 +25,6 @@ export const ExpensesPage = () => (
   <EntityPage
     entityName='Expense'
     entityPlural='Expenses'
-    columnLength={6}
     blankEntity={{
       uuid: '',
       name: '',

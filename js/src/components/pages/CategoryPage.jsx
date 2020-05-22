@@ -8,7 +8,6 @@ export const CategoryPage = ({ categoryType }) => {
     <EntityPage
       entityName={`${categoryType} Category`}
       entityPlural={`${categoryType} Categories`}
-      columnLength={3}
       blankEntity={{
         uuid: '',
         name: '',

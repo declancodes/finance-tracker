@@ -1,7 +1,8 @@
-import axios from "axios";
-import querystring from "query-string";
+import axios from 'axios';
+import querystring from 'query-string';
+import sortBy from 'lodash.sortby';
 
-const API_URL = "http://localhost:8080"
+const API_URL = 'http://localhost:8080'
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
 const ACCOUNTS_URL = `${API_URL}/accounts`
 const CONTRIBUTIONS_URL = `${API_URL}/contributions`
@@ -35,24 +36,12 @@ function remove(url) {
   return axios.delete(url)
 }
 
-function sortByCategoryName(promise) {
-  return sort(promise, (a, b) => a.category.name.localeCompare(b.category.name));
-}
-
-function sortByName(promise) {
-  return sort(promise, (a, b) => a.name.localeCompare(b.name));
-}
-
-function sortByDate(promise) {
-  return sort(promise, (a, b) => a.date.localeCompare(b.date));
-}
-
-function sort(promise, f) {
+function sort(promise, order) {
   return promise
     .then(response =>
       (response.data === null || response.data === undefined)
         ? []
-        : response.data.sort(f)
+        : sortBy(response.data, order)
     );
 }
 
@@ -62,7 +51,10 @@ const api = {
   },
 
   getAccountCategories() {
-    return sortByName(get(ACCOUNT_CATEGORIES_URL));
+    return sort(
+      get(ACCOUNT_CATEGORIES_URL),
+      ['name']
+    );
   },
 
   updateAccountCategory(values) {
@@ -78,7 +70,10 @@ const api = {
   },
 
   getAccounts() {
-    return sortByCategoryName(get(ACCOUNTS_URL));
+    return sort(
+      get(ACCOUNTS_URL),
+      ['category.name', 'name']
+    );
   },
 
   updateAccount(values) {
@@ -94,7 +89,10 @@ const api = {
   },
 
   getContributions(start, end) {
-    return sortByDate(get(CONTRIBUTIONS_URL, start, end));
+    return sort(
+      get(CONTRIBUTIONS_URL, start, end),
+      ['date', 'account.name', 'amount']
+    );
   },
 
   updateContribution(values) {
@@ -110,7 +108,10 @@ const api = {
   },
 
   getExpenseCategories() {
-    return sortByName(get(EXPENSE_CATEGORIES_URL));
+    return sort(
+      get(EXPENSE_CATEGORIES_URL),
+      ['name']
+    );
   },
 
   updateExpenseCategory(values) {
@@ -126,7 +127,10 @@ const api = {
   },
 
   getExpenses(start, end) {
-    return sortByDate(get(EXPENSES_URL, start, end));
+    return sort(
+      get(EXPENSES_URL, start, end),
+      ['date', 'category.name', 'amount']
+    );
   },
 
   updateExpense(values) {
