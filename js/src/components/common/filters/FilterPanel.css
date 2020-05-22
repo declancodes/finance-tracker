@@ -1,0 +1,7 @@
+.filter-panel * {
+  display: inline-block;
+  margin: 3px;;
+}
+.filter-panel select {
+  width: 175px;
+}

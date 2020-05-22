@@ -1,6 +1,7 @@
 import React from 'react';
 import { LabeledDatePicker } from './LabeledDatePicker';
 import { Options } from '../Options';
+import './FilterPanel.css';
 import '../../../../node_modules/react-datepicker/dist/react-datepicker.css';
 
 export const FilterPanel = ({
