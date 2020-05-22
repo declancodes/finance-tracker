@@ -3,31 +3,6 @@ import EntityPage from '../common/EntityPage';
 import api from '../../api'
 import moment from 'moment';
 
-const createExpense = (values) =>
-  api.createExpense(values);
-
-const getExpenses = (start, end) =>
-  api.getExpenses(start, end)
-    .then(response =>
-      (response.data === null || response.data === undefined)
-        ? []
-        : response.data.sort((a, b) => a.date.localeCompare(b.date))
-    );
-
-const updateExpense = (values) =>
-  api.updateExpense(values);
-
-const deleteExpense = (uuid) =>
-  api.deleteExpense(uuid);
-
-const getOptions = () =>
-  api.getExpenseCategories()
-    .then(response =>
-      (response.data === null || response.data === undefined)
-        ? []
-        : response.data.sort((a, b) => a.name.localeCompare(b.name))
-    );
-
 const doExtraModifications = (values) => {
   const ecUuid = values.category;
   values.category = {
@@ -60,11 +35,11 @@ export const ExpensesPage = () => (
       amount: 0
     }}
     usesDates={true}
-    createEntity={createExpense}
-    getEntities={getExpenses}
-    updateEntity={updateExpense}
-    deleteEntity={deleteExpense}
-    getOptions={getOptions}
+    createEntity={api.createExpense}
+    getEntities={api.getExpenses}
+    updateEntity={api.updateExpense}
+    deleteEntity={api.deleteExpense}
+    getOptions={api.getExpenseCategories}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

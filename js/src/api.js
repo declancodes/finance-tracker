@@ -35,13 +35,34 @@ function remove(url) {
   return axios.delete(url)
 }
 
+function sortByCategoryName(promise) {
+  return sort(promise, (a, b) => a.category.name.localeCompare(b.category.name));
+}
+
+function sortByName(promise) {
+  return sort(promise, (a, b) => a.name.localeCompare(b.name));
+}
+
+function sortByDate(promise) {
+  return sort(promise, (a, b) => a.date.localeCompare(b.date));
+}
+
+function sort(promise, f) {
+  return promise
+    .then(response =>
+      (response.data === null || response.data === undefined)
+        ? []
+        : response.data.sort(f)
+    );
+}
+
 const api = {
   createAccountCategory(values) {
     return create(ACCOUNT_CATEGORIES_URL, values);
   },
 
   getAccountCategories() {
-    return get(ACCOUNT_CATEGORIES_URL);
+    return sortByName(get(ACCOUNT_CATEGORIES_URL));
   },
 
   updateAccountCategory(values) {
@@ -57,7 +78,7 @@ const api = {
   },
 
   getAccounts() {
-    return get(ACCOUNTS_URL);
+    return sortByCategoryName(get(ACCOUNTS_URL));
   },
 
   updateAccount(values) {
@@ -73,7 +94,7 @@ const api = {
   },
 
   getContributions(start, end) {
-    return get(CONTRIBUTIONS_URL, start, end);
+    return sortByDate(get(CONTRIBUTIONS_URL, start, end));
   },
 
   updateContribution(values) {
@@ -89,7 +110,7 @@ const api = {
   },
 
   getExpenseCategories() {
-    return get(EXPENSE_CATEGORIES_URL);
+    return sortByName(get(EXPENSE_CATEGORIES_URL));
   },
 
   updateExpenseCategory(values) {
@@ -105,7 +126,7 @@ const api = {
   },
 
   getExpenses(start, end) {
-    return get(EXPENSES_URL, start, end);
+    return sortByDate(get(EXPENSES_URL, start, end));
   },
 
   updateExpense(values) {

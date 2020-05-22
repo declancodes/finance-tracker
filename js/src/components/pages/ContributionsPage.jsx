@@ -3,31 +3,6 @@ import EntityPage from '../common/EntityPage';
 import api from '../../api';
 import moment from 'moment';
 
-const createContribution = (values) =>
-  api.createContribution(values);
-
-const getContributions = (start, end) =>
-  api.getContributions(start, end)
-    .then(response =>
-      (response.data === null || response.data === undefined)
-        ? []
-        : response.data.sort((a, b) => a.date.localeCompare(b.date))
-    );
-
-const updateContribution = (values) =>
-  api.updateContribution(values);
-
-const deleteContribution = (uuid) =>
-  api.deleteContribution(uuid);
-
-const getOptions = () =>
-  api.getAccounts()
-    .then(response =>
-      (response.data === null || response.data === undefined)
-        ? []
-        : response.data.sort((a, b) => a.name.localeCompare(b.name))
-    );
-
 const doExtraModifications = (values) => {
   const aUuid = values.account;
   values.account = {
@@ -60,11 +35,11 @@ export const ContributionsPage = () => (
       amount: 0
     }}
     usesDates={true}
-    createEntity={createContribution}
-    getEntities={getContributions}
-    updateEntity={updateContribution}
-    deleteEntity={deleteContribution}
-    getOptions={getOptions}
+    createEntity={api.createContribution}
+    getEntities={api.getContributions}
+    updateEntity={api.updateContribution}
+    deleteEntity={api.deleteContribution}
+    getOptions={api.getAccounts}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />
