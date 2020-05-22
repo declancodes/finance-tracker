@@ -1,27 +1,39 @@
 import React from 'react';
-import { DateRangePanel } from '../common/DateRangePanel';
-import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
-import EntityForm from '../common/forms/EntityForm';
-import { EntityHeader } from '../common/tables/EntityHeader';
-import EntityRow from '../common/tables/EntityRow';
+import EntityPage from '../common/EntityPage';
 import api from '../../api';
 import moment from 'moment';
 
 class ContributionsPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      contributions: [],
-      start: moment().startOf('month').toDate(),
-      end: moment().endOf('month').toDate()
-    };
+    this.createContribution = this.createContribution.bind(this);
+    this.getContributions = this.getContributions.bind(this);
+    this.updateContribution = this.updateContribution.bind(this);
+    this.deleteContribution = this.deleteContribution.bind(this);
     this.getOptions = this.getOptions.bind(this);
     this.doExtraModifications = this.doExtraModifications.bind(this);
-    this.handleCreate = this.handleCreate.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleStartDateSet = this.handleStartDateSet.bind(this);
-    this.handleEndDateSet = this.handleEndDateSet.bind(this);
+    this.getInitialValues = this.getInitialValues.bind(this);
+  }
+
+  createContribution(values) {
+    return api.createContribution(values);
+  }
+
+  getContributions(start, end) {
+    return api.getContributions(start, end)
+      .then(response => {
+        return (response.data === null || response.data === undefined)
+          ? []
+          : response.data.sort((a, b) => a.date.localeCompare(b.date));
+      });
+  }
+
+  updateContribution(values) {
+    return api.updateContribution(values);
+  }
+
+  deleteContribution(uuid) {
+    return api.deleteContribution(uuid);
   }
 
   getOptions() {
@@ -43,105 +55,37 @@ class ContributionsPage extends React.Component {
     values.date = dateToSubmit;
   }
 
-  handleCreate(values) {
-    api.createContribution(values)
-      .then(() => this.setContributions())
-  }
+  getInitialValues(contribution) {
+    let initialValues = JSON.parse(JSON.stringify(contribution));
+    initialValues.account = contribution.account.uuid;
+    initialValues.date = moment(contribution.date).format('MM/DD/YYYY')
 
-  handleDelete(uuid) {
-    api.deleteContribution(uuid)
-      .then(() => this.setContributions())
-  }
-
-  handleUpdate(values) {
-    api.updateContribution(values)
-      .then(() => this.setContributions())
-  }
-
-  handleStartDateSet(value) {
-    this.setState(
-      { start: value },
-      () => this.setContributions());
-  }
-
-  handleEndDateSet(value) {
-    this.setState(
-      { end: value },
-      () => this.setContributions());
-  }
-
-  componentDidMount() {
-    this.setContributions()
-  }
-
-  setContributions() {
-    api.getContributions(this.state.start.toISOString(), this.state.end.toISOString())
-      .then(response => {
-        let contributions = (response.data === null || response.data === undefined)
-          ? []
-          : response.data
-            .sort((a, b) => a.date.localeCompare(b.date));
-        this.setState({ contributions: contributions });
-      });
+    return initialValues;
   }
 
   render() {
-    const entityName = 'Contribution';
-    const entityPlural = `${entityName}s`;
-    const blankEntity = {
-      uuid: '',
-      name: '',
-      account: '',
-      description: '',
-      date: '',
-      amount: 0
-    };
-
     return (
-      <div>
-        <h1>{entityPlural}</h1>
-        <DateRangePanel
-          start={this.state.start}
-          end={this.state.end}
-          setStart={this.handleStartDateSet}
-          setEnd={this.handleEndDateSet}
-        />
-        <table>
-          <EntityHeader entity={blankEntity}/>
-          <tbody>
-            {this.state.contributions.length > 0 ? (
-              this.state.contributions.map(contribution => {
-                let initialVals = JSON.parse(JSON.stringify(contribution));
-                initialVals.account = contribution.account.uuid;
-                initialVals.date = moment(contribution.date).format('MM/DD/YYYY')
-
-                return (
-                  <EntityRow
-                    key={contribution.uuid}
-                    entityName={entityName}
-                    entity={contribution}
-                    initialValues={initialVals}
-                    getOptions={this.getOptions}
-                    doExtraModifications={this.doExtraModifications}
-                    handleUpdate={this.handleUpdate}
-                    handleDelete={this.handleDelete}
-                  />
-                );
-              })
-            ) : (
-              <EmptyEntityRow columnLength={6} entityPlural={entityPlural}/>
-            )}
-          </tbody>
-        </table>
-        <EntityForm
-          entityName={entityName}
-          entity={blankEntity}
-          isCreateMode={true}
-          getOptions={this.getOptions}
-          doExtraModifications={this.doExtraModifications}
-          doSubmit={this.handleCreate}
-        />
-      </div>
+      <EntityPage
+        entityName='Contribution'
+        entityPlural='Contributions'
+        columnLength={6}
+        blankEntity={{
+          uuid: '',
+          name: '',
+          account: '',
+          description: '',
+          date: '',
+          amount: 0
+        }}
+        usesDates={true}
+        createEntity={this.createContribution}
+        getEntities={this.getContributions}
+        updateEntity={this.updateContribution}
+        deleteEntity={this.deleteContribution}
+        getOptions={this.getOptions}
+        doExtraModifications={this.doExtraModifications}
+        getInitialValues={this.getInitialValues}
+      />
     );
   }
 }

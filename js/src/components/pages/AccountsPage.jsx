@@ -1,21 +1,38 @@
 import React from 'react';
-import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
-import EntityForm from '../common/forms/EntityForm';
-import { EntityHeader } from '../common/tables/EntityHeader';
-import EntityRow from '../common/tables/EntityRow';
-import api from '../../api'
+import EntityPage from '../common/EntityPage';
+import api from '../../api';
 
 class AccountsPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      accounts: []
-    };
+    this.createAccount = this.createAccount.bind(this);
+    this.getAccounts = this.getAccounts.bind(this);
+    this.updateAccount = this.updateAccount.bind(this);
+    this.deleteAccount = this.deleteAccount.bind(this);
     this.getOptions = this.getOptions.bind(this);
     this.doExtraModifications = this.doExtraModifications.bind(this);
-    this.handleCreate = this.handleCreate.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.getInitialValues = this.getInitialValues.bind(this);
+  }
+
+  createAccount(values) {
+    return api.createAccount(values);
+  }
+
+  getAccounts() {
+    return api.getAccounts()
+      .then(response => {
+        return (response.data === null || response.data === undefined)
+          ? []
+          : response.data.sort((a, b) => a.category.name.localeCompare(b.category.name));
+      });
+  }
+
+  updateAccount(values) {
+    return api.updateAccount(values);
+  }
+
+  deleteAccount(uuid) {
+    return api.deleteAccount(uuid);
   }
 
   getOptions() {
@@ -34,85 +51,35 @@ class AccountsPage extends React.Component {
     };
   }
 
-  handleCreate(values) {
-    api.createAccount(values)
-      .then(() => this.setAccounts())
-  }
+  getInitialValues(account) {
+    let initialValues = JSON.parse(JSON.stringify(account));
+    initialValues.category = account.category.uuid;
 
-  handleUpdate(values) {
-    api.updateAccount(values)
-      .then(() => this.setAccounts())
-  }
-
-  handleDelete(uuid) {
-    api.deleteAccount(uuid)
-      .then(() => this.setAccounts())
-  }
-
-  componentDidMount() {
-    this.setAccounts()
-  }
-
-  setAccounts() {
-    api.getAccounts()
-      .then(response => {
-        let accounts = (response.data === null || response.data === undefined)
-          ? []
-          : response.data
-            .sort((a, b) => a.category.name.localeCompare(b.category.name));
-        this.setState({ accounts: accounts });
-      })
+    return initialValues;
   }
 
   render() {
-    const entityName = 'Account';
-    const entityPlural = `${entityName}s`;
-    const blankEntity = {
-      uuid: '',
-      name: '',
-      category: '',
-      description: '',
-      amount: 0
-    };
-
     return (
-      <div>
-        <h1>{entityPlural}</h1>
-        <table>
-          <EntityHeader entity={blankEntity}/>
-          <tbody>
-            {this.state.accounts.length > 0 ? (
-              this.state.accounts.map(account => {
-                let initialVals = JSON.parse(JSON.stringify(account));
-                initialVals.category = account.category.uuid;
-
-                return (
-                  <EntityRow
-                    key={account.uuid}
-                    entityName={entityName}
-                    entity={account}
-                    initialValues={initialVals}
-                    getOptions={this.getOptions}
-                    doExtraModifications={this.doExtraModifications}
-                    handleUpdate={this.handleUpdate}
-                    handleDelete={this.handleDelete}
-                  />
-                );
-              })
-            ) : (
-              <EmptyEntityRow columnLength={5} entityPlural={entityPlural}/>
-            )}
-          </tbody>
-        </table>
-        <EntityForm
-          entityName={entityName}
-          entity={blankEntity}
-          isCreateMode={true}
-          getOptions={this.getOptions}
-          doExtraModifications={this.doExtraModifications}
-          doSubmit={this.handleCreate}
-        />
-      </div>
+      <EntityPage
+        entityName='Account'
+        entityPlural='Accounts'
+        columnLength={5}
+        blankEntity={{
+          uuid: '',
+          name: '',
+          category: '',
+          description: '',
+          amount: 0
+        }}
+        usesDates={false}
+        createEntity={this.createAccount}
+        getEntities={this.getAccounts}
+        updateEntity={this.updateAccount}
+        deleteEntity={this.deleteAccount}
+        getOptions={this.getOptions}
+        doExtraModifications={this.doExtraModifications}
+        getInitialValues={this.getInitialValues}
+      />
     );
   }
 }

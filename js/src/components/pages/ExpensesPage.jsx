@@ -1,27 +1,39 @@
 import React from 'react';
-import { DateRangePanel } from '../common/DateRangePanel';
-import { EmptyEntityRow } from '../common/tables/EmptyEntityRow';
-import EntityForm from '../common/forms/EntityForm';
-import { EntityHeader } from '../common/tables/EntityHeader';
-import EntityRow from '../common/tables/EntityRow';
+import EntityPage from '../common/EntityPage';
 import api from '../../api'
 import moment from 'moment';
 
 class ExpensesPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      expenses: [],
-      start: moment().startOf('month').toDate(),
-      end: moment().endOf('month').toDate()
-    };
+    this.createExpense = this.createExpense.bind(this);
+    this.getExpenses = this.getExpenses.bind(this);
+    this.updateExpense = this.updateExpense.bind(this);
+    this.deleteExpense = this.deleteExpense.bind(this);
     this.getOptions = this.getOptions.bind(this);
     this.doExtraModifications = this.doExtraModifications.bind(this);
-    this.handleCreate = this.handleCreate.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleStartDateSet = this.handleStartDateSet.bind(this);
-    this.handleEndDateSet = this.handleEndDateSet.bind(this);
+    this.getInitialValues = this.getInitialValues.bind(this);
+  }
+
+  createExpense(values) {
+    return api.createExpense(values);
+  }
+
+  getExpenses(start, end) {
+    return api.getExpenses(start, end)
+      .then(response => {
+        return (response.data === null || response.data === undefined)
+          ? []
+          : response.data.sort((a, b) => a.date.localeCompare(b.date));
+      });
+  }
+
+  updateExpense(values) {
+    return api.updateExpense(values);
+  }
+
+  deleteExpense(uuid) {
+    return api.deleteExpense(uuid);
   }
 
   getOptions() {
@@ -43,104 +55,37 @@ class ExpensesPage extends React.Component {
     values.date = dateToSubmit;
   }
 
-  handleCreate(values) {
-    api.createExpense(values)
-      .then(() => this.setExpenses())
-  }
+  getInitialValues(expense) {
+    let initialValues = JSON.parse(JSON.stringify(expense));
+    initialValues.category = expense.category.uuid;
+    initialValues.date = moment(expense.date).format('MM/DD/YYYY');
 
-  handleDelete(uuid) {
-    api.deleteExpense(uuid)
-      .then(() => this.setExpenses())
-  }
-
-  handleUpdate(values) {
-    api.updateExpense(values)
-      .then(() => this.setExpenses())
-  }
-
-  handleStartDateSet(value) {
-    this.setState(
-      { start: value },
-      () => this.setExpenses());
-  }
-
-  handleEndDateSet(value) {
-    this.setState(
-      { end: value },
-      () => this.setExpenses());
-  }
-
-  componentDidMount() {
-    this.setExpenses()
-  }
-
-  setExpenses() {
-    api.getExpenses(this.state.start.toISOString(), this.state.end.toISOString())
-      .then(response => {
-        let expenses = (response.data === null || response.data === undefined)
-          ? []
-          : response.data.sort((a, b) => a.date.localeCompare(b.date));
-        this.setState({ expenses: expenses });
-      });
+    return initialValues;
   }
 
   render() {
-    const entityName = 'Expense';
-    const entityPlural = `${entityName}s`;
-    const blankEntity = {
-      uuid: '',
-      name: '',
-      category: '',
-      description: '',
-      date: '',
-      amount: 0
-    };
-
     return (
-      <div>
-        <h1>{entityPlural}</h1>
-        <DateRangePanel
-          start={this.state.start}
-          end={this.state.end}
-          setStart={this.handleStartDateSet}
-          setEnd={this.handleEndDateSet}
-        />
-        <table>
-          <EntityHeader entity={blankEntity}/>
-          <tbody>
-            {this.state.expenses.length > 0 ? (
-              this.state.expenses.map(expense => {
-                let initialVals = JSON.parse(JSON.stringify(expense));
-                initialVals.category = expense.category.uuid;
-                initialVals.date = moment(expense.date).format('MM/DD/YYYY')
-
-                return (
-                  <EntityRow
-                    key={expense.uuid}
-                    entityName={entityName}
-                    entity={expense}
-                    initialValues={initialVals}
-                    getOptions={this.getOptions}
-                    doExtraModifications={this.doExtraModifications}
-                    handleUpdate={this.handleUpdate}
-                    handleDelete={this.handleDelete}
-                  />
-                );
-              })
-            ) : (
-              <EmptyEntityRow columnLength={6} entityPlural={entityPlural}/>
-            )}
-          </tbody>
-        </table>
-        <EntityForm
-          entityName={entityName}
-          entity={blankEntity}
-          isCreateMode={true}
-          getOptions={this.getOptions}
-          doExtraModifications={this.doExtraModifications}
-          doSubmit={this.handleCreate}
-        />
-      </div>
+      <EntityPage
+        entityName='Expense'
+        entityPlural='Expenses'
+        columnLength={6}
+        blankEntity={{
+          uuid: '',
+          name: '',
+          category: '',
+          description: '',
+          date: '',
+          amount: 0
+        }}
+        usesDates={true}
+        createEntity={this.createExpense}
+        getEntities={this.getExpenses}
+        updateEntity={this.updateExpense}
+        deleteEntity={this.deleteExpense}
+        getOptions={this.getOptions}
+        doExtraModifications={this.doExtraModifications}
+        getInitialValues={this.getInitialValues}
+      />
     );
   }
 }

@@ -10,17 +10,7 @@ class EntityRow extends React.Component {
     this.state = {
       isEditing: false
     };
-    this.getOptions = this.getOptions.bind(this);
-    this.doExtraModifications = this.doExtraModifications.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-  }
-
-  getOptions() {
-    return this.props.getOptions()
-  }
-
-  doExtraModifications(values) {
-    this.props.doExtraModifications(values);
   }
 
   handleUpdate(values) {
@@ -49,18 +39,10 @@ class EntityRow extends React.Component {
               <EntityForm
                 entityName={this.props.entityName}
                 entity={e}
-                initialValues={this.props.initialValues}
+                getInitialValues={this.props.getInitialValues}
                 isCreateMode={false}
-                getOptions={
-                  this.props.getOptions === undefined
-                    ? undefined
-                    : this.getOptions
-                }
-                doExtraModifications={
-                  this.props.doExtraModifications === undefined
-                    ? undefined
-                    : this.doExtraModifications
-                }
+                getOptions={this.props.getOptions}
+                doExtraModifications={this.props.doExtraModifications}
                 doSubmit={this.handleUpdate}
               />
               <Button

@@ -20,17 +20,17 @@ class EntityForm extends React.Component {
 
   render() {
     const e = this.props.entity;
+    const initialValues = this.props.getInitialValues === undefined
+      ? e
+      : this.props.getInitialValues(e);
+
     return (
       <div>
         <h2>
           {this.props.isCreateMode ? 'Create' : 'Edit'} {this.props.entityName}
         </h2>
         <Formik
-          initialValues={
-            this.props.initialValues === undefined
-              ? e
-              : this.props.initialValues
-          }
+          initialValues={initialValues}
           onSubmit={(values, { setSubmitting, resetForm }) => {
             if (this.props.isCreateMode) {
               delete values.uuid;
