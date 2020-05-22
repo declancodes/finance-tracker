@@ -1,9 +1,10 @@
 import React from 'react';
 import { Field } from 'formik';
 import { Options } from '../Options';
+import capitalize from 'lodash.capitalize';
 
 export const LabeledField = ({ name, fieldType, options }) => {
-  const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+  const displayName = capitalize(name);
   return (
     <div>
       <label htmlFor={name}>{displayName}</label>

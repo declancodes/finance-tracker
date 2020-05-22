@@ -2,7 +2,7 @@ import React from 'react';
 import { EntityForm } from './forms/EntityForm';
 import { EntityHeader } from './tables/EntityHeader';
 import EntityRow from './tables/EntityRow';
-import { FilterPanel } from './FilterPanel';
+import { FilterPanel } from './filters/FilterPanel';
 import moment from 'moment';
 import size from 'lodash.size';
 
