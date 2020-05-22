@@ -1,8 +1,8 @@
 import React from 'react';
-import { DateRangePanel } from './DateRangePanel';
-import EntityForm from './forms/EntityForm';
+import { EntityForm } from './forms/EntityForm';
 import { EntityHeader } from './tables/EntityHeader';
 import EntityRow from './tables/EntityRow';
+import { FilterPanel } from './FilterPanel';
 import moment from 'moment';
 import size from 'lodash.size';
 
@@ -11,14 +11,17 @@ class EntityPage extends React.Component {
     super(props);
     this.state = {
       entities: [],
+      options: [],
       start: moment().startOf('month').toDate(),
-      end: moment().endOf('month').toDate()
+      end: moment().endOf('month').toDate(),
+      filterCategory: ''
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleStartDateSet = this.handleStartDateSet.bind(this);
     this.handleEndDateSet = this.handleEndDateSet.bind(this);
+    this.handleFilterCategorySet = this.handleFilterCategorySet.bind(this);
   }
 
   handleCreate(values) {
@@ -48,13 +51,31 @@ class EntityPage extends React.Component {
       () => this.setEntities());
   }
 
+  handleFilterCategorySet(value) {
+    this.setState(
+      { filterCategory: value },
+      () => this.setEntities());
+  }
+
   componentDidMount() {
     this.setEntities();
+    this.setOptions();
+  }
+
+  setOptions() {
+    if (this.props.getOptions !== undefined) {
+      this.props.getOptions()
+        .then(response => this.setState({ options: response }));
+    }
   }
 
   setEntities() {
-    (this.props.usesDates
-      ? this.props.getEntities(this.state.start.toISOString(), this.state.end.toISOString())
+    (this.props.usesFilters
+      ? this.props.getEntities(
+          this.state.start.toISOString(),
+          this.state.end.toISOString(),
+          this.state.filterCategory
+        )
       : this.props.getEntities()
     ).then(response => this.setState({ entities: response }));
   }
@@ -63,12 +84,16 @@ class EntityPage extends React.Component {
     return (
       <div>
         <h1>{this.props.entityPlural}</h1>
-        {this.props.usesDates &&
-          <DateRangePanel
+        {this.props.usesFilters &&
+          <FilterPanel
             start={this.state.start}
             end={this.state.end}
+            filterCategory={this.state.filterCategory}
+            filterCategoryOptions={this.state.options}
+            filterCategoryName={this.props.filterCategoryName}
             setStart={this.handleStartDateSet}
             setEnd={this.handleEndDateSet}
+            setFilterCategory={this.handleFilterCategorySet}
           />
         }
         <table>
@@ -81,7 +106,7 @@ class EntityPage extends React.Component {
                   entityName={this.props.entityName}
                   entity={entity}
                   getInitialValues={this.props.getInitialValues}
-                  getOptions={this.props.getOptions}
+                  options={this.state.options}
                   doExtraModifications={this.props.doExtraModifications}
                   handleUpdate={this.handleUpdate}
                   handleDelete={this.handleDelete}
@@ -100,7 +125,7 @@ class EntityPage extends React.Component {
           entityName={this.props.entityName}
           entity={this.props.blankEntity}
           isCreateMode={true}
-          getOptions={this.props.getOptions}
+          options={this.state.options}
           doExtraModifications={this.props.doExtraModifications}
           doSubmit={this.handleCreate}
         />

@@ -33,7 +33,8 @@ export const ExpensesPage = () => (
       date: '',
       amount: 0
     }}
-    usesDates={true}
+    usesFilters={true}
+    filterCategoryName='Category'
     createEntity={api.createExpense}
     getEntities={api.getExpenses}
     updateEntity={api.updateExpense}

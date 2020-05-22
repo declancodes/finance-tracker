@@ -1,5 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
+import { Options } from '../Options';
 
 export const LabeledField = ({ name, fieldType, options }) => {
   const displayName = name.charAt(0).toUpperCase() + name.slice(1);
@@ -10,14 +11,11 @@ export const LabeledField = ({ name, fieldType, options }) => {
         <Field name={name} type={fieldType} />
       ) : (
         <Field name={name} as='select'>
-          <option defaultValue=''>Select {displayName}</option>
-          {options.length > 0 && (
-            options.map(option => (
-              <option key={option.uuid} value={option.uuid}>
-                {option.name}
-              </option>
-            ))
-          )}
+          <Options
+            entityName={displayName}
+            options={options}
+            optionValue='uuid'
+          />
         </Field>
       )}
     </div>

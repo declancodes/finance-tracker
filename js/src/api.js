@@ -13,16 +13,17 @@ function create(url, values) {
   return axios.post(url, values)
 }
 
-function get(baseUrl, start, end, category) {
+function get(baseUrl, start, end, category, account) {
   const params = {
     start: start,
     end: end,
-    category: category
+    category: category,
+    account: account
   };
 
   const url = querystring.stringifyUrl(
     { url: baseUrl, query: params },
-    { skipNull: true }
+    { skipNull: true, skipEmptyString: true }
   );
 
   return axios.get(url);
@@ -88,9 +89,9 @@ const api = {
     return create(CONTRIBUTIONS_URL, values);
   },
 
-  getContributions(start, end) {
+  getContributions(start, end, account) {
     return sort(
-      get(CONTRIBUTIONS_URL, start, end),
+      get(CONTRIBUTIONS_URL, start, end, null, account),
       ['date', 'account.name', 'amount']
     );
   },
@@ -126,9 +127,9 @@ const api = {
     return create(EXPENSES_URL, values);
   },
 
-  getExpenses(start, end) {
+  getExpenses(start, end, category) {
     return sort(
-      get(EXPENSES_URL, start, end),
+      get(EXPENSES_URL, start, end, category),
       ['date', 'category.name', 'amount']
     );
   },

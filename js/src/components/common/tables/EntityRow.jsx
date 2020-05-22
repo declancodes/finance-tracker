@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../Button';
-import EntityForm from '../forms/EntityForm';
+import { EntityForm } from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import moment from 'moment';
 
@@ -41,7 +41,7 @@ class EntityRow extends React.Component {
                 entity={e}
                 getInitialValues={this.props.getInitialValues}
                 isCreateMode={false}
-                getOptions={this.props.getOptions}
+                options={this.props.options}
                 doExtraModifications={this.props.doExtraModifications}
                 doSubmit={this.handleUpdate}
               />

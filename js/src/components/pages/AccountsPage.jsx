@@ -27,7 +27,7 @@ export const AccountsPage = () => (
       description: '',
       amount: 0
     }}
-    usesDates={false}
+    usesFilters={false}
     createEntity={api.createAccount}
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}

@@ -13,7 +13,7 @@ export const CategoryPage = ({ categoryType }) => {
         name: '',
         description: ''
       }}
-      usesDates={false}
+      usesFilters={false}
       createEntity={isAccountCategory ? api.createAccountCategory : api.createExpenseCategory}
       getEntities={isAccountCategory ? api.getAccountCategories : api.getExpenseCategories}
       updateEntity={isAccountCategory ? api.updateAccountCategory : api.updateExpenseCategory}

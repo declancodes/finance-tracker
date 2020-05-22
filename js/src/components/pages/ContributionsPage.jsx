@@ -33,7 +33,8 @@ export const ContributionsPage = () => (
       date: '',
       amount: 0
     }}
-    usesDates={true}
+    usesFilters={true}
+    filterCategoryName='Account'
     createEntity={api.createContribution}
     getEntities={api.getContributions}
     updateEntity={api.updateContribution}
