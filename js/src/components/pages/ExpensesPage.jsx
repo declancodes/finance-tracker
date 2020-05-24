@@ -1,7 +1,7 @@
 import React from 'react';
 import EntityPage from '../common/EntityPage';
-import api from '../../api'
-import moment from 'moment';
+import { api } from '../../common/api';
+import { helpers } from '../../common/helpers';
 
 const doExtraModifications = (values) => {
   const ecUuid = values.category;
@@ -9,14 +9,14 @@ const doExtraModifications = (values) => {
     uuid: ecUuid
   };
 
-  const dateToSubmit = moment(values.date).toISOString();
+  const dateToSubmit = helpers.consumeDate(values.date);
   values.date = dateToSubmit;
 }
 
 const getInitialValues = (expense) => {
   let initialValues = JSON.parse(JSON.stringify(expense));
   initialValues.category = expense.category.uuid;
-  initialValues.date = moment(expense.date).format('MM/DD/YYYY');
+  initialValues.date = helpers.displayDate(expense.date);
 
   return initialValues;
 }

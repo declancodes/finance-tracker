@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../Button';
 import { EntityForm } from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
-import moment from 'moment';
+import { helpers } from '../../../common/helpers';
 
 class EntityRow extends React.Component {
   constructor(props) {
@@ -30,7 +30,7 @@ class EntityRow extends React.Component {
         {e.hasOwnProperty('account') && <td>{e.account.name}</td>}
         {e.hasOwnProperty('category') && <td>{e.category.name}</td>}
         {e.hasOwnProperty('description') && <td>{e.description}</td>}
-        {e.hasOwnProperty('date') && <td>{moment(e.date).format('MM/DD/YYYY')}</td>}
+        {e.hasOwnProperty('date') && <td>{helpers.displayDate(e.date)}</td>}
         {e.hasOwnProperty('amount') && <td>{`$${e.amount}`}</td>}
         <td>
           {this.state.isEditing ? (

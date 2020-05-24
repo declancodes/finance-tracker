@@ -46,7 +46,7 @@ function sort(promise, order) {
     );
 }
 
-const api = {
+export const api = {
   createAccountCategory(values) {
     return create(ACCOUNT_CATEGORIES_URL, values);
   },
@@ -141,6 +141,4 @@ const api = {
   deleteExpense(uuid) {
     return remove(`${EXPENSES_URL}/${uuid}`)
   },
-}
-
-export default api;
+};

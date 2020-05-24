@@ -1,6 +1,7 @@
 import React from 'react';
 import EntityPage from '../common/EntityPage';
-import api from '../../api';
+import { api } from '../../common/api';
+
 
 const doExtraModifications = (values) => {
   const acUuid = values.category;
