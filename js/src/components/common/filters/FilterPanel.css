@@ -1,4 +1,4 @@
-.filter-panel * {
+.filter-panel > * {
   display: inline-block;
   margin: 3px;;
 }
