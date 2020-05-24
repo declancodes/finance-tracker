@@ -10,16 +10,15 @@ class EntityRow extends React.Component {
     this.state = {
       isEditing: false
     };
-    this.handleUpdate = this.handleUpdate.bind(this);
-  }
-
-  handleUpdate(values) {
-    this.props.handleUpdate(values);
-    this.setEditing(false);
+    this.stopEditing = this.stopEditing.bind(this);
   }
 
   setEditing(val) {
-    this.setState({ isEditing: val })
+    this.setState({ isEditing: val });
+  }
+
+  stopEditing() {
+    this.setEditing(false);
   }
 
   render() {
@@ -32,7 +31,7 @@ class EntityRow extends React.Component {
         {e.hasOwnProperty('category') && <td>{e.category.name}</td>}
         {e.hasOwnProperty('description') && <td>{e.description}</td>}
         {e.hasOwnProperty('date') && <td>{moment(e.date).format('MM/DD/YYYY')}</td>}
-        {e.hasOwnProperty('amount') && <td>${e.amount}</td>}
+        {e.hasOwnProperty('amount') && <td>{`$${e.amount}`}</td>}
         <td>
           {this.state.isEditing ? (
             <div>
@@ -43,11 +42,12 @@ class EntityRow extends React.Component {
                 isCreateMode={false}
                 options={this.props.options}
                 doExtraModifications={this.props.doExtraModifications}
-                doSubmit={this.handleUpdate}
+                doSubmit={this.props.handleUpdate}
+                doFinalState={this.stopEditing}
               />
               <Button
                 name='Cancel'
-                handleFunc={() => this.setEditing(false)}
+                handleFunc={this.stopEditing}
               />
             </div>
           ) : (

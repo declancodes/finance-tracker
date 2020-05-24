@@ -10,7 +10,8 @@ export const EntityForm = ({
   isCreateMode,
   options,
   doExtraModifications,
-  doSubmit
+  doSubmit,
+  doFinalState
 }) => {
   const initialValues = getInitialValues === undefined
     ? entity
@@ -35,6 +36,10 @@ export const EntityForm = ({
           doSubmit(values);
           setSubmitting(false);
           resetForm();
+
+          if (doFinalState !== undefined) {
+            doFinalState();
+          }
         }}
       >
         <Form>
