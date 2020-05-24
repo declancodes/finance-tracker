@@ -1,65 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../Button';
 import { EntityForm } from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import { helpers } from '../../../common/helpers';
 
-class EntityRow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isEditing: false
-    };
-    this.stopEditing = this.stopEditing.bind(this);
-  }
-
-  setEditing(val) {
-    this.setState({ isEditing: val });
-  }
-
-  stopEditing() {
-    this.setEditing(false);
-  }
-
-  render() {
-    const e = this.props.entity;
-
-    return (
-      <tr>
-        {e.hasOwnProperty('name') && <td>{e.name}</td>}
-        {e.hasOwnProperty('account') && <td>{e.account.name}</td>}
-        {e.hasOwnProperty('category') && <td>{e.category.name}</td>}
-        {e.hasOwnProperty('description') && <td>{e.description}</td>}
-        {e.hasOwnProperty('date') && <td>{helpers.displayDate(e.date)}</td>}
-        {e.hasOwnProperty('amount') && <td>{`$${e.amount}`}</td>}
-        <td>
-          {this.state.isEditing ? (
-            <div>
-              <EntityForm
-                entityName={this.props.entityName}
-                entity={e}
-                getInitialValues={this.props.getInitialValues}
-                isCreateMode={false}
-                options={this.props.options}
-                doExtraModifications={this.props.doExtraModifications}
-                doSubmit={this.props.handleUpdate}
-                doFinalState={this.stopEditing}
-              />
-              <Button
-                name='Cancel'
-                handleFunc={this.stopEditing}
-              />
-            </div>
-          ) : (
-            <ModifyRowPanel
-              handleEdit={() => this.setEditing(true)}
-              handleDelete={() => this.props.handleDelete(e.uuid)}
+export const EntityRow = ({
+  entityName,
+  entity,
+  getInitialValues,
+  options,
+  doExtraModifications,
+  handleUpdate,
+  handleDelete
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  return (
+    <tr>
+      {entity.hasOwnProperty('name') && <td>{entity.name}</td>}
+      {entity.hasOwnProperty('account') && <td>{entity.account.name}</td>}
+      {entity.hasOwnProperty('category') && <td>{entity.category.name}</td>}
+      {entity.hasOwnProperty('description') && <td>{entity.description}</td>}
+      {entity.hasOwnProperty('date') && <td>{helpers.displayDate(entity.date)}</td>}
+      {entity.hasOwnProperty('amount') && <td>{`$${entity.amount}`}</td>}
+      <td>
+        {isEditing ? (
+          <div>
+            <EntityForm
+              entityName={entityName}
+              entity={entity}
+              getInitialValues={getInitialValues}
+              isCreateMode={false}
+              options={options}
+              doExtraModifications={doExtraModifications}
+              doSubmit={handleUpdate}
+              doFinalState={() => setIsEditing(false)}
             />
-          )}
-        </td>
-      </tr>
-    );
-  }
-}
-
-export default EntityRow;
+            <Button
+              name='Cancel'
+              handleFunc={() => setIsEditing(false)}
+            />
+          </div>
+        ) : (
+          <ModifyRowPanel
+            handleEdit={() => setIsEditing(true)}
+            handleDelete={() => handleDelete(entity.uuid)}
+          />
+        )}
+      </td>
+    </tr>
+  );
+};
