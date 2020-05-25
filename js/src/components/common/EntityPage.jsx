@@ -25,35 +25,36 @@ class EntityPage extends React.Component {
   }
 
   handleCreate(values) {
-    this.props.createEntity(values)
-      .then(() => this.setEntities());
+    this.handlePromise(this.props.createEntity(values));
   }
 
   handleUpdate(values) {
-    this.props.updateEntity(values)
-      .then(() => this.setEntities());
+    this.handlePromise(this.props.updateEntity(values));
   }
 
   handleDelete(uuid) {
-    this.props.deleteEntity(uuid)
-      .then(() => this.setEntities());
+    this.handlePromise(this.props.deleteEntity(uuid));
   }
 
   handleStartDateSet(value) {
-    this.setState(
-      { start: value },
-      () => this.setEntities());
+    this.handleFilterFieldSet({ start: value });
   }
 
   handleEndDateSet(value) {
-    this.setState(
-      { end: value },
-      () => this.setEntities());
+    this.handleFilterFieldSet({ end: value });
   }
 
   handleFilterCategorySet(value) {
+    this.handleFilterFieldSet({ filterCategory: value });
+  }
+
+  handlePromise(promise) {
+    promise.then(() => this.setEntities());
+  }
+
+  handleFilterFieldSet(filterField) {
     this.setState(
-      { filterCategory: value },
+      filterField,
       () => this.setEntities());
   }
 
