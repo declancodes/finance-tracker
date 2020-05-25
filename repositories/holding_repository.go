@@ -22,14 +22,18 @@ const (
 		account.name AS "account.name",
 		account.description AS "account.description",
 		account.amount AS "account.amount",
-		holding.name,
-		holding.ticker_symbol,
+		fund.fund_uuid AS "fund.fund_uuid",
+		fund.name, AS "fund.name",
+		fund.ticker_symbol AS "fund.ticker_symbol",
+		fund.share_price AS "fund.share_price",
 		holding.shares
 	FROM holding
 	INNER JOIN account
 		ON holding.account_uuid = account.account_uuid
 	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid`
+		ON account.account_category_uuid = account_category.account_category_uuid
+	INNER JOIN fund
+		ON holding.fund_uuid = fund.fund_uuid`
 )
 
 // CreateHolding creates a Holding in db.
@@ -38,15 +42,13 @@ func (r *HoldingRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.U
 	INSERT INTO holding (
 		holding_uuid,
 		account_uuid,
-		name,
-		ticker_symbol,
+		fund_uuid,
 		shares
 	)
 	VALUES (
 		:holding_uuid,
 		:account.account_uuid,
-		:name,
-		:ticker_symbol,
+		:fund_uuid,
 		:shares
 	)
 	RETURNING holding_uuid;`
@@ -90,6 +92,7 @@ func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interfac
 		"holding":  "holding.holding_uuid = ",
 		"account":  "account.name = ",
 		"category": "account_category.name = ",
+		"fund":     "fund.ticker_symbol = ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
@@ -112,7 +115,8 @@ func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interfac
 			&h.Account.ID,
 			&h.Account.Category.ID, &h.Account.Category.Name, &h.Account.Category.Description,
 			&h.Account.Name, &h.Account.Description, &h.Account.Amount,
-			&h.Name, &h.TickerSymbol, &h.Shares)
+			&h.Fund.ID, &h.Fund.Name, &h.Fund.TickerSymbol, &h.Fund.SharePrice,
+			&h.Shares)
 		if err != nil {
 			return hs, err
 		}
@@ -128,8 +132,7 @@ func (r *HoldingRepository) UpdateHolding(db *sqlx.DB, h models.Holding) error {
 	UPDATE holding
 	SET
 		account_uuid = :account.account_uuid,
-		name = :name,
-		ticker_symbol = :ticker_symbol,
+		fund_uuid = :fund_uuid,
 		shares = :shares
 	WHERE
 		holding_uuid = :holding_uuid;`

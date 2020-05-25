@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/DeclanCodes/finance-tracker/repositories"
@@ -35,7 +34,6 @@ func (c *HoldingController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.ID, _ = uuid.NewUUID()
-		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		hUUID, err := holdingRepo.CreateHolding(db, h)
 		if err != nil {
 			errorCreating(w, "holding", err)
@@ -73,6 +71,7 @@ func (c *HoldingController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 		q := r.URL.Query()
 		accName := q.Get("account")
 		catName := q.Get("category")
+		fundSymbol := q.Get("fund")
 
 		mValues := make(map[string]interface{})
 		if accName != "" {
@@ -80,6 +79,9 @@ func (c *HoldingController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 		}
 		if catName != "" {
 			mValues["category"] = catName
+		}
+		if fundSymbol != "" {
+			mValues["fund"] = fundSymbol
 		}
 
 		hs, err := holdingRepo.GetHoldings(db, mValues)
@@ -112,7 +114,6 @@ func (c *HoldingController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.ID = hUUID
-		h.TickerSymbol = strings.ToUpper(h.TickerSymbol)
 		err = holdingRepo.UpdateHolding(db, h)
 		if err != nil {
 			errorExecutingHolding(w, err)
