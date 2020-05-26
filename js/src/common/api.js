@@ -2,23 +2,26 @@ import axios from 'axios';
 import querystring from 'query-string';
 import sortBy from 'lodash.sortby';
 
-const API_URL = 'http://localhost:8080'
-const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`
-const ACCOUNTS_URL = `${API_URL}/accounts`
-const CONTRIBUTIONS_URL = `${API_URL}/contributions`
-const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`
-const EXPENSES_URL = `${API_URL}/expenses`
+const API_URL = 'http://localhost:8080';
+const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`;
+const ACCOUNTS_URL = `${API_URL}/accounts`;
+const CONTRIBUTIONS_URL = `${API_URL}/contributions`;
+const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`;
+const EXPENSES_URL = `${API_URL}/expenses`;
+const FUNDS_URL = `${API_URL}/funds`;
+const HOLDINGS_URL = `${API_URL}/holdings`;
 
 function create(url, values) {
   return axios.post(url, values)
 }
 
-function get(baseUrl, start, end, category, account) {
+function get(baseUrl, start, end, category, account, fund) {
   const params = {
     start: start,
     end: end,
     category: category,
-    account: account
+    account: account,
+    fund: fund
   };
 
   const url = querystring.stringifyUrl(
@@ -141,4 +144,42 @@ export const api = {
   deleteExpense(uuid) {
     return remove(`${EXPENSES_URL}/${uuid}`)
   },
+
+  createFund(values) {
+    return create(FUNDS_URL, values);
+  },
+
+  getFunds() {
+    return sort(
+      get(FUNDS_URL),
+      ['name', 'tickerSymbol']
+    );
+  },
+
+  updateFund(values) {
+    return update(`${FUNDS_URL}/${values.uuid}`, values)
+  },
+
+  deleteFund(uuid) {
+    return remove(`${FUNDS_URL}/${uuid}`)
+  },
+
+  createHolding(values) {
+    return create(HOLDINGS_URL, values);
+  },
+
+  getHoldings(fundTicker) {
+    return sort(
+      get(HOLDINGS_URL, null, null, null, null, fundTicker),
+      ['account.name', 'fund.tickerSymbol']
+    );
+  },
+
+  updateHolding(values) {
+    return update(`${HOLDINGS_URL}/${values.uuid}`, values)
+  },
+
+  deleteHolding(uuid) {
+    return remove(`${HOLDINGS_URL}/${uuid}`)
+  }
 };

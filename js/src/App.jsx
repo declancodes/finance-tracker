@@ -10,6 +10,7 @@ import { AccountsPage } from './components/pages/AccountsPage';
 import { CategoryPage } from './components/pages/CategoryPage';
 import { ContributionsPage } from './components/pages/ContributionsPage';
 import { ExpensesPage } from './components/pages/ExpensesPage';
+import { FundsPage } from './components/pages/FundsPage';
 import './App.css';
 
 const App = () => (
@@ -22,6 +23,7 @@ const App = () => (
           <li><Link to='/contributions'>Contributions</Link></li>
           <li><Link to='/expenses'>Expenses</Link></li>
           <li><Link to='/expensecategories'>Expense Categories</Link></li>
+          <li><Link to='/funds'>Funds</Link></li>
         </ul>
       </nav>
       <Switch>
@@ -39,6 +41,9 @@ const App = () => (
         </Route>
         <Route path='/expensecategories'>
           <CategoryPage key='2' categoryType='Expense'/>
+        </Route>
+        <Route path='/funds'>
+          <FundsPage/>
         </Route>
       </Switch>
     </div>

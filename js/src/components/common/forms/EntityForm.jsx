@@ -47,8 +47,10 @@ export const EntityForm = ({
           {entity.hasOwnProperty('category') && <LabeledField name='category' options={options}/>}
           {entity.hasOwnProperty('account') && <LabeledField name='account' options={options}/>}
           {entity.hasOwnProperty('description') && <LabeledField name='description' fieldType='text'/>}
+          {entity.hasOwnProperty('tickerSymbol') && <LabeledField name='tickerSymbol' fieldType='text'/>}
           {entity.hasOwnProperty('date') && <DatePickerField name='date'/>}
           {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
+          {entity.hasOwnProperty('sharePrice') && <LabeledField name='sharePrice' fieldType='number'/>}
           <button type='submit'>
             {isCreateMode ? 'Create' : 'Update'}
           </button>
