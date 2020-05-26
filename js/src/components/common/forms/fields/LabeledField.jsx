@@ -1,5 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
+import { DatePickerField } from './DatePickerField';
 import { Options } from '../../Options';
 import startCase from 'lodash.startcase';
 
@@ -13,9 +14,7 @@ export const LabeledField = ({
   return (
     <div className='labeled-field'>
       <label htmlFor={name}>{displayName}</label>
-      {options === undefined ? (
-        <Field name={name} type={fieldType} />
-      ) : (
+      {options !== undefined ? (
         <Field name={name} as='select'>
           <Options
             entityName={displayName}
@@ -24,6 +23,10 @@ export const LabeledField = ({
             optionDisplay={optionDisplay}
           />
         </Field>
+      ) : fieldType === 'date' ? (
+        <DatePickerField name={name}/>
+      ) : (
+        <Field name={name} type={fieldType}/>
       )}
     </div>
   );

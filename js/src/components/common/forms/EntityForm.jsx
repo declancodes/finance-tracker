@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Formik } from 'formik';
-import { DatePickerField } from './fields/DatePickerField';
 import { LabeledField } from './fields/LabeledField';
 
 export const EntityForm = ({
@@ -50,7 +49,7 @@ export const EntityForm = ({
           {entity.hasOwnProperty('fund') && <LabeledField name='fund' options={options2} optionDisplay='tickerSymbol'/>}
           {entity.hasOwnProperty('description') && <LabeledField name='description' fieldType='text'/>}
           {entity.hasOwnProperty('tickerSymbol') && <LabeledField name='tickerSymbol' fieldType='text'/>}
-          {entity.hasOwnProperty('date') && <DatePickerField name='date'/>}
+          {entity.hasOwnProperty('date') && <LabeledField name='date' fieldType='date'/>}
           {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
           {entity.hasOwnProperty('sharePrice') && <LabeledField name='sharePrice' fieldType='number'/>}
           {entity.hasOwnProperty('shares') && <LabeledField name='shares' fieldType='number'/>}
