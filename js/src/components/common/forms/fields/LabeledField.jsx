@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
-import { Options } from '../Options';
+import { Options } from '../../Options';
 import startCase from 'lodash.startcase';
 
 export const LabeledField = ({
@@ -11,7 +11,7 @@ export const LabeledField = ({
 }) => {
   const displayName = startCase(name);
   return (
-    <div>
+    <div className='labeled-field'>
       <label htmlFor={name}>{displayName}</label>
       {options === undefined ? (
         <Field name={name} type={fieldType} />

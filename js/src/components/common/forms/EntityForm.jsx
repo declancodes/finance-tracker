@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Formik } from 'formik';
-import { DatePickerField } from './DatePickerField';
-import { LabeledField } from './LabeledField';
+import { DatePickerField } from './fields/DatePickerField';
+import { LabeledField } from './fields/LabeledField';
 
 export const EntityForm = ({
   entityName,

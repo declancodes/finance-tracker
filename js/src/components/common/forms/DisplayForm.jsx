@@ -13,7 +13,7 @@ export const DisplayForm = ({
   doSubmit,
   setNotUsing
 }) => (
-  <div>
+  <div className='display-form'>
     <EntityForm
       entityName={entityName}
       entity={entity}
