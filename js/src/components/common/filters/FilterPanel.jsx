@@ -5,6 +5,7 @@ import './FilterPanel.css';
 import '../../../../node_modules/react-datepicker/dist/react-datepicker.css';
 
 export const FilterPanel = ({
+  usesDates,
   start,
   end,
   filterCategory,
@@ -15,16 +16,20 @@ export const FilterPanel = ({
   setFilterCategory
 }) => (
   <div className='filter-panel'>
-    <LabeledDatePicker
-      name='from'
-      initial={start}
-      onChange={val => setStart(val)}
-    />
-    <LabeledDatePicker
-      name='to'
-      initial={end}
-      onChange={val => setEnd(val)}
-    />
+    {usesDates &&
+      <>
+        <LabeledDatePicker
+          name='from'
+          initial={start}
+          onChange={val => setStart(val)}
+        />
+        <LabeledDatePicker
+          name='to'
+          initial={end}
+          onChange={val => setEnd(val)}
+        />
+      </>
+    }
     <label htmlFor='categoryFilter'>{filterCategoryName}</label>
     <select
       name='categoryFilter'

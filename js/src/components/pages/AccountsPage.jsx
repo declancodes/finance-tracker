@@ -27,7 +27,9 @@ export const AccountsPage = () => (
       description: '',
       amount: 0
     }}
-    usesFilters={false}
+    usesFilters={true}
+    usesDates={false}
+    filterCategoryName='Category'
     createEntity={api.createAccount}
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}

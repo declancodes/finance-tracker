@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './Button';
 import { EntityForm } from './forms/EntityForm';
 import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
@@ -15,7 +16,8 @@ class EntityPage extends React.Component {
       options2: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
-      filterCategory: ''
+      filterCategory: '',
+      isCreating: false
     };
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -64,6 +66,10 @@ class EntityPage extends React.Component {
     this.setOptions();
   }
 
+  setIsCreating(val) {
+    this.setState({ isCreating: val });
+  }
+
   setOptions() {
     if (this.props.getOptions1 !== undefined) {
       this.props.getOptions1()
@@ -92,6 +98,7 @@ class EntityPage extends React.Component {
         <h1>{this.props.entityPlural}</h1>
         {this.props.usesFilters &&
           <FilterPanel
+            usesDates={this.props.usesDates}
             start={this.state.start}
             end={this.state.end}
             filterCategory={this.state.filterCategory}
@@ -128,15 +135,28 @@ class EntityPage extends React.Component {
             )}
           </tbody>
         </table>
-        <EntityForm
-          entityName={this.props.entityName}
-          entity={this.props.blankEntity}
-          isCreateMode={true}
-          options1={this.state.options1}
-          options2={this.state.options2}
-          doExtraModifications={this.props.doExtraModifications}
-          doSubmit={this.handleCreate}
-        />
+        {this.state.isCreating ? (
+          <div>
+            <EntityForm
+              entityName={this.props.entityName}
+              entity={this.props.blankEntity}
+              isCreateMode={true}
+              options1={this.state.options1}
+              options2={this.state.options2}
+              doExtraModifications={this.props.doExtraModifications}
+              doSubmit={this.handleCreate}
+            />
+            <Button
+              name='Cancel'
+              handleFunc={() => this.setIsCreating(false)}
+            />
+          </div>
+        ) : (
+          <Button
+            name={`Create ${this.props.entityName}`}
+            handleFunc={() => this.setIsCreating(true)}
+          />
+        )}
       </div>
     );
   }
