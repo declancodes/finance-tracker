@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './Button';
-import { EntityForm } from './forms/EntityForm';
+import { DisplayForm } from './forms/DisplayForm';
 import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
@@ -136,21 +136,16 @@ class EntityPage extends React.Component {
           </tbody>
         </table>
         {this.state.isCreating ? (
-          <div>
-            <EntityForm
-              entityName={this.props.entityName}
-              entity={this.props.blankEntity}
-              isCreateMode={true}
-              options1={this.state.options1}
-              options2={this.state.options2}
-              doExtraModifications={this.props.doExtraModifications}
-              doSubmit={this.handleCreate}
-            />
-            <Button
-              name='Cancel'
-              handleFunc={() => this.setIsCreating(false)}
-            />
-          </div>
+          <DisplayForm
+            entityName={this.props.entityName}
+            entity={this.props.blankEntity}
+            isCreateMode={true}
+            options1={this.state.options1}
+            options2={this.state.options2}
+            doExtraModifications={this.props.doExtraModifications}
+            doSubmit={this.handleCreate}
+            setNotUsing={() => this.setIsCreating(false)}
+          />
         ) : (
           <Button
             name={`Create ${this.props.entityName}`}

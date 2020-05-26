@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../Button';
-import { EntityForm } from '../forms/EntityForm';
+import { DisplayForm } from '../forms/DisplayForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import { helpers } from '../../../common/helpers';
 
@@ -29,23 +28,17 @@ export const EntityRow = ({
       {entity.hasOwnProperty('shares') && <td>{entity.shares}</td>}
       <td>
         {isEditing ? (
-          <div>
-            <EntityForm
-              entityName={entityName}
-              entity={entity}
-              getInitialValues={getInitialValues}
-              isCreateMode={false}
-              options1={options1}
-              options2={options2}
-              doExtraModifications={doExtraModifications}
-              doSubmit={handleUpdate}
-              doFinalState={() => setIsEditing(false)}
-            />
-            <Button
-              name='Cancel'
-              handleFunc={() => setIsEditing(false)}
-            />
-          </div>
+          <DisplayForm
+            entityName={entityName}
+            entity={entity}
+            getInitialValues={getInitialValues}
+            isCreateMode={false}
+            options1={options1}
+            options2={options2}
+            doExtraModifications={doExtraModifications}
+            doSubmit={handleUpdate}
+            setNotUsing={() => setIsEditing(false)}
+          />
         ) : (
           <ModifyRowPanel
             handleEdit={() => setIsEditing(true)}
