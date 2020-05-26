@@ -3,7 +3,12 @@ import { Field } from 'formik';
 import { Options } from '../Options';
 import startCase from 'lodash.startcase';
 
-export const LabeledField = ({ name, fieldType, options }) => {
+export const LabeledField = ({
+  name,
+  fieldType,
+  options,
+  optionDisplay
+}) => {
   const displayName = startCase(name);
   return (
     <div>
@@ -16,6 +21,7 @@ export const LabeledField = ({ name, fieldType, options }) => {
             entityName={displayName}
             options={options}
             optionValue='uuid'
+            optionDisplay={optionDisplay}
           />
         </Field>
       )}

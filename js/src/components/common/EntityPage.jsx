@@ -11,7 +11,8 @@ class EntityPage extends React.Component {
     super(props);
     this.state = {
       entities: [],
-      options: [],
+      options1: [],
+      options2: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
       filterCategory: ''
@@ -64,9 +65,13 @@ class EntityPage extends React.Component {
   }
 
   setOptions() {
-    if (this.props.getOptions !== undefined) {
-      this.props.getOptions()
-        .then(response => this.setState({ options: response }));
+    if (this.props.getOptions1 !== undefined) {
+      this.props.getOptions1()
+        .then(response => this.setState({ options1: response }));
+    }
+    if (this.props.getOptions2 !== undefined) {
+      this.props.getOptions2()
+        .then(response => this.setState({ options2: response }));
     }
   }
 
@@ -90,7 +95,7 @@ class EntityPage extends React.Component {
             start={this.state.start}
             end={this.state.end}
             filterCategory={this.state.filterCategory}
-            filterCategoryOptions={this.state.options}
+            filterCategoryOptions={this.state.options1}
             filterCategoryName={this.props.filterCategoryName}
             setStart={this.handleStartDateSet}
             setEnd={this.handleEndDateSet}
@@ -107,7 +112,8 @@ class EntityPage extends React.Component {
                   entityName={this.props.entityName}
                   entity={entity}
                   getInitialValues={this.props.getInitialValues}
-                  options={this.state.options}
+                  options1={this.state.options1}
+                  options2={this.state.options2}
                   doExtraModifications={this.props.doExtraModifications}
                   handleUpdate={this.handleUpdate}
                   handleDelete={this.handleDelete}
@@ -126,7 +132,8 @@ class EntityPage extends React.Component {
           entityName={this.props.entityName}
           entity={this.props.blankEntity}
           isCreateMode={true}
-          options={this.state.options}
+          options1={this.state.options1}
+          options2={this.state.options2}
           doExtraModifications={this.props.doExtraModifications}
           doSubmit={this.handleCreate}
         />

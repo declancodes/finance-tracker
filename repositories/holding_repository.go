@@ -23,7 +23,7 @@ const (
 		account.description AS "account.description",
 		account.amount AS "account.amount",
 		fund.fund_uuid AS "fund.fund_uuid",
-		fund.name, AS "fund.name",
+		fund.name AS "fund.name",
 		fund.ticker_symbol AS "fund.ticker_symbol",
 		fund.share_price AS "fund.share_price",
 		holding.shares
@@ -48,7 +48,7 @@ func (r *HoldingRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.U
 	VALUES (
 		:holding_uuid,
 		:account.account_uuid,
-		:fund_uuid,
+		:fund.fund_uuid,
 		:shares
 	)
 	RETURNING holding_uuid;`

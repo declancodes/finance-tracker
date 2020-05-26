@@ -35,6 +35,7 @@ export const FilterPanel = ({
         entityName={filterCategoryName}
         options={filterCategoryOptions}
         optionValue='name'
+        optionDisplay='name'
       />
     </select>
   </div>

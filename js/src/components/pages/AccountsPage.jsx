@@ -2,7 +2,6 @@ import React from 'react';
 import EntityPage from '../common/EntityPage';
 import { api } from '../../common/api';
 
-
 const doExtraModifications = (values) => {
   const acUuid = values.category;
   values.category = {
@@ -33,7 +32,7 @@ export const AccountsPage = () => (
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}
     deleteEntity={api.deleteAccount}
-    getOptions={api.getAccountCategories}
+    getOptions1={api.getAccountCategories}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

@@ -8,7 +8,8 @@ export const EntityForm = ({
   entity,
   getInitialValues,
   isCreateMode,
-  options,
+  options1,
+  options2,
   doExtraModifications,
   doSubmit,
   doFinalState
@@ -44,13 +45,15 @@ export const EntityForm = ({
       >
         <Form>
           {entity.hasOwnProperty('name') && <LabeledField name='name' fieldType='text'/>}
-          {entity.hasOwnProperty('category') && <LabeledField name='category' options={options}/>}
-          {entity.hasOwnProperty('account') && <LabeledField name='account' options={options}/>}
+          {entity.hasOwnProperty('category') && <LabeledField name='category' options={options1} optionDisplay='name'/>}
+          {entity.hasOwnProperty('account') && <LabeledField name='account' options={options1} optionDisplay='name'/>}
+          {entity.hasOwnProperty('fund') && <LabeledField name='fund' options={options2} optionDisplay='tickerSymbol'/>}
           {entity.hasOwnProperty('description') && <LabeledField name='description' fieldType='text'/>}
           {entity.hasOwnProperty('tickerSymbol') && <LabeledField name='tickerSymbol' fieldType='text'/>}
           {entity.hasOwnProperty('date') && <DatePickerField name='date'/>}
           {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
           {entity.hasOwnProperty('sharePrice') && <LabeledField name='sharePrice' fieldType='number'/>}
+          {entity.hasOwnProperty('shares') && <LabeledField name='shares' fieldType='number'/>}
           <button type='submit'>
             {isCreateMode ? 'Create' : 'Update'}
           </button>
