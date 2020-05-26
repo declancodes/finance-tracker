@@ -5,7 +5,6 @@ import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
 import moment from 'moment';
-import size from 'lodash.size';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -128,7 +127,7 @@ class EntityPage extends React.Component {
               ))
             ) : (
               <tr>
-                <td colSpan={size(this.props.blankEntity)}>
+                <td colSpan={Object.keys(this.props.blankEntity).length}>
                   No {this.props.entityPlural}
                 </td>
               </tr>

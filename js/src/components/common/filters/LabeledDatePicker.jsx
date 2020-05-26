@@ -1,6 +1,6 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
-import capitalize from 'lodash.capitalize';
+import startCase from 'lodash.startcase';
 
 export const LabeledDatePicker = ({
   name,
@@ -8,7 +8,7 @@ export const LabeledDatePicker = ({
   onChange
 }) => (
   <>
-    <label htmlFor={name}>{capitalize(name)}</label>
+    <label htmlFor={name}>{startCase(name)}</label>
     <DatePicker
       name={name}
       selected={initial}

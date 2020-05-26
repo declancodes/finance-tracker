@@ -13,11 +13,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "formik": "^2.1.4",
-    "lodash.capitalize": "^4.2.1",
-    "lodash.size": "^4.2.0",
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
-    "lodash.tolower": "^4.1.2",
     "moment": "^2.25.3",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
