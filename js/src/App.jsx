@@ -7,7 +7,7 @@ import {
   Link
 } from 'react-router-dom';
 import { AccountsPage } from './components/pages/AccountsPage';
-import { CategoryPage } from './components/pages/CategoryPage';
+import { CategoriesPage } from './components/pages/CategoriesPage';
 import { ContributionsPage } from './components/pages/ContributionsPage';
 import { ExpensesPage } from './components/pages/ExpensesPage';
 import { FundsPage } from './components/pages/FundsPage';
@@ -33,7 +33,7 @@ const App = () => (
           <AccountsPage/>
         </Route>
         <Route path='/accountcategories'>
-          <CategoryPage key='1' categoryType='Account'/>
+          <CategoriesPage key='1' categoryType='Account'/>
         </Route>
         <Route path='/contributions'>
           <ContributionsPage/>
@@ -42,7 +42,7 @@ const App = () => (
           <ExpensesPage/>
         </Route>
         <Route path='/expensecategories'>
-          <CategoryPage key='2' categoryType='Expense'/>
+          <CategoriesPage key='2' categoryType='Expense'/>
         </Route>
         <Route path='/funds'>
           <FundsPage/>

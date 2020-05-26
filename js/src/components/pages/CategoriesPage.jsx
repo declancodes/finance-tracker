@@ -2,7 +2,7 @@ import React from 'react';
 import EntityPage from '../common/EntityPage';
 import { api } from '../../common/api';
 
-export const CategoryPage = ({ categoryType }) => {
+export const CategoriesPage = ({ categoryType }) => {
   const isAccountCategory = categoryType === 'Account';
   return (
     <EntityPage
