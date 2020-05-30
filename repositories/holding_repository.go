@@ -70,7 +70,7 @@ func (r *HoldingRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.U
 }
 
 // GetHolding retrieves Holding with hUUID from db.
-func (r *HoldingRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h models.Holding, err error) {
+func (r *HoldingRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h *models.Holding, err error) {
 	mValues := map[string]interface{}{
 		"holding": hUUID.String(),
 	}
@@ -88,7 +88,7 @@ func (r *HoldingRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h models.H
 
 // GetHoldings retrieves Holding entities from db.
 // Filters for Holding retrieval are applied to the query based on the key-value pairs in mValues.
-func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) (hs []models.Holding, err error) {
+func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) (hs []*models.Holding, err error) {
 	mFilters := map[string]string{
 		"holding":  "holding.holding_uuid = ",
 		"account":  "account.name = ",
@@ -122,7 +122,7 @@ func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interfac
 			return hs, err
 		}
 
-		hs = append(hs, h)
+		hs = append(hs, &h)
 	}
 	return hs, nil
 }

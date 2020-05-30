@@ -94,9 +94,7 @@ func (c *HoldingController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		for _, h := range hs {
-			d := h.Shares.Mul(h.Fund.SharePrice)
-			hold := &h
-			hold.Value = d
+			h.Value = h.Shares.Mul(h.Fund.SharePrice)
 		}
 
 		addJSONContentHeader(w)
