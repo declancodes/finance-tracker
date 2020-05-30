@@ -15,6 +15,7 @@ type Fund struct {
 	Name         string          `json:"name" db:"name"`
 	TickerSymbol string          `json:"tickerSymbol" db:"ticker_symbol"`
 	SharePrice   decimal.Decimal `json:"sharePrice" db:"share_price"`
+	ExpenseRatio decimal.Decimal `json:"expenseRatio" db:"expense_ratio"`
 }
 
 // PreviousPrice is the price for Date.

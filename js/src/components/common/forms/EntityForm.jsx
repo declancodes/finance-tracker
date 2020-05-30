@@ -53,6 +53,7 @@ export const EntityForm = ({
           {entity.hasOwnProperty('amount') && <LabeledField name='amount' fieldType='number'/>}
           {entity.hasOwnProperty('sharePrice') && <LabeledField name='sharePrice' fieldType='number'/>}
           {entity.hasOwnProperty('shares') && <LabeledField name='shares' fieldType='number'/>}
+          {entity.hasOwnProperty('expenseRatio') && <LabeledField name='expenseRatio' fieldType='number'/>}
           <button type='submit'>
             {isCreateMode ? 'Create' : 'Update'}
           </button>

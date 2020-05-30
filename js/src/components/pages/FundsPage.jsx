@@ -11,7 +11,8 @@ export const FundsPage = () => {
         uuid: '',
         name: '',
         tickerSymbol: '',
-        sharePrice: ''
+        sharePrice: 0,
+        expenseRatio: 0
       }}
       usesFilters={false}
       createEntity={api.createFund}

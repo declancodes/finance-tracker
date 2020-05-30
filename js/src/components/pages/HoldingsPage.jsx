@@ -30,7 +30,8 @@ export const HoldingsPage = () => (
       uuid: '',
       account: '',
       fund: '',
-      shares: 0
+      shares: 0,
+      value: 0
     }}
     usesFilters={false}
     createEntity={api.createHolding}

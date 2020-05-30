@@ -26,6 +26,7 @@ const (
 		fund.name AS "fund.name",
 		fund.ticker_symbol AS "fund.ticker_symbol",
 		fund.share_price AS "fund.share_price",
+		fund.expense_ratio AS "fund.expense_ratio",
 		holding.shares
 	FROM holding
 	INNER JOIN account
@@ -115,7 +116,7 @@ func (r *HoldingRepository) GetHoldings(db *sqlx.DB, mValues map[string]interfac
 			&h.Account.ID,
 			&h.Account.Category.ID, &h.Account.Category.Name, &h.Account.Category.Description,
 			&h.Account.Name, &h.Account.Description, &h.Account.Amount,
-			&h.Fund.ID, &h.Fund.Name, &h.Fund.TickerSymbol, &h.Fund.SharePrice,
+			&h.Fund.ID, &h.Fund.Name, &h.Fund.TickerSymbol, &h.Fund.SharePrice, &h.Fund.ExpenseRatio,
 			&h.Shares)
 		if err != nil {
 			return hs, err

@@ -17,7 +17,8 @@ const (
 		fund_uuid,
 		name,
 		ticker_symbol,
-		share_price
+		share_price,
+		expense_ratio
 	FROM fund`
 )
 
@@ -28,13 +29,15 @@ func (r *FundRepository) CreateFund(db *sqlx.DB, f models.Fund) (uuid.UUID, erro
 		fund_uuid,
 		name,
 		ticker_symbol,
-		share_price
+		share_price,
+		expense_ratio
 	)
 	VALUES (
 		:fund_uuid,
 		:name,
 		:ticker_symbol,
-		:share_price
+		:share_price,
+		:expense_ratio
 	)
 	RETURNING fund_uuid;`
 
@@ -79,7 +82,8 @@ func (r *FundRepository) UpdateFund(db *sqlx.DB, f models.Fund) error {
 	SET
 		name = :name,
 		ticker_symbol = :ticker_symbol,
-		share_price = :share_price
+		share_price = :share_price,
+		expense_ratio = :expense_ratio
 	WHERE
 		fund_uuid = :fund_uuid;`
 

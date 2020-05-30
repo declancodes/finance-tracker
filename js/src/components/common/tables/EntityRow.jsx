@@ -26,6 +26,8 @@ export const EntityRow = ({
       {entity.hasOwnProperty('amount') && <td>{`$${entity.amount}`}</td>}
       {entity.hasOwnProperty('sharePrice') && <td>{`$${entity.sharePrice}`}</td>}
       {entity.hasOwnProperty('shares') && <td>{entity.shares}</td>}
+      {entity.hasOwnProperty('value') && <td>{`$${entity.value}`}</td>}
+      {entity.hasOwnProperty('expenseRatio') && <td>{`${entity.expenseRatio}%`}</td>}
       <td>
         {isEditing ? (
           <DisplayForm

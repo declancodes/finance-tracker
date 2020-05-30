@@ -11,4 +11,5 @@ type Holding struct {
 	Account Account         `json:"account" db:"account"`
 	Fund    Fund            `json:"fund" db:"fund"`
 	Shares  decimal.Decimal `json:"shares" db:"shares"`
+	Value   decimal.Decimal `json:"value"`
 }
