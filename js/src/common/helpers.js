@@ -18,5 +18,9 @@ export const helpers = {
 
   displayCurrency(currencyString) {
     return currencyFormatter.format(currencyString);
+  },
+
+  displayDecimals(num, places) {
+    return (Math.round(num * 1000) / 1000).toFixed(places);
   }
 };

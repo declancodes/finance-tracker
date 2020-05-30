@@ -25,7 +25,7 @@ export const EntityRow = ({
       {entity.hasOwnProperty('date') && <td>{helpers.displayDate(entity.date)}</td>}
       {entity.hasOwnProperty('amount') && <td>{helpers.displayCurrency(entity.amount)}</td>}
       {entity.hasOwnProperty('sharePrice') && <td>{helpers.displayCurrency(entity.sharePrice)}</td>}
-      {entity.hasOwnProperty('shares') && <td>{entity.shares}</td>}
+      {entity.hasOwnProperty('shares') && <td>{helpers.displayDecimals(entity.shares, 3)}</td>}
       {entity.hasOwnProperty('value') && <td>{helpers.displayCurrency(entity.value)}</td>}
       {entity.hasOwnProperty('expenseRatio') && <td>{`${entity.expenseRatio}%`}</td>}
       <td>
