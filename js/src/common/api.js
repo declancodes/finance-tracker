@@ -73,9 +73,9 @@ export const api = {
     return create(ACCOUNTS_URL, values);
   },
 
-  getAccounts() {
+  getAccounts(start, end, category) {
     return sort(
-      get(ACCOUNTS_URL),
+      get(ACCOUNTS_URL, null, null, category),
       ['category.name', 'name']
     );
   },
