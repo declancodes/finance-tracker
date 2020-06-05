@@ -9,13 +9,30 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// AssetCategory is a type of asset a Fund has.
+type AssetCategory struct {
+	ID          uuid.UUID `json:"uuid,omitEmpty" db:"asset_category_uuid"`
+	Name        string    `json:"name" db:"name"`
+	Description string    `json:"description" db:"description"`
+}
+
 // Fund is a traded entity in which money can be invested.
 type Fund struct {
 	ID           uuid.UUID       `json:"uuid,omitEmpty" db:"fund_uuid"`
+	Category     AssetCategory   `json:"category" db:"asset_category"`
 	Name         string          `json:"name" db:"name"`
 	TickerSymbol string          `json:"tickerSymbol" db:"ticker_symbol"`
 	SharePrice   decimal.Decimal `json:"sharePrice" db:"share_price"`
 	ExpenseRatio decimal.Decimal `json:"expenseRatio" db:"expense_ratio"`
+}
+
+// Holding is a position in a fund.
+type Holding struct {
+	ID      uuid.UUID       `json:"uuid,omitEmpty" db:"holding_uuid"`
+	Account Account         `json:"account" db:"account"`
+	Fund    Fund            `json:"fund" db:"fund"`
+	Shares  decimal.Decimal `json:"shares" db:"shares"`
+	Value   decimal.Decimal `json:"value"`
 }
 
 // PreviousPrice is the price for Date.

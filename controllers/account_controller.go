@@ -23,12 +23,20 @@ func badRequestAccount(w http.ResponseWriter, err error) {
 	badRequestModel(w, "account", err)
 }
 
+func badRequestContribution(w http.ResponseWriter, err error) {
+	badRequestModel(w, "contribution", err)
+}
+
 func errorExecutingAccountCategory(w http.ResponseWriter, err error) {
 	errorExecuting(w, "account category", err)
 }
 
 func errorExecutingAccount(w http.ResponseWriter, err error) {
 	errorExecuting(w, "account", err)
+}
+
+func errorExecutingContribution(w http.ResponseWriter, err error) {
+	errorExecuting(w, "contribution", err)
 }
 
 // CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
@@ -70,6 +78,27 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		created(w, aUUID)
+	}
+}
+
+// CreateContribution creates a Contribution based on the r *http.Request Body.
+func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var c models.Contribution
+		err := json.NewDecoder(r.Body).Decode(&c)
+		if err != nil {
+			badRequestContribution(w, err)
+			return
+		}
+
+		c.ID, _ = uuid.NewUUID()
+		cUUID, err := accountRepo.CreateContribution(db, c)
+		if err != nil {
+			errorCreating(w, "contribution", err)
+			return
+		}
+
+		created(w, cUUID)
 	}
 }
 
@@ -154,6 +183,63 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// GetContribution gets a Contribution.
+func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		c, err := accountRepo.GetContribution(db, cUUID)
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(c)
+		logError(err)
+	}
+}
+
+// GetContributions gets Contribution entities.
+func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		accName := q.Get("account")
+		catName := q.Get("category")
+		start := getTime(q.Get("start"))
+		end := getTime(q.Get("end"))
+
+		mValues := make(map[string]interface{})
+		if accName != "" {
+			mValues["account"] = accName
+		}
+		if catName != "" {
+			mValues["category"] = catName
+		}
+		if !start.IsZero() {
+			mValues["start"] = start
+		}
+		if !end.IsZero() {
+			mValues["end"] = end
+		}
+
+		cs, err := accountRepo.GetContributions(db, mValues)
+
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(cs)
+		logError(err)
+	}
+}
+
 // UpdateAccountCategory updates an AccountCategory.
 func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -208,6 +294,33 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// UpdateContribution updates a Contribution.
+func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		var c models.Contribution
+		err = json.NewDecoder(r.Body).Decode(&c)
+		if err != nil {
+			badRequestContribution(w, err)
+			return
+		}
+
+		c.ID = cUUID
+		err = accountRepo.UpdateContribution(db, c)
+		if err != nil {
+			errorExecutingContribution(w, err)
+			return
+		}
+
+		updated(w, c.ID)
+	}
+}
+
 // DeleteAccountCategory deletes an AccountCategory.
 func (c *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -219,5 +332,12 @@ func (c *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc 
 func (c *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "account", accountRepo.DeleteAccount)
+	}
+}
+
+// DeleteContribution deletes a Contribution.
+func (c *AccountController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		delete(w, r, db, "contribution", accountRepo.DeleteContribution)
 	}
 }

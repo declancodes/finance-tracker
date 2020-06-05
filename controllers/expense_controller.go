@@ -35,7 +35,6 @@ func errorExecutingExpense(w http.ResponseWriter, err error) {
 func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ec models.ExpenseCategory
-
 		err := json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
 			badRequestExpenseCategory(w, err)

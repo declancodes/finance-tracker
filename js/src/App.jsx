@@ -7,9 +7,11 @@ import {
   Link
 } from 'react-router-dom';
 import { AccountsPage } from './components/pages/AccountsPage';
-import { CategoriesPage } from './components/pages/CategoriesPage';
+import { AccountCategoriesPage } from './components/pages/categories/AccountCategoriesPage';
+import { AssetCategoriesPage } from './components/pages/categories/AssetCategoriesPage';
 import { ContributionsPage } from './components/pages/ContributionsPage';
 import { ExpensesPage } from './components/pages/ExpensesPage';
+import { ExpenseCategoriesPage } from './components/pages/categories/ExpenseCategoriesPage';
 import { FundsPage } from './components/pages/FundsPage';
 import { HoldingsPage } from './components/pages/HoldingsPage';
 import './App.css';
@@ -21,6 +23,7 @@ const App = () => (
         <ul>
           <li><Link to='/accounts'>Accounts</Link></li>
           <li><Link to='/accountcategories'>Account Categories</Link></li>
+          <li><Link to='/assetcategories'>Asset Categories</Link></li>
           <li><Link to='/contributions'>Contributions</Link></li>
           <li><Link to='/expenses'>Expenses</Link></li>
           <li><Link to='/expensecategories'>Expense Categories</Link></li>
@@ -33,7 +36,10 @@ const App = () => (
           <AccountsPage/>
         </Route>
         <Route path='/accountcategories'>
-          <CategoriesPage key='1' categoryType='Account'/>
+          <AccountCategoriesPage/>
+        </Route>
+        <Route path='/assetcategories'>
+          <AssetCategoriesPage/>
         </Route>
         <Route path='/contributions'>
           <ContributionsPage/>
@@ -42,7 +48,7 @@ const App = () => (
           <ExpensesPage/>
         </Route>
         <Route path='/expensecategories'>
-          <CategoriesPage key='2' categoryType='Expense'/>
+          <ExpenseCategoriesPage/>
         </Route>
         <Route path='/funds'>
           <FundsPage/>

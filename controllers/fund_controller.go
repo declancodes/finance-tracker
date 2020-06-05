@@ -20,12 +20,49 @@ type FundController struct{}
 
 var fundRepo = repositories.FundRepository{}
 
+func badRequestAssetCategory(w http.ResponseWriter, err error) {
+	badRequestModel(w, "asset category", err)
+}
+
 func badRequestFund(w http.ResponseWriter, err error) {
 	badRequestModel(w, "fund", err)
 }
 
+func badRequestHolding(w http.ResponseWriter, err error) {
+	badRequestModel(w, "holding", err)
+}
+
+func errorExecutingAssetCategory(w http.ResponseWriter, err error) {
+	errorExecuting(w, "asset category", err)
+}
+
 func errorExecutingFund(w http.ResponseWriter, err error) {
 	errorExecuting(w, "fund", err)
+}
+
+func errorExecutingHolding(w http.ResponseWriter, err error) {
+	errorExecuting(w, "holding", err)
+}
+
+// CreateAssetCategory creates an AssetCategory based on the r *http.Request Body.
+func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var ac models.AssetCategory
+		err := json.NewDecoder(r.Body).Decode(&ac)
+		if err != nil {
+			badRequestAssetCategory(w, err)
+			return
+		}
+
+		ac.ID, _ = uuid.NewUUID()
+		acUUID, err := fundRepo.CreateAssetCategory(db, ac)
+		if err != nil {
+			errorCreating(w, "asset category", err)
+			return
+		}
+
+		created(w, acUUID)
+	}
 }
 
 // CreateFund creates a Fund based on the r *http.Request Body.
@@ -51,6 +88,63 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		created(w, fUUID)
+	}
+}
+
+// CreateHolding creates a Holding based on the r *http.Request Body.
+func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var h models.Holding
+		err := json.NewDecoder(r.Body).Decode(&h)
+		if err != nil {
+			badRequestHolding(w, err)
+			return
+		}
+
+		h.ID, _ = uuid.NewUUID()
+		hUUID, err := fundRepo.CreateHolding(db, h)
+		if err != nil {
+			errorCreating(w, "holding", err)
+			return
+		}
+
+		created(w, hUUID)
+	}
+}
+
+// GetAssetCategory gets an AssetCategory.
+func (c *FundController) GetAssetCategory(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		acUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		ac, err := fundRepo.GetAssetCategory(db, acUUID)
+		if err != nil {
+			errorExecutingAssetCategory(w, err)
+			return
+		}
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(ac)
+		logError(err)
+	}
+}
+
+// GetAssetCategories gets AssetCategory entities.
+func (c *FundController) GetAssetCategories(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		acs, err := fundRepo.GetAssetCategories(db)
+		if err != nil {
+			errorExecutingAssetCategory(w, err)
+			return
+		}
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(acs)
+		logError(err)
 	}
 }
 
@@ -91,6 +185,92 @@ func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// GetHolding gets a Holding.
+func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		hUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		h, err := fundRepo.GetHolding(db, hUUID)
+		if err != nil {
+			errorExecutingHolding(w, err)
+			return
+		}
+
+		h.Value = h.Shares.Mul(h.Fund.SharePrice)
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(h)
+		logError(err)
+	}
+}
+
+// GetHoldings gets Holding entities.
+func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		accName := q.Get("account")
+		catName := q.Get("category")
+		fundSymbol := q.Get("fund")
+
+		mValues := make(map[string]interface{})
+		if accName != "" {
+			mValues["account"] = accName
+		}
+		if catName != "" {
+			mValues["category"] = catName
+		}
+		if fundSymbol != "" {
+			mValues["fund"] = fundSymbol
+		}
+
+		hs, err := fundRepo.GetHoldings(db, mValues)
+
+		if err != nil {
+			errorExecutingHolding(w, err)
+			return
+		}
+
+		for _, h := range hs {
+			h.Value = h.Shares.Mul(h.Fund.SharePrice)
+		}
+
+		addJSONContentHeader(w)
+		err = json.NewEncoder(w).Encode(hs)
+		logError(err)
+	}
+}
+
+// UpdateAssetCategory updates an AssetCategory.
+func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		acUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		var ac models.AssetCategory
+		err = json.NewDecoder(r.Body).Decode(&ac)
+		if err != nil {
+			badRequestAssetCategory(w, err)
+			return
+		}
+
+		ac.ID = acUUID
+		err = fundRepo.UpdateAssetCategory(db, ac)
+		if err != nil {
+			errorExecutingAssetCategory(w, err)
+			return
+		}
+
+		updated(w, ac.ID)
+	}
+}
+
 // UpdateFund updates a Fund.
 func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -123,10 +303,51 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// UpdateHolding updates a Holding.
+func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		hUUID, err := getUUID(r)
+		if err != nil {
+			badRequestUUID(w, err)
+			return
+		}
+
+		var h models.Holding
+		err = json.NewDecoder(r.Body).Decode(&h)
+		if err != nil {
+			badRequestHolding(w, err)
+			return
+		}
+
+		h.ID = hUUID
+		err = fundRepo.UpdateHolding(db, h)
+		if err != nil {
+			errorExecutingHolding(w, err)
+			return
+		}
+
+		updated(w, h.ID)
+	}
+}
+
+// DeleteAssetCategory deletes an AssetCategory.
+func (c *FundController) DeleteAssetCategory(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		delete(w, r, db, "asset category", fundRepo.DeleteAssetCategory)
+	}
+}
+
 // DeleteFund deletes a Fund.
 func (c *FundController) DeleteFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "fund", fundRepo.DeleteFund)
+	}
+}
+
+// DeleteHolding deletes a Holding.
+func (c *FundController) DeleteHolding(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		delete(w, r, db, "holding", fundRepo.DeleteHolding)
 	}
 }
 

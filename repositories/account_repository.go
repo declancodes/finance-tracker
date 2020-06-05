@@ -31,6 +31,26 @@ const (
 	FROM account
 	INNER JOIN account_category
 		ON account.account_category_uuid = account_category.account_category_uuid`
+
+	getContributionsQuery = `
+	SELECT
+		contribution.contribution_uuid,
+		account.account_uuid AS "account.account_uuid",
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name AS "account.name",
+		account.description AS "account.description",
+		account.amount AS "account.amount",
+		contribution.name,
+		contribution.description,
+		contribution.amount,
+		contribution.date_made
+	FROM contribution
+	INNER JOIN account
+		ON contribution.account_uuid = account.account_uuid
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
 )
 
 // CreateAccountCategory creates an AccountCategory in db.
@@ -48,19 +68,7 @@ func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.Account
 	)
 	RETURNING account_category_uuid;`
 
-	rows, err := db.NamedQuery(query, ac)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(&ac.ID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-	}
-	return ac.ID, nil
+	return createAndGetUUID(db, query, ac)
 }
 
 // CreateAccount creates an Account in db.
@@ -82,19 +90,31 @@ func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) (uuid.U
 	)
 	RETURNING account_uuid;`
 
-	rows, err := db.NamedQuery(query, a)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	defer rows.Close()
+	return createAndGetUUID(db, query, a)
+}
 
-	for rows.Next() {
-		err = rows.Scan(&a.ID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-	}
-	return a.ID, nil
+// CreateContribution creates a Contribution in db.
+func (r *AccountRepository) CreateContribution(db *sqlx.DB, c models.Contribution) (uuid.UUID, error) {
+	query := `
+	INSERT INTO contribution (
+		contribution_uuid,
+		account_uuid,
+		name,
+		description,
+		amount,
+		date_made
+	)
+	VALUES (
+		:contribution_uuid,
+		:account.account_uuid,
+		:name,
+		:description,
+		:amount,
+		:date_made
+	)
+	RETURNING contribution_uuid;`
+
+	return createAndGetUUID(db, query, c)
 }
 
 // GetAccountCategory retrieves the AccountCategory with acUUID from db.
@@ -102,7 +122,7 @@ func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (a
 	query := fmt.Sprintf(`
 	%s
 	WHERE
-		account_category_uuid = $1;`, getAccountsQuery)
+		account_category_uuid = $1;`, getAccountCategoriesQuery)
 
 	err = db.Get(&ac, query, acUUID.String())
 	return ac, err
@@ -118,19 +138,26 @@ func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) (acs []models.Acco
 
 // GetAccount retrieves the Account with aUUID from db.
 func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.Account, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		account.account_uuid = $1;`, getAccountsQuery)
+	mValues := map[string]interface{}{
+		"account": aUUID.String(),
+	}
 
-	err = db.Get(&a, query, aUUID.String())
-	return a, err
+	as, err := r.GetAccounts(db, mValues)
+	if err != nil {
+		return a, err
+	}
+	if len(as) > 1 {
+		return a, fmt.Errorf("more than one Account with ID: %v", aUUID)
+	}
+
+	return as[0], nil
 }
 
 // GetAccounts retrieves Account entities from db.
 // Filters for Account retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) (as []models.Account, err error) {
 	mFilters := map[string]string{
+		"account":  "account.account_uuid = ",
 		"category": "account_category.name = ",
 	}
 
@@ -145,6 +172,64 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 	return as, err
 }
 
+// GetContribution retrieves Contribution with cUUID from db.
+func (r *AccountRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c models.Contribution, err error) {
+	mValues := map[string]interface{}{
+		"contribution": cUUID.String(),
+	}
+
+	cs, err := r.GetContributions(db, mValues)
+	if err != nil {
+		return c, err
+	}
+	if len(cs) > 1 {
+		return c, fmt.Errorf("more than one Contribution with ID: %v", cUUID)
+	}
+
+	return cs[0], nil
+}
+
+// GetContributions retrieves Contribution entities from db.
+// Filters for Contribution retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]interface{}) (cs []models.Contribution, err error) {
+	mFilters := map[string]string{
+		"contribution": "contribution.contribution_uuid = ",
+		"account":      "account.name = ",
+		"category":     "account_category.name = ",
+		"start":        "contribution.date_made >= ",
+		"end":          "contribution.date_made <= ",
+	}
+
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	if err != nil {
+		return cs, err
+	}
+
+	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
+
+	rows, err := db.Queryx(query, values...)
+	if err != nil {
+		return cs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var c models.Contribution
+
+		err = rows.Scan(&c.ID,
+			&c.Account.ID,
+			&c.Account.Category.ID, &c.Account.Category.Name, &c.Account.Category.Description,
+			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
+			&c.Name, &c.Description, &c.Amount, &c.Date)
+		if err != nil {
+			return cs, err
+		}
+
+		cs = append(cs, c)
+	}
+	return cs, nil
+}
+
 // UpdateAccountCategory updates an AccountCategory in db.
 func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac models.AccountCategory) error {
 	query := `
@@ -155,10 +240,7 @@ func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac models.Account
 	WHERE
 		account_category_uuid = :account_category_uuid;`
 
-	res, err := db.NamedExec(query, ac)
-
-	_, err = getExecuted(res, err)
-	return err
+	return updateEntity(db, query, ac)
 }
 
 // UpdateAccount updates an Account in db.
@@ -173,10 +255,23 @@ func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a models.Account) error {
 	WHERE
 		account_uuid = :account_uuid;`
 
-	res, err := db.NamedExec(query, a)
+	return updateEntity(db, query, a)
+}
 
-	_, err = getExecuted(res, err)
-	return err
+// UpdateContribution updates a Contribution in db.
+func (r *AccountRepository) UpdateContribution(db *sqlx.DB, c models.Contribution) error {
+	query := `
+	UPDATE contribution
+	SET
+		account_uuid = :account.account_uuid,
+		name = :name,
+		description = :description,
+		amount = :amount,
+		date_made = :date_made
+	WHERE
+		contribution_uuid = :contribution_uuid;`
+
+	return updateEntity(db, query, c)
 }
 
 // DeleteAccountCategory deletes an AccountCategory from db.
@@ -186,10 +281,7 @@ func (r *AccountRepository) DeleteAccountCategory(db *sqlx.DB, acUUID uuid.UUID)
 	WHERE
 		account_category_uuid = $1;`
 
-	res, err := db.Exec(query, acUUID.String())
-
-	_, err = getExecuted(res, err)
-	return err
+	return deleteEntity(db, query, acUUID)
 }
 
 // DeleteAccount deletes an Account from db.
@@ -199,8 +291,15 @@ func (r *AccountRepository) DeleteAccount(db *sqlx.DB, aUUID uuid.UUID) error {
 	WHERE
 		account_uuid = $1;`
 
-	res, err := db.Exec(query, aUUID.String())
+	return deleteEntity(db, query, aUUID)
+}
 
-	_, err = getExecuted(res, err)
-	return err
+// DeleteContribution deletes a Contribution from db.
+func (r *AccountRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID) error {
+	query := `
+	DELETE FROM contribution
+	WHERE
+		contribution_uuid = $1;`
+
+	return deleteEntity(db, query, cUUID)
 }

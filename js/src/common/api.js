@@ -5,6 +5,7 @@ import sortBy from 'lodash.sortby';
 const API_URL = 'http://localhost:8080';
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`;
 const ACCOUNTS_URL = `${API_URL}/accounts`;
+const ASSET_CATEGORIES_URL = `${API_URL}/assetcategories`;
 const CONTRIBUTIONS_URL = `${API_URL}/contributions`;
 const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`;
 const EXPENSES_URL = `${API_URL}/expenses`;
@@ -86,6 +87,25 @@ export const api = {
 
   deleteAccount(uuid) {
     return remove(`${ACCOUNTS_URL}/${uuid}`)
+  },
+
+  createAssetCategory(values) {
+    return create(ASSET_CATEGORIES_URL, values);
+  },
+
+  getAssetCategories() {
+    return sort(
+      get(ASSET_CATEGORIES_URL),
+      ['name']
+    );
+  },
+
+  updateAssetCategory(values) {
+    return update(`${ASSET_CATEGORIES_URL}/${values.uuid}`, values)
+  },
+
+  deleteAssetCategory(uuid) {
+    return remove(`${ASSET_CATEGORIES_URL}/${uuid}`)
   },
 
   createContribution(values) {

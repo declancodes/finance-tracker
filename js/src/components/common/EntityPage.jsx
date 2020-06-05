@@ -81,13 +81,13 @@ class EntityPage extends React.Component {
   }
 
   setEntities() {
-    (this.props.usesFilters
-      ? this.props.getEntities(
-          this.state.start.toISOString(),
-          this.state.end.toISOString(),
-          this.state.filterCategory
-        )
-      : this.props.getEntities()
+    (this.props.usesFilters ?
+      this.props.getEntities(
+        this.state.start.toISOString(),
+        this.state.end.toISOString(),
+        this.state.filterCategory
+      ) :
+      this.props.getEntities()
     ).then(response => this.setState({ entities: response }));
   }
 
