@@ -21,14 +21,26 @@ const App = () => (
     <div>
       <nav>
         <ul>
-          <li><Link to='/accounts'>Accounts</Link></li>
-          <li><Link to='/accountcategories'>Account Categories</Link></li>
-          <li><Link to='/assetcategories'>Asset Categories</Link></li>
-          <li><Link to='/contributions'>Contributions</Link></li>
-          <li><Link to='/expenses'>Expenses</Link></li>
-          <li><Link to='/expensecategories'>Expense Categories</Link></li>
-          <li><Link to='/funds'>Funds</Link></li>
-          <li><Link to='/holdings'>Holdings</Link></li>
+          <li>
+            <ul>
+              <li><Link to='/accounts'>Accounts</Link></li>
+              <li><Link to='/accountcategories'>Account Categories</Link></li>
+              <li><Link to='/contributions'>Contributions</Link></li>
+            </ul>
+          </li>
+          <li>
+            <ul>
+              <li><Link to='/expenses'>Expenses</Link></li>
+              <li><Link to='/expensecategories'>Expense Categories</Link></li>
+            </ul>
+          </li>
+          <li>
+            <ul>
+              <li><Link to='/assetcategories'>Asset Categories</Link></li>
+              <li><Link to='/funds'>Funds</Link></li>
+              <li><Link to='/holdings'>Holdings</Link></li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <Switch>
