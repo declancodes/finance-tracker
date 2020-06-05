@@ -258,7 +258,7 @@ func (r *FundRepository) UpdateFund(db *sqlx.DB, f models.Fund) error {
 	query := `
 	UPDATE fund
 	SET
-		asset_category_uuid = :asset_category.asset_category_uuid
+		asset_category_uuid = :asset_category.asset_category_uuid,
 		name = :name,
 		ticker_symbol = :ticker_symbol,
 		share_price = :share_price,
