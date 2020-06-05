@@ -172,7 +172,15 @@ func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 // GetFunds gets Fund entities.
 func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fs, err := fundRepo.GetFunds(db)
+		q := r.URL.Query()
+		catName := q.Get("category")
+
+		mValues := make(map[string]interface{})
+		if catName != "" {
+			mValues["category"] = catName
+		}
+
+		fs, err := fundRepo.GetFunds(db, mValues)
 
 		if err != nil {
 			errorExecutingFund(w, err)

@@ -169,10 +169,10 @@ export const api = {
     return create(FUNDS_URL, values);
   },
 
-  getFunds() {
+  getFunds(start, end, category) {
     return sort(
-      get(FUNDS_URL),
-      ['name', 'tickerSymbol']
+      get(FUNDS_URL, null, null, category),
+      ['category.name', 'name', 'tickerSymbol']
     );
   },
 

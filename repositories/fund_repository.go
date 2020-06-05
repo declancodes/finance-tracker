@@ -21,12 +21,14 @@ const (
 
 	getFundsQuery = `
 	SELECT
-		fund_uuid,
-		asset_category_uuid,
-		name,
-		ticker_symbol,
-		share_price,
-		expense_ratio
+		fund.fund_uuid,
+		asset_category.asset_category_uuid AS "asset_category.asset_category_uuid",
+		asset_category.name AS "asset_category.name",
+		asset_category.description AS "asset_category.description",
+		fund.name,
+		fund.ticker_symbol,
+		fund.share_price,
+		fund.expense_ratio
 	FROM fund
 	INNER JOIN asset_category
 		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
@@ -144,20 +146,37 @@ func (r *FundRepository) GetAssetCategories(db *sqlx.DB) (acs []models.AssetCate
 
 // GetFund retrieves the Fund with fUUID from db.
 func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (f models.Fund, err error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		fund.fund_uuid = $1;`, getFundsQuery)
+	mValues := map[string]interface{}{
+		"fund": fUUID.String(),
+	}
 
-	err = db.Get(&f, query, fUUID.String())
-	return f, err
+	fs, err := r.GetFunds(db, mValues)
+	if err != nil {
+		return f, err
+	}
+	if len(fs) > 1 {
+		return f, fmt.Errorf("more than one Fund with ID: %v", fUUID)
+	}
+
+	return fs[0], nil
 }
 
 // GetFunds retrieves Fund entities from db.
-func (r *FundRepository) GetFunds(db *sqlx.DB) (fs []models.Fund, err error) {
-	query := fmt.Sprintf(`%s;`, getFundsQuery)
+// Filters for Fund retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (fs []models.Fund, err error) {
+	mFilters := map[string]string{
+		"fund":     "fund.fund_uuid = ",
+		"category": "asset_category.name = ",
+	}
 
-	err = db.Select(&fs, query)
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	if err != nil {
+		return fs, err
+	}
+
+	query := fmt.Sprintf("%s %s", getFundsQuery, clauses)
+
+	err = db.Select(&fs, query, values...)
 	return fs, err
 }
 
