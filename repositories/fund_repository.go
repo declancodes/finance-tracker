@@ -275,7 +275,7 @@ func (r *FundRepository) UpdateHolding(db *sqlx.DB, h models.Holding) error {
 	UPDATE holding
 	SET
 		account_uuid = :account.account_uuid,
-		fund_uuid = :fund_uuid,
+		fund_uuid = :fund.fund_uuid,
 		shares = :shares
 	WHERE
 		holding_uuid = :holding_uuid;`
