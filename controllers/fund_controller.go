@@ -172,15 +172,7 @@ func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 // GetFunds gets Fund entities.
 func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		catName := q.Get("category")
-
-		mValues := make(map[string]interface{})
-		if catName != "" {
-			mValues["category"] = catName
-		}
-
-		fs, err := fundRepo.GetFunds(db, mValues)
+		fs, err := fundRepo.GetFunds(db, getFilters(r))
 
 		if err != nil {
 			errorExecutingFund(w, err)
@@ -219,23 +211,7 @@ func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 // GetHoldings gets Holding entities.
 func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		accName := q.Get("account")
-		catName := q.Get("category")
-		fundSymbol := q.Get("fund")
-
-		mValues := make(map[string]interface{})
-		if accName != "" {
-			mValues["account"] = accName
-		}
-		if catName != "" {
-			mValues["category"] = catName
-		}
-		if fundSymbol != "" {
-			mValues["fund"] = fundSymbol
-		}
-
-		hs, err := fundRepo.GetHoldings(db, mValues)
+		hs, err := fundRepo.GetHoldings(db, getFilters(r))
 
 		if err != nil {
 			errorExecutingHolding(w, err)

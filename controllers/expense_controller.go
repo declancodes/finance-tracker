@@ -133,23 +133,7 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 // GetExpenses gets Expense entities.
 func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		catName := q.Get("category")
-		start := getTime(q.Get("start"))
-		end := getTime(q.Get("end"))
-
-		mValues := make(map[string]interface{})
-		if catName != "" {
-			mValues["category"] = catName
-		}
-		if !start.IsZero() {
-			mValues["start"] = start
-		}
-		if !end.IsZero() {
-			mValues["end"] = end
-		}
-
-		es, err := expenseRepo.GetExpenses(db, mValues)
+		es, err := expenseRepo.GetExpenses(db, getFilters(r))
 
 		if err != nil {
 			errorExecutingExpense(w, err)

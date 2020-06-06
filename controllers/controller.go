@@ -76,6 +76,34 @@ func errorExecuting(w http.ResponseWriter, m string, err error) {
 	log.Println(err)
 }
 
+func getFilters(r *http.Request) map[string]interface{} {
+	q := r.URL.Query()
+	accName := q.Get("account")
+	catName := q.Get("category")
+	fundSymbol := q.Get("fund")
+	start := getTime(q.Get("start"))
+	end := getTime(q.Get("end"))
+
+	mValues := make(map[string]interface{})
+	if accName != "" {
+		mValues["account"] = accName
+	}
+	if catName != "" {
+		mValues["category"] = catName
+	}
+	if fundSymbol != "" {
+		mValues["fund"] = fundSymbol
+	}
+	if !start.IsZero() {
+		mValues["start"] = start
+	}
+	if !end.IsZero() {
+		mValues["end"] = end
+	}
+
+	return mValues
+}
+
 func getTime(s string) time.Time {
 	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {

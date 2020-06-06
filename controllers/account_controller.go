@@ -162,15 +162,7 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 // GetAccounts gets Account entities.
 func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		catName := q.Get("category")
-
-		mValues := make(map[string]interface{})
-		if catName != "" {
-			mValues["category"] = catName
-		}
-
-		as, err := accountRepo.GetAccounts(db, mValues)
+		as, err := accountRepo.GetAccounts(db, getFilters(r))
 
 		if err != nil {
 			errorExecutingAccount(w, err)
@@ -207,27 +199,7 @@ func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 // GetContributions gets Contribution entities.
 func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		accName := q.Get("account")
-		catName := q.Get("category")
-		start := getTime(q.Get("start"))
-		end := getTime(q.Get("end"))
-
-		mValues := make(map[string]interface{})
-		if accName != "" {
-			mValues["account"] = accName
-		}
-		if catName != "" {
-			mValues["category"] = catName
-		}
-		if !start.IsZero() {
-			mValues["start"] = start
-		}
-		if !end.IsZero() {
-			mValues["end"] = end
-		}
-
-		cs, err := accountRepo.GetContributions(db, mValues)
+		cs, err := accountRepo.GetContributions(db, getFilters(r))
 
 		if err != nil {
 			errorExecutingContribution(w, err)
