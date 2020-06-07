@@ -17,7 +17,7 @@ export const LabeledField = ({
       {options !== undefined ? (
         <Field name={name} as='select'>
           <Options
-            entityName={displayName}
+            defaultOptionText={`Select ${displayName}`}
             options={options}
             optionValue='uuid'
             optionDisplay={optionDisplay}

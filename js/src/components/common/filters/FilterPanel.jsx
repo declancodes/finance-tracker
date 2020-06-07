@@ -1,10 +1,11 @@
 import React from 'react';
 import { LabeledDatePicker } from './LabeledDatePicker';
 import { Options } from '../Options';
+import { helpers } from '../../../common/helpers';
+import pluralize from 'pluralize';
+import startCase from 'lodash.startcase';
 import './FilterPanel.css';
 import '../../../../node_modules/react-datepicker/dist/react-datepicker.css';
-import { helpers } from '../../../common/helpers';
-import startCase from 'lodash.startcase';
 
 export const FilterPanel = ({
   usesDates,
@@ -41,7 +42,7 @@ export const FilterPanel = ({
         onChange={e => setFilterCategory(e.target.value)}
       >
         <Options
-          entityName={filterCategoryDisplayName}
+          defaultOptionText={`All ${pluralize(filterCategoryDisplayName)}`}
           options={helpers.getOptionsFromKey(filterCategoryOptions, filterCategoryName)}
           optionValue='name'
           optionDisplay='name'

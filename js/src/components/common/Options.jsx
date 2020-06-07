@@ -1,13 +1,13 @@
 import React from 'react';
 
 export const Options = ({
-  entityName,
+  defaultOptionText,
   options,
   optionValue,
   optionDisplay
 }) => (
   <>
-    <option value='' defaultValue=''>Select {entityName}</option>
+    <option value='' defaultValue=''>{defaultOptionText}</option>
     {options.length > 0 && (
       options.map(option => (
         <option key={option.uuid} value={option[optionValue]}>
