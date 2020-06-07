@@ -24,7 +24,6 @@ const getInitialValues = (contribution) => {
 export const ContributionsPage = () => (
   <EntityPage
     entityName='Contribution'
-    entityPlural='Contributions'
     blankEntity={{
       uuid: '',
       name: '',
@@ -35,12 +34,14 @@ export const ContributionsPage = () => (
     }}
     usesFilters={true}
     usesDates={true}
-    filterCategoryName='Account'
+    filterCategoryName='account'
     createEntity={api.createContribution}
     getEntities={api.getContributions}
     updateEntity={api.updateContribution}
     deleteEntity={api.deleteContribution}
-    getOptions={[api.getAccounts]}
+    getOptions={[
+      {key: 'account', value: api.getAccounts}
+    ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

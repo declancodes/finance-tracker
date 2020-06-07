@@ -19,7 +19,6 @@ const getInitialValues = (account) => {
 export const AccountsPage = () => (
   <EntityPage
     entityName='Account'
-    entityPlural='Accounts'
     blankEntity={{
       uuid: '',
       name: '',
@@ -29,12 +28,14 @@ export const AccountsPage = () => (
     }}
     usesFilters={true}
     usesDates={false}
-    filterCategoryName='Category'
+    filterCategoryName='category'
     createEntity={api.createAccount}
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}
     deleteEntity={api.deleteAccount}
-    getOptions={[api.getAccountCategories]}
+    getOptions={[
+      {key: 'category', value: api.getAccountCategories}
+    ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

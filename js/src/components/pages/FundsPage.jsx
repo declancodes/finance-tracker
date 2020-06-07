@@ -19,7 +19,6 @@ const getInitialValues = (fund) => {
 export const FundsPage = () => (
   <EntityPage
     entityName='Fund'
-    entityPlural='Funds'
     blankEntity={{
       uuid: '',
       name: '',
@@ -30,12 +29,14 @@ export const FundsPage = () => (
     }}
     usesFilters={true}
     usesDates={false}
-    filterCategoryName='Category'
+    filterCategoryName='category'
     createEntity={api.createFund}
     getEntities={api.getFunds}
     updateEntity={api.updateFund}
     deleteEntity={api.deleteFund}
-    getOptions={[api.getAssetCategories]}
+    getOptions={[
+      {key: 'category', value: api.getAssetCategories}
+    ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

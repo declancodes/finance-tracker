@@ -25,7 +25,6 @@ const getInitialValues = (holding) => {
 export const HoldingsPage = () => (
   <EntityPage
     entityName='Holding'
-    entityPlural='Holdings'
     blankEntity={{
       uuid: '',
       account: '',
@@ -38,7 +37,10 @@ export const HoldingsPage = () => (
     getEntities={api.getHoldings}
     updateEntity={api.updateHolding}
     deleteEntity={api.deleteHolding}
-    getOptions={[api.getAccounts, api.getFunds]}
+    getOptions={[
+      {key: 'account', value: api.getAccounts},
+      {key: 'fund', value: api.getFunds}
+    ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

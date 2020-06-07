@@ -16,6 +16,7 @@
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
     "moment": "^2.25.3",
+    "pluralize": "^8.0.0",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-datepicker": "^2.15.0",

@@ -22,5 +22,11 @@ export const helpers = {
 
   displayDecimals(num, places) {
     return (Math.round(num * 1000) / 1000).toFixed(places);
+  },
+
+  getOptionsFromKey(options, key) {
+    return (Array.isArray(options) && options.length) ?
+      options.filter(o => o.key === key)[0].value :
+      options;
   }
 };

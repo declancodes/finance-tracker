@@ -24,7 +24,6 @@ const getInitialValues = (expense) => {
 export const ExpensesPage = () => (
   <EntityPage
     entityName='Expense'
-    entityPlural='Expenses'
     blankEntity={{
       uuid: '',
       name: '',
@@ -35,12 +34,14 @@ export const ExpensesPage = () => (
     }}
     usesFilters={true}
     usesDates={true}
-    filterCategoryName='Category'
+    filterCategoryName='category'
     createEntity={api.createExpense}
     getEntities={api.getExpenses}
     updateEntity={api.updateExpense}
     deleteEntity={api.deleteExpense}
-    getOptions={[api.getExpenseCategories]}
+    getOptions={[
+      {key: 'category', value: api.getExpenseCategories}
+    ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Formik } from 'formik';
 import { LabeledField } from './fields/LabeledField';
+import { LabeledSelectField } from './fields/LabeledSelectField';
 
 export const EntityForm = ({
   entityName,
@@ -47,13 +48,13 @@ export const EntityForm = ({
             <LabeledField name='name' fieldType='text'/>
           }
           {entity.hasOwnProperty('category') &&
-            <LabeledField name='category' options={options[0]} optionDisplay='name'/>
+            <LabeledSelectField name='category' options={options} optionDisplay='name'/>
           }
           {entity.hasOwnProperty('account') &&
-            <LabeledField name='account' options={options[0]} optionDisplay='name'/>
+            <LabeledSelectField name='account' options={options} optionDisplay='name'/>
           }
           {entity.hasOwnProperty('fund') &&
-            <LabeledField name='fund' options={options[1]} optionDisplay='tickerSymbol'/>
+            <LabeledSelectField name='fund' options={options} optionDisplay='tickerSymbol'/>
           }
           {entity.hasOwnProperty('description') &&
             <LabeledField name='description' fieldType='text'/>

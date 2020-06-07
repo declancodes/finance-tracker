@@ -5,13 +5,14 @@ import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
 import moment from 'moment';
+import pluralize from 'pluralize';
 
 class EntityPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       entities: [],
-      options: [[]],
+      options: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
       filterCategory: '',
@@ -73,8 +74,13 @@ class EntityPage extends React.Component {
       return;
     }
 
-    let opts = this.props.getOptions.map(getOpts =>
-      getOpts().then(response => response)
+    let opts = this.props.getOptions.map(getOpts => 
+      getOpts.value().then(response => {
+        return {
+          key: getOpts.key,
+          value: response
+        }
+      })
     );
 
     Promise.all(opts)
@@ -93,9 +99,10 @@ class EntityPage extends React.Component {
   }
 
   render() {
+    const entityPluralName = pluralize(this.props.entityName);
     return (
       <div>
-        <h1>{this.props.entityPlural}</h1>
+        <h1>{entityPluralName}</h1>
         {this.props.usesFilters &&
           <FilterPanel
             usesDates={this.props.usesDates}
@@ -128,7 +135,7 @@ class EntityPage extends React.Component {
             ) : (
               <tr>
                 <td colSpan={Object.keys(this.props.blankEntity).length}>
-                  No {this.props.entityPlural}
+                  No {entityPluralName}
                 </td>
               </tr>
             )}
