@@ -7,8 +7,7 @@ export const DisplayForm = ({
   entity,
   getInitialValues,
   isCreateMode,
-  options1,
-  options2,
+  options,
   doExtraModifications,
   doSubmit,
   setNotUsing
@@ -19,8 +18,7 @@ export const DisplayForm = ({
       entity={entity}
       getInitialValues={getInitialValues}
       isCreateMode={isCreateMode}
-      options1={options1}
-      options2={options2}
+      options={options}
       doExtraModifications={doExtraModifications}
       doSubmit={doSubmit}
       doFinalState={setNotUsing}

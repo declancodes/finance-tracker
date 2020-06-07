@@ -35,7 +35,7 @@ export const FundsPage = () => (
     getEntities={api.getFunds}
     updateEntity={api.updateFund}
     deleteEntity={api.deleteFund}
-    getOptions1={api.getAssetCategories}
+    getOptions={[api.getAssetCategories]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

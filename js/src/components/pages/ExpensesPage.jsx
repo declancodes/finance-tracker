@@ -40,7 +40,7 @@ export const ExpensesPage = () => (
     getEntities={api.getExpenses}
     updateEntity={api.updateExpense}
     deleteEntity={api.deleteExpense}
-    getOptions1={api.getExpenseCategories}
+    getOptions={[api.getExpenseCategories]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

@@ -38,7 +38,7 @@ export const FilterPanel = ({
     >
       <Options
         entityName={filterCategoryName}
-        options={filterCategoryOptions}
+        options={filterCategoryOptions[0]}
         optionValue='name'
         optionDisplay='name'
       />

@@ -38,8 +38,7 @@ export const HoldingsPage = () => (
     getEntities={api.getHoldings}
     updateEntity={api.updateHolding}
     deleteEntity={api.deleteHolding}
-    getOptions1={api.getAccounts}
-    getOptions2={api.getFunds}
+    getOptions={[api.getAccounts, api.getFunds]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />

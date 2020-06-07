@@ -7,8 +7,7 @@ export const EntityRow = ({
   entityName,
   entity,
   getInitialValues,
-  options1,
-  options2,
+  options,
   doExtraModifications,
   handleUpdate,
   handleDelete
@@ -35,8 +34,7 @@ export const EntityRow = ({
             entity={entity}
             getInitialValues={getInitialValues}
             isCreateMode={false}
-            options1={options1}
-            options2={options2}
+            options={options}
             doExtraModifications={doExtraModifications}
             doSubmit={handleUpdate}
             setNotUsing={() => setIsEditing(false)}

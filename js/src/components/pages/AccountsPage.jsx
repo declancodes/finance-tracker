@@ -34,7 +34,7 @@ export const AccountsPage = () => (
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}
     deleteEntity={api.deleteAccount}
-    getOptions1={api.getAccountCategories}
+    getOptions={[api.getAccountCategories]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   />
