@@ -137,7 +137,7 @@ func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) (acs []models.Acco
 }
 
 // GetAccount retrieves the Account with aUUID from db.
-func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.Account, err error) {
+func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a *models.Account, err error) {
 	mValues := map[string]interface{}{
 		"account": aUUID.String(),
 	}
@@ -155,7 +155,7 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a models.A
 
 // GetAccounts retrieves Account entities from db.
 // Filters for Account retrieval are applied to the query based on the key-value pairs in mValues.
-func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) (as []models.Account, err error) {
+func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) (as []*models.Account, err error) {
 	mFilters := map[string]string{
 		"account":  "account.account_uuid = ",
 		"category": "account_category.name = ",

@@ -8,6 +8,7 @@ import (
 	"github.com/DeclanCodes/finance-tracker/repositories"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/shopspring/decimal"
 )
 
 // AccountController is the means for interacting with Account entities from an http router.
@@ -153,6 +154,8 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		updateAccountValueFromHoldings(db, a)
+
 		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(a)
 		logError(err)
@@ -167,6 +170,10 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 		if err != nil {
 			errorExecutingAccount(w, err)
 			return
+		}
+
+		for _, a := range as {
+			updateAccountValueFromHoldings(db, a)
 		}
 
 		addJSONContentHeader(w)
@@ -311,5 +318,21 @@ func (c *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 func (c *AccountController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, "contribution", accountRepo.DeleteContribution)
+	}
+}
+
+func updateAccountValueFromHoldings(db *sqlx.DB, a *models.Account) {
+	hs, err := fundRepo.GetHoldings(db, map[string]interface{}{"account": a.Name})
+	if err != nil {
+		logError(err)
+		return
+	}
+
+	if len(hs) > 0 {
+		hTotal := decimal.Zero
+		for _, h := range hs {
+			hTotal = hTotal.Add(h.Value)
+		}
+		a.Amount = hTotal
 	}
 }

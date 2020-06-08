@@ -235,6 +235,8 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 			return hs, err
 		}
 
+		h.Value = h.Shares.Mul(h.Fund.SharePrice)
+
 		hs = append(hs, &h)
 	}
 	return hs, nil

@@ -200,8 +200,6 @@ func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		h.Value = h.Shares.Mul(h.Fund.SharePrice)
-
 		addJSONContentHeader(w)
 		err = json.NewEncoder(w).Encode(h)
 		logError(err)
@@ -216,10 +214,6 @@ func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 		if err != nil {
 			errorExecutingHolding(w, err)
 			return
-		}
-
-		for _, h := range hs {
-			h.Value = h.Shares.Mul(h.Fund.SharePrice)
 		}
 
 		addJSONContentHeader(w)
