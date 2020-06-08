@@ -27,14 +27,15 @@ export const AccountsPage = () => (
       amount: 0
     }}
     usesFilters={true}
-    usesDates={false}
-    filterCategoryName='category'
+    filterCategories={[
+      {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
+    ]}
     createEntity={api.createAccount}
     getEntities={api.getAccounts}
     updateEntity={api.updateAccount}
     deleteEntity={api.deleteAccount}
     getOptions={[
-      {key: 'category', value: api.getAccountCategories}
+      {name: 'category', value: api.getAccountCategories}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

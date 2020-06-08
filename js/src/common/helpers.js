@@ -24,9 +24,24 @@ export const helpers = {
     return (Math.round(num * 1000) / 1000).toFixed(places);
   },
 
-  getOptionsFromKey(options, key) {
-    return (Array.isArray(options) && options.length) ?
-      options.filter(o => o.key === key)[0].value :
-      options;
+  getOptionsFromKey(options, name, defaultValue) {
+    if (!this.isNonEmptyArray(options)) {
+      return defaultValue;
+    }
+
+    const opt = options.filter(o => o.name === name);
+    return this.isNonEmptyArray(opt) ? opt[0].value : defaultValue;
+  },
+
+  getOptionsArrayFromKey(options, name) {
+    return this.getOptionsFromKey(options, name, options);
+  },
+
+  getValueFromKey(options, name) {
+    return this.getOptionsFromKey(options, name, '');
+  },
+
+  isNonEmptyArray(obj) {
+    return Array.isArray(obj) && obj.length > 0;
   }
 };

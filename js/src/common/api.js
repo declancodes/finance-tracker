@@ -16,17 +16,9 @@ function create(url, values) {
   return axios.post(url, values)
 }
 
-function get(baseUrl, start, end, category, account, fund) {
-  const params = {
-    start: start,
-    end: end,
-    category: category,
-    account: account,
-    fund: fund
-  };
-
+function get(baseUrl, filterParams) {
   const url = querystring.stringifyUrl(
-    { url: baseUrl, query: params },
+    { url: baseUrl, query: filterParams },
     { skipNull: true, skipEmptyString: true }
   );
 
@@ -55,7 +47,7 @@ export const api = {
     return create(ACCOUNT_CATEGORIES_URL, values);
   },
 
-  getAccountCategories() {
+  getAccountCategories(filterParams) {
     return sort(
       get(ACCOUNT_CATEGORIES_URL),
       ['name']
@@ -74,9 +66,9 @@ export const api = {
     return create(ACCOUNTS_URL, values);
   },
 
-  getAccounts(start, end, category) {
+  getAccounts(filterParams) {
     return sort(
-      get(ACCOUNTS_URL, null, null, category),
+      get(ACCOUNTS_URL, filterParams),
       ['category.name', 'name']
     );
   },
@@ -93,7 +85,7 @@ export const api = {
     return create(ASSET_CATEGORIES_URL, values);
   },
 
-  getAssetCategories() {
+  getAssetCategories(filterParams) {
     return sort(
       get(ASSET_CATEGORIES_URL),
       ['name']
@@ -112,9 +104,9 @@ export const api = {
     return create(CONTRIBUTIONS_URL, values);
   },
 
-  getContributions(start, end, account) {
+  getContributions(filterParams) {
     return sort(
-      get(CONTRIBUTIONS_URL, start, end, null, account),
+      get(CONTRIBUTIONS_URL, filterParams),
       ['date', 'account.name', 'amount']
     );
   },
@@ -131,7 +123,7 @@ export const api = {
     return create(EXPENSE_CATEGORIES_URL, values);
   },
 
-  getExpenseCategories() {
+  getExpenseCategories(filterParams) {
     return sort(
       get(EXPENSE_CATEGORIES_URL),
       ['name']
@@ -150,9 +142,9 @@ export const api = {
     return create(EXPENSES_URL, values);
   },
 
-  getExpenses(start, end, category) {
+  getExpenses(filterParams) {
     return sort(
-      get(EXPENSES_URL, start, end, category),
+      get(EXPENSES_URL, filterParams),
       ['date', 'category.name', 'amount']
     );
   },
@@ -169,9 +161,9 @@ export const api = {
     return create(FUNDS_URL, values);
   },
 
-  getFunds(start, end, category) {
+  getFunds(filterParams) {
     return sort(
-      get(FUNDS_URL, null, null, category),
+      get(FUNDS_URL, filterParams),
       ['category.name', 'name', 'tickerSymbol']
     );
   },
@@ -188,9 +180,9 @@ export const api = {
     return create(HOLDINGS_URL, values);
   },
 
-  getHoldings(fundTicker) {
+  getHoldings(filterParams) {
     return sort(
-      get(HOLDINGS_URL, null, null, null, null, fundTicker),
+      get(HOLDINGS_URL, filterParams),
       ['account.name', 'fund.tickerSymbol']
     );
   },

@@ -28,14 +28,15 @@ export const FundsPage = () => (
       expenseRatio: 0
     }}
     usesFilters={true}
-    usesDates={false}
-    filterCategoryName='category'
+    filterCategories={[
+      {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
+    ]}
     createEntity={api.createFund}
     getEntities={api.getFunds}
     updateEntity={api.updateFund}
     deleteEntity={api.deleteFund}
     getOptions={[
-      {key: 'category', value: api.getAssetCategories}
+      {name: 'category', value: api.getAssetCategories}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

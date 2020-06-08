@@ -32,14 +32,18 @@ export const HoldingsPage = () => (
       shares: 0,
       value: 0
     }}
-    usesFilters={false}
+    usesFilters={true}
+    filterCategories={[
+      {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'},
+      {name: 'fund', value: '', optionValue: 'tickerSymbol', optionDisplay: 'tickerSymbol'}
+    ]}
     createEntity={api.createHolding}
     getEntities={api.getHoldings}
     updateEntity={api.updateHolding}
     deleteEntity={api.deleteHolding}
     getOptions={[
-      {key: 'account', value: api.getAccounts},
-      {key: 'fund', value: api.getFunds}
+      {name: 'account', value: api.getAccounts},
+      {name: 'fund', value: api.getFunds}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

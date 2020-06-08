@@ -9,7 +9,7 @@ export const LabeledSelectField = ({
 }) => (
   <LabeledField
     name={name}
-    options={helpers.getOptionsFromKey(options, name)}
+    options={helpers.getOptionsArrayFromKey(options, name)}
     optionDisplay={optionDisplay}
   />
 );

@@ -6,6 +6,7 @@ import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import { helpers } from '../../common/helpers';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class EntityPage extends React.Component {
       options: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
-      filterCategory: '',
+      filterCategories: [],
       isCreating: false
     };
     this.handleCreate = this.handleCreate.bind(this);
@@ -46,8 +47,15 @@ class EntityPage extends React.Component {
     this.handleFilterFieldSet({ end: value });
   }
 
-  handleFilterCategorySet(value) {
-    this.handleFilterFieldSet({ filterCategory: value });
+  handleFilterCategorySet(name, value) {
+    const filterCategories = this.state.filterCategories.map(fc => {
+      if (fc.name === name) {
+        fc.value = value;
+      }
+      return fc;
+    });
+
+    this.handleFilterFieldSet({ filterCategories: filterCategories });
   }
 
   handlePromise(promise) {
@@ -60,9 +68,14 @@ class EntityPage extends React.Component {
       () => this.setEntities());
   }
 
+  getFilterCategoryValue(name) {
+    return helpers.getValueFromKey(this.state.filterCategories, name);
+  }
+
   componentDidMount() {
     this.setEntities();
     this.setOptions();
+    this.setState({ filterCategories: this.props.filterCategories });
   }
 
   setIsCreating(val) {
@@ -74,10 +87,10 @@ class EntityPage extends React.Component {
       return;
     }
 
-    let opts = this.props.getOptions.map(getOpts => 
+    const opts = this.props.getOptions.map(getOpts => 
       getOpts.value().then(response => {
         return {
-          key: getOpts.key,
+          name: getOpts.name,
           value: response
         }
       })
@@ -88,14 +101,14 @@ class EntityPage extends React.Component {
   }
 
   setEntities() {
-    (this.props.usesFilters ?
-      this.props.getEntities(
-        this.state.start.toISOString(),
-        this.state.end.toISOString(),
-        this.state.filterCategory
-      ) :
-      this.props.getEntities()
-    ).then(response => this.setState({ entities: response }));
+    this.props.getEntities({
+      start: this.props.usesDates ? this.state.start.toISOString() : null,
+      end: this.props.usesDates ? this.state.end.toISOString() : null,
+      category: this.getFilterCategoryValue('category'),
+      account: this.getFilterCategoryValue('account'),
+      fund: this.getFilterCategoryValue('fund')
+    })
+    .then(response => this.setState({ entities: response }));
   }
 
   render() {
@@ -108,9 +121,8 @@ class EntityPage extends React.Component {
             usesDates={this.props.usesDates}
             start={this.state.start}
             end={this.state.end}
-            filterCategory={this.state.filterCategory}
-            filterCategoryOptions={this.state.options}
-            filterCategoryName={this.props.filterCategoryName}
+            filterCategories={this.state.filterCategories}
+            options={this.state.options}
             setStart={this.handleStartDateSet}
             setEnd={this.handleEndDateSet}
             setFilterCategory={this.handleFilterCategorySet}

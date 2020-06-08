@@ -1,7 +1,7 @@
-.filter-panel > * {
+.labeled-category-filter {
   display: inline-block;
-  margin: 3px;;
+  margin: 3px;
 }
-.filter-panel select {
-  width: 175px;
+.labeled-category-filter select {
+  width: 200px;
 }

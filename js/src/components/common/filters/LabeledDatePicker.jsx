@@ -7,12 +7,12 @@ export const LabeledDatePicker = ({
   initial,
   onChange
 }) => (
-  <>
+  <div className='labeled-category-filter'>
     <label htmlFor={name}>{startCase(name)}</label>
     <DatePicker
       name={name}
       selected={initial}
       onChange={onChange}
     />
-  </>
+  </div>
 );
