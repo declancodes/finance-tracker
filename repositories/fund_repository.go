@@ -236,6 +236,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 		}
 
 		h.Value = h.Shares.Mul(h.Fund.SharePrice)
+		h.EffectiveExpense = h.Value.Mul(h.Fund.ExpenseRatio)
 
 		hs = append(hs, &h)
 	}

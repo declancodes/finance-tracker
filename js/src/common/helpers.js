@@ -24,6 +24,10 @@ export const helpers = {
     return (Math.round(num * 1000) / 1000).toFixed(places);
   },
 
+  displayPercentage(num, places) {
+    return (Math.round(num * 100000) / 1000).toFixed(places);
+  },
+
   getOptionsFromKey(options, name, defaultValue) {
     if (!this.isNonEmptyArray(options)) {
       return defaultValue;

@@ -30,7 +30,8 @@ export const HoldingsPage = () => (
       account: '',
       fund: '',
       shares: 0,
-      value: 0
+      value: 0,
+      effectiveExpense: 0
     }}
     usesFilters={true}
     filterCategories={[

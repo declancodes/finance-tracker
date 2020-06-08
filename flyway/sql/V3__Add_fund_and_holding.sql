@@ -10,7 +10,7 @@ CREATE TABLE fund (
     name VARCHAR(100) NOT NULL,
     ticker_symbol VARCHAR(6) UNIQUE NOT NULL,
     share_price NUMERIC(12, 4) NOT NULL,
-    expense_ratio NUMERIC(12, 4) NOT NULL
+    expense_ratio NUMERIC(12, 8) NOT NULL
 );
 
 CREATE TABLE holding (

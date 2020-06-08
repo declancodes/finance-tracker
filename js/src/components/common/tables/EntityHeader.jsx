@@ -15,6 +15,7 @@ export const EntityHeader = ({ entity }) => (
       {entity.hasOwnProperty('shares') && <th>Shares</th>}
       {entity.hasOwnProperty('value') && <th>Value</th>}
       {entity.hasOwnProperty('expenseRatio') && <th>Expense Ratio</th>}
+      {entity.hasOwnProperty('effectiveExpense') && <th>Effective Expense</th>}
       <th>Actions</th>
     </tr>
   </thead>
