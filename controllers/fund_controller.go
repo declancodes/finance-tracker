@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -78,7 +79,12 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 		f.ID, _ = uuid.NewUUID()
 		f.TickerSymbol = strings.ToUpper(f.TickerSymbol)
 		if f.SharePrice.Equal(decimal.Zero) {
-			f.SharePrice = getSharePrice(f.TickerSymbol)
+			sp, err := getSharePrice(f.TickerSymbol)
+			if err != nil {
+				errorExecutingFund(w, err)
+				return
+			}
+			f.SharePrice = sp
 		}
 
 		fUUID, err := fundRepo.CreateFund(db, f)
@@ -268,7 +274,12 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 		f.ID = fUUID
 		f.TickerSymbol = strings.ToUpper(f.TickerSymbol)
 		if f.SharePrice.Equal(decimal.Zero) {
-			f.SharePrice = getSharePrice(f.TickerSymbol)
+			sp, err := getSharePrice(f.TickerSymbol)
+			if err != nil {
+				errorExecutingFund(w, err)
+				return
+			}
+			f.SharePrice = sp
 		}
 
 		err = fundRepo.UpdateFund(db, f)
@@ -291,7 +302,12 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		for _, f := range fs {
-			f.SharePrice = getSharePrice(f.TickerSymbol)
+			sp, err := getSharePrice(f.TickerSymbol)
+			if err != nil {
+				errorExecutingFund(w, err)
+				return
+			}
+			f.SharePrice = sp
 
 			err = fundRepo.UpdateFund(db, f)
 			if err != nil {
@@ -352,7 +368,7 @@ func (c *FundController) DeleteHolding(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
-func getSharePrice(s string) decimal.Decimal {
+func getSharePrice(s string) (decimal.Decimal, error) {
 	u := &url.URL{
 		Scheme:   "https",
 		Host:     os.Getenv("IEX_HOST"),
@@ -361,15 +377,24 @@ func getSharePrice(s string) decimal.Decimal {
 	}
 
 	req, err := http.NewRequest("GET", u.String(), nil)
-	logError(err)
+	if err != nil {
+		log.Println(err)
+		return decimal.Zero, err
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	logError(err)
+	if err != nil {
+		log.Println(err)
+		return decimal.Zero, err
+	}
 
 	var pp models.PreviousPrice
 	err = json.NewDecoder(resp.Body).Decode(&pp)
-	logError(err)
+	if err != nil {
+		log.Println(err)
+		return decimal.Zero, err
+	}
 
-	return pp.Close
+	return pp.Close, nil
 }
