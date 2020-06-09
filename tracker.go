@@ -91,6 +91,7 @@ func main() {
 
 	r.HandleFunc("/funds", fc.CreateFund(db)).Methods("POST")
 	r.HandleFunc("/funds", fc.GetFunds(db)).Methods("GET")
+	r.HandleFunc("/funds", fc.UpdateFundSharePrices(db)).Methods("PUT")
 	r.HandleFunc("/funds/{uuid}", fc.GetFund(db)).Methods("GET")
 	r.HandleFunc("/funds/{uuid}", fc.UpdateFund(db)).Methods("PUT")
 	r.HandleFunc("/funds/{uuid}", fc.DeleteFund(db)).Methods("DELETE")

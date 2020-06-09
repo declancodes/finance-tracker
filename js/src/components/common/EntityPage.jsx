@@ -128,6 +128,7 @@ class EntityPage extends React.Component {
             setFilterCategory={this.handleFilterCategorySet}
           />
         }
+        {this.props.children}
         <table>
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>

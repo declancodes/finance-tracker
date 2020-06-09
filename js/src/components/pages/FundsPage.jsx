@@ -1,6 +1,7 @@
 import React from 'react';
 import EntityPage from '../common/EntityPage';
 import { api } from '../../common/api';
+import { Button } from '../common/Button';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category;
@@ -40,5 +41,10 @@ export const FundsPage = () => (
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
-  />
+  >
+    <Button
+      name='Update All Fund Share Prices'
+      handleFunc={api.updateFundSharePrices}
+    />
+  </EntityPage>
 );

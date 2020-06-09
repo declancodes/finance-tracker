@@ -172,6 +172,10 @@ export const api = {
     return update(`${FUNDS_URL}/${values.uuid}`, values)
   },
 
+  updateFundSharePrices() {
+    return axios.put(FUNDS_URL);
+  },
+
   deleteFund(uuid) {
     return remove(`${FUNDS_URL}/${uuid}`)
   },

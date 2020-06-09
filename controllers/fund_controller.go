@@ -281,6 +281,29 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// UpdateFundSharePrices updates SharePrices for all Funds matching query params filter(s).
+func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fs, err := fundRepo.GetFunds(db, getFilters(r))
+		if err != nil {
+			errorExecutingFund(w, err)
+			return
+		}
+
+		for _, f := range fs {
+			f.SharePrice = getSharePrice(f.TickerSymbol)
+
+			err = fundRepo.UpdateFund(db, f)
+			if err != nil {
+				errorExecutingFund(w, err)
+				return
+			}
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 // UpdateHolding updates a Holding.
 func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
