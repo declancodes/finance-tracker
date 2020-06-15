@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { DisplayForm } from './forms/DisplayForm';
@@ -129,7 +129,12 @@ class EntityPage extends React.Component {
           />
         }
         {this.props.children}
-        <table>
+        <Table
+          variant='dark'
+          striped
+          bordered
+          hover
+        >
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>
             {this.state.entities.length > 0 ? (
@@ -153,7 +158,7 @@ class EntityPage extends React.Component {
               </tr>
             )}
           </tbody>
-        </table>
+        </Table>
         {this.state.isCreating ? (
           <DisplayForm
             entityName={this.props.entityName}
