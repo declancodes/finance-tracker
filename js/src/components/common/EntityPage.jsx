@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Table } from 'react-bootstrap';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { DisplayForm } from './forms/DisplayForm';
+import { EntityForm } from './forms/EntityForm';
 import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
@@ -160,14 +160,14 @@ class EntityPage extends React.Component {
           </tbody>
         </Table>
         {this.state.isCreating ? (
-          <DisplayForm
+          <EntityForm
             entityName={this.props.entityName}
             entity={this.props.blankEntity}
             isCreateMode={true}
             options={this.state.options}
             doExtraModifications={this.props.doExtraModifications}
             doSubmit={this.handleCreate}
-            setNotUsing={() => this.setIsCreating(false)}
+            doFinalState={() => this.setIsCreating(false)}
           />
         ) : (
           <Button

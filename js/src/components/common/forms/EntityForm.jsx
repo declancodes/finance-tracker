@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { Form, Formik } from 'formik';
 import { LabeledField } from './fields/LabeledField';
 import { LabeledSelectField } from './fields/LabeledSelectField';
+import { ButtonPair } from '../ButtonPair';
 
 export const EntityForm = ({
   entityName,
@@ -39,9 +39,7 @@ export const EntityForm = ({
           setSubmitting(false);
           resetForm();
 
-          if (doFinalState !== undefined) {
-            doFinalState();
-          }
+          doFinalState();
         }}
       >
         <Form>
@@ -78,9 +76,12 @@ export const EntityForm = ({
           {entity.hasOwnProperty('expenseRatio') &&
             <LabeledField name='expenseRatio' fieldType='number'/>
           }
-          <Button variant='success' type='submit'>
-            {typeDisplay}
-          </Button>
+          <ButtonPair
+            type1='submit'
+            display1={typeDisplay}
+            onClick2={doFinalState}
+            display2='Cancel'
+          />
         </Form>
       </Formik>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DisplayForm } from '../forms/DisplayForm';
+import { EntityForm } from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import { helpers } from '../../../common/helpers';
 
@@ -30,7 +30,7 @@ export const EntityRow = ({
       {entity.hasOwnProperty('effectiveExpense') && <td>{helpers.displayCurrency(entity.effectiveExpense)}</td>}
       <td>
         {isEditing ? (
-          <DisplayForm
+          <EntityForm
             entityName={entityName}
             entity={entity}
             getInitialValues={getInitialValues}
@@ -38,7 +38,7 @@ export const EntityRow = ({
             options={options}
             doExtraModifications={doExtraModifications}
             doSubmit={handleUpdate}
-            setNotUsing={() => setIsEditing(false)}
+            doFinalState={() => setIsEditing(false)}
           />
         ) : (
           <ModifyRowPanel
