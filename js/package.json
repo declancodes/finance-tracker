@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
     "formik": "^2.1.4",
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
@@ -19,9 +20,11 @@
     "pluralize": "^8.0.0",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-datepicker": "^2.15.0",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
+    "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
