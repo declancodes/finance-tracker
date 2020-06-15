@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../Button';
+import { Button } from 'react-bootstrap';
 import { EntityForm } from './EntityForm';
 
 export const DisplayForm = ({
@@ -24,8 +24,10 @@ export const DisplayForm = ({
       doFinalState={setNotUsing}
     />
     <Button
-      name='Cancel'
-      handleFunc={setNotUsing}
-    />
+      variant='dark'
+      onClick={setNotUsing}
+    >
+      Cancel
+    </Button>
   </div>
 );

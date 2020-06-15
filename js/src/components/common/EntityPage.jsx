@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button } from './Button';
+import { Button } from 'react-bootstrap';
+import moment from 'moment';
+import pluralize from 'pluralize';
 import { DisplayForm } from './forms/DisplayForm';
 import { EntityHeader } from './tables/EntityHeader';
 import { EntityRow } from './tables/EntityRow';
 import { FilterPanel } from './filters/FilterPanel';
-import moment from 'moment';
-import pluralize from 'pluralize';
 import { helpers } from '../../common/helpers';
 
 class EntityPage extends React.Component {
@@ -166,9 +166,11 @@ class EntityPage extends React.Component {
           />
         ) : (
           <Button
-            name={`Create ${this.props.entityName}`}
-            handleFunc={() => this.setIsCreating(true)}
-          />
+            variant='dark'
+            onClick={() => this.setIsCreating(true)}
+          >
+            {`Create ${this.props.entityName}`}
+          </Button>
         )}
       </div>
     );

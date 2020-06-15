@@ -1,15 +1,19 @@
 import React from 'react';
-import { Button } from '../Button';
+import { Button } from 'react-bootstrap';
 
 export const ModifyRowPanel = ({ handleEdit, handleDelete}) => (
   <div>
     <Button
-      name='Edit'
-      handleFunc={handleEdit}
-    />
+      variant='dark'
+      onClick={handleEdit}
+    >
+      Edit
+    </Button>
     <Button
-      name='Delete'
-      handleFunc={handleDelete}
-    />
+      variant='danger'
+      onClick={handleDelete}
+    >
+      Delete
+    </Button>
   </div>
 );
