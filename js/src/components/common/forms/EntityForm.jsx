@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import { Form, Formik } from 'formik';
 import { LabeledField } from './fields/LabeledField';
 import { LabeledSelectField } from './fields/LabeledSelectField';
@@ -77,9 +78,9 @@ export const EntityForm = ({
           {entity.hasOwnProperty('expenseRatio') &&
             <LabeledField name='expenseRatio' fieldType='number'/>
           }
-          <button type='submit'>
+          <Button variant='success' type='submit'>
             {typeDisplay}
-          </button>
+          </Button>
         </Form>
       </Formik>
     </div>
