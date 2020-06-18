@@ -1,4 +1,5 @@
 import React from 'react';
+import { Form } from 'react-bootstrap';
 import { Options } from '../Options';
 import { helpers } from '../../../common/helpers';
 import pluralize from 'pluralize';
@@ -10,13 +11,11 @@ export const LabeledCategoryFilter = ({
   setFilterCategory
 }) => {
   const displayName = startCase(filterCategory.name);
-  const htmlFor = `${filterCategory.name}-filter`;
 
   return (
-    <div className='labeled-category-filter'>
-      <label htmlFor={htmlFor}>{displayName}</label>
-      <select
-        name={htmlFor}
+    <>
+      <Form.Label>{displayName}</Form.Label>
+      <Form.Control as='select'
         value={filterCategory.value}
         onChange={e => setFilterCategory(filterCategory.name, e.target.value)}
       >
@@ -26,7 +25,7 @@ export const LabeledCategoryFilter = ({
           optionValue={filterCategory.optionValue}
           optionDisplay={filterCategory.optionDisplay}
         />
-      </select>
-    </div>
+      </Form.Control>
+    </>
   );
 };

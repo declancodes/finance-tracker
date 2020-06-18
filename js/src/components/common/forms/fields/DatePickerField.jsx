@@ -10,6 +10,7 @@ export const DatePickerField = ({ ...props }) => {
     <DatePicker
       {...field}
       {...props}
+      wrapperClassName='form-control'
       selected={(field.value && new Date(field.value)) || null}
       onChange={val => setFieldValue(field.name, val)}
     />
