@@ -1,33 +1,49 @@
 import React from 'react';
-import { Field } from 'formik';
+import {
+  Form,
+  Row,
+  Col
+} from 'react-bootstrap';
 import { DatePickerField } from './DatePickerField';
-import { Options } from '../../Options';
+import { LabeledSelectField } from './LabeledSelectField';
 import startCase from 'lodash.startcase';
 
 export const LabeledField = ({
   name,
   fieldType,
   options,
-  optionDisplay
+  optionDisplay,
+  props
 }) => {
   const displayName = startCase(name);
+
   return (
-    <div className='labeled-field'>
-      <label htmlFor={name}>{displayName}</label>
-      {options !== undefined ? (
-        <Field name={name} as='select'>
-          <Options
-            defaultOptionText={`Select ${displayName}`}
+    <Form.Group as={Row}>
+      <Form.Label
+        column
+        sm={1}
+      >
+        {displayName}
+      </Form.Label>
+      <Col sm={6}>
+        {options !== undefined ? (
+          <LabeledSelectField
+            name={name}
+            displayName={displayName}
             options={options}
-            optionValue='uuid'
             optionDisplay={optionDisplay}
           />
-        </Field>
-      ) : fieldType === 'date' ? (
-        <DatePickerField name={name}/>
-      ) : (
-        <Field name={name} type={fieldType}/>
-      )}
-    </div>
+        ) : fieldType === 'date' ? (
+          <DatePickerField name={name}/>
+        ) : (
+          <Form.Control
+            name={name}
+            type={fieldType}
+            value={props.values[name]}
+            onChange={props.handleChange}
+          />
+        )}
+      </Col>
+    </Form.Group>
   );
 };

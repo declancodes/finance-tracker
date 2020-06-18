@@ -171,7 +171,7 @@ class EntityPage extends React.Component {
           />
         ) : (
           <Button
-            variant='dark'
+            variant='primary'
             onClick={() => this.setIsCreating(true)}
           >
             {`Create ${this.props.entityName}`}
