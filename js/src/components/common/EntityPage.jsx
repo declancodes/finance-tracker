@@ -130,10 +130,11 @@ class EntityPage extends React.Component {
         }
         {this.props.children}
         <Table
-          variant='dark'
           striped
           bordered
           hover
+          size='sm'
+          responsive
         >
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>

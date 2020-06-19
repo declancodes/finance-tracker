@@ -14,7 +14,7 @@ export const FilterPanel = ({
   setFilterCategory
 }) => (
   <Form className='filter-panel'>
-    <Form.Row>
+    <Form.Row as={Col} xs='auto'>
       {usesDates &&
         <>
           <LabeledDatePicker
