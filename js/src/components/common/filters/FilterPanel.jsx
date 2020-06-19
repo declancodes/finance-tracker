@@ -14,32 +14,34 @@ export const FilterPanel = ({
   setFilterCategory
 }) => (
   <Form className='filter-panel'>
-    <Form.Row as={Col} xs='auto'>
-      {usesDates &&
-        <>
-          <LabeledDatePicker
-            name='from'
-            initial={start}
-            onChange={val => setStart(val)}
-          />
-          <LabeledDatePicker
-            name='to'
-            initial={end}
-            onChange={val => setEnd(val)}
-          />
-        </>
-      }
-      {filterCategories.length > 0 &&
-        filterCategories.map(fc => (
-          <Form.Group key={`lcf-${fc.name}`} as={Col} xs='auto'>
-            <LabeledCategoryFilter
-              filterCategory={fc}
-              options={options}
-              setFilterCategory={setFilterCategory}
+    <div className='container-fluid'>
+      <Form.Row>
+        {usesDates &&
+          <>
+            <LabeledDatePicker
+              name='from'
+              initial={start}
+              onChange={val => setStart(val)}
             />
-          </Form.Group>
-        )
-      )}
-    </Form.Row>
+            <LabeledDatePicker
+              name='to'
+              initial={end}
+              onChange={val => setEnd(val)}
+            />
+          </>
+        }
+        {filterCategories.length > 0 &&
+          filterCategories.map(fc => (
+            <Form.Group key={`lcf-${fc.name}`} as={Col} xs='auto'>
+              <LabeledCategoryFilter
+                filterCategory={fc}
+                options={options}
+                setFilterCategory={setFilterCategory}
+              />
+            </Form.Group>
+          )
+        )}
+      </Form.Row>
+    </div>
   </Form>
 );
