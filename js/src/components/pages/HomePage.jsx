@@ -7,7 +7,7 @@ export const HomePage = () => (
     <p>Track all of your finances in one easy location.</p>
     <p>
       <Button
-        variant='dark'
+        variant='primary'
         href='/accounts'
       >
         Get Started

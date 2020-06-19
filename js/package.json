@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
+    "bootswatch": "^4.5.0",
     "formik": "^2.1.4",
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
