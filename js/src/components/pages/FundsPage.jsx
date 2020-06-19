@@ -42,11 +42,8 @@ export const FundsPage = () => (
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   >
-    <Button
-      variant='dark'
-      onClick={api.updateFundSharePrices}
-    >
-      Update All Fund Share Prices
+    <Button onClick={api.updateFundSharePrices}>
+      Get latest share prices
     </Button>
   </EntityPage>
 );

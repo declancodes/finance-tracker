@@ -32,9 +32,9 @@ export const EntityForm = ({
 
   return (
     <div className='entity-form'>
-      <h2>
+      <h4>
         {`${typeDisplay} ${entityName}`}
-      </h2>
+      </h4>
       <Formik
         initialValues={initialValues}
         onSubmit={(values, { setSubmitting, resetForm }) => {

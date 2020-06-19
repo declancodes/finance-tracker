@@ -6,10 +6,7 @@ export const HomePage = () => (
     <h1>Welcome to finance-tracker</h1>
     <p>Track all of your finances in one easy location.</p>
     <p>
-      <Button
-        variant='primary'
-        href='/accounts'
-      >
+      <Button href='/accounts'>
         Get Started
       </Button>
     </p>

@@ -115,7 +115,7 @@ class EntityPage extends React.Component {
     const entityPluralName = pluralize(this.props.entityName);
     return (
       <div>
-        <h1>{entityPluralName}</h1>
+        <h3>{entityPluralName}</h3>
         {this.props.usesFilters &&
           <FilterPanel
             usesDates={this.props.usesDates}
@@ -172,7 +172,6 @@ class EntityPage extends React.Component {
           />
         ) : (
           <Button
-            variant='primary'
             onClick={() => this.setIsCreating(true)}
           >
             {`Create ${this.props.entityName}`}
