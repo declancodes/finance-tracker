@@ -25,7 +25,7 @@ func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]strin
 		for k := range mFilters {
 			if val, ok := mValues[k]; ok {
 				values = append(values, val)
-				conditions = append(conditions, fmt.Sprintf("%s$%d", mFilters[k], len(values)))
+				conditions = append(conditions, fmt.Sprintf("%s(?)", mFilters[k]))
 			}
 		}
 	}

@@ -116,20 +116,27 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 // Filters for Expense retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interface{}) (es []models.Expense, err error) {
 	mFilters := map[string]string{
-		"expense":  "expense.expense_uuid = ",
-		"category": "expense_category.name = ",
-		"start":    "expense.date_incurred >= ",
-		"end":      "expense.date_incurred <= ",
+		"expense":    "expense.expense_uuid = ",
+		"categories": "expense_category.name IN ",
+		"start":      "expense.date_incurred >= ",
+		"end":        "expense.date_incurred <= ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
-		return es, err
+		return nil, err
 	}
 
 	query := fmt.Sprintf("%s %s", getExpensesQuery, clauses)
 
-	err = db.Select(&es, query, values...)
+	q, args, err := sqlx.In(query, values...)
+	if err != nil {
+		return nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	err = db.Select(&es, q, args...)
 	return es, err
 }
 

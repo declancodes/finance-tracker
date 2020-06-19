@@ -42,7 +42,7 @@ export const helpers = {
   },
 
   getValueFromKey(options, name) {
-    return this.getOptionsFromKey(options, name, '');
+    return this.getOptionsFromKey(options, name, []);
   },
 
   isNonEmptyArray(obj) {

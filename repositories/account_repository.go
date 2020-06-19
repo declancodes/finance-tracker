@@ -157,18 +157,25 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a *models.
 // Filters for Account retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) (as []*models.Account, err error) {
 	mFilters := map[string]string{
-		"account":  "account.account_uuid = ",
-		"category": "account_category.name = ",
+		"account":    "account.account_uuid = ",
+		"categories": "account_category.name IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
-		return as, err
+		return nil, err
 	}
 
 	query := fmt.Sprintf("%s %s", getAccountsQuery, clauses)
 
-	err = db.Select(&as, query, values...)
+	q, args, err := sqlx.In(query, values...)
+	if err != nil {
+		return nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	err = db.Select(&as, q, args...)
 	return as, err
 }
 
@@ -194,22 +201,29 @@ func (r *AccountRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c mod
 func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]interface{}) (cs []models.Contribution, err error) {
 	mFilters := map[string]string{
 		"contribution": "contribution.contribution_uuid = ",
-		"account":      "account.name = ",
-		"category":     "account_category.name = ",
+		"accounts":     "account.name IN ",
+		"categories":   "account_category.name IN ",
 		"start":        "contribution.date_made >= ",
 		"end":          "contribution.date_made <= ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
-		return cs, err
+		return nil, err
 	}
 
 	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
 
-	rows, err := db.Queryx(query, values...)
+	q, args, err := sqlx.In(query, values...)
 	if err != nil {
-		return cs, err
+		return nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	rows, err := db.Queryx(q, args...)
+	if err != nil {
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -222,7 +236,7 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
 			&c.Name, &c.Description, &c.Amount, &c.Date)
 		if err != nil {
-			return cs, err
+			return nil, err
 		}
 
 		cs = append(cs, c)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/DeclanCodes/finance-tracker/repositories"
@@ -78,21 +79,23 @@ func errorExecuting(w http.ResponseWriter, m string, err error) {
 
 func getFilters(r *http.Request) map[string]interface{} {
 	q := r.URL.Query()
-	accName := q.Get("account")
-	catName := q.Get("category")
-	fundSymbol := q.Get("fund")
+
+	accNames := getSlice(q, "account")
+	catNames := getSlice(q, "category")
+	fundSymbols := getSlice(q, "fund")
+
 	start := getTime(q.Get("start"))
 	end := getTime(q.Get("end"))
 
 	mValues := make(map[string]interface{})
-	if accName != "" {
-		mValues["account"] = accName
+	if accNames != nil && len(accNames) > 0 {
+		mValues["accounts"] = accNames
 	}
-	if catName != "" {
-		mValues["category"] = catName
+	if catNames != nil && len(catNames) > 0 {
+		mValues["categories"] = catNames
 	}
-	if fundSymbol != "" {
-		mValues["fund"] = fundSymbol
+	if fundSymbols != nil && len(fundSymbols) > 0 {
+		mValues["funds"] = fundSymbols
 	}
 	if !start.IsZero() {
 		mValues["start"] = start
@@ -102,6 +105,13 @@ func getFilters(r *http.Request) map[string]interface{} {
 	}
 
 	return mValues
+}
+
+func getSlice(q url.Values, search string) []string {
+	if vs, ok := q[search]; ok {
+		return vs
+	}
+	return nil
 }
 
 func getTime(s string) time.Time {

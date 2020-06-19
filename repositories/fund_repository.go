@@ -166,7 +166,7 @@ func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (f models.Fund, e
 func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (fs []models.Fund, err error) {
 	mFilters := map[string]string{
 		"fund":     "fund.fund_uuid = ",
-		"category": "asset_category.name = ",
+		"category": "asset_category.name IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
@@ -176,7 +176,14 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 
 	query := fmt.Sprintf("%s %s", getFundsQuery, clauses)
 
-	err = db.Select(&fs, query, values...)
+	q, args, err := sqlx.In(query, values...)
+	if err != nil {
+		return nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	err = db.Select(&fs, q, args...)
 	return fs, err
 }
 
@@ -201,10 +208,10 @@ func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h *models.Hol
 // Filters for Holding retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) (hs []*models.Holding, err error) {
 	mFilters := map[string]string{
-		"holding":  "holding.holding_uuid = ",
-		"account":  "account.name = ",
-		"category": "account_category.name = ",
-		"fund":     "fund.ticker_symbol = ",
+		"holding":    "holding.holding_uuid = ",
+		"accounts":   "account.name IN ",
+		"categories": "account_category.name IN ",
+		"funds":      "fund.ticker_symbol IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
@@ -214,7 +221,14 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 
 	query := fmt.Sprintf("%s %s", getHoldingsQuery, clauses)
 
-	rows, err := db.Queryx(query, values...)
+	q, args, err := sqlx.In(query, values...)
+	if err != nil {
+		return nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	rows, err := db.Queryx(q, args...)
 	if err != nil {
 		return hs, err
 	}

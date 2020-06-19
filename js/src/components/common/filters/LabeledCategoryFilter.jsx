@@ -1,8 +1,7 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { Options } from '../Options';
+import Select from 'react-select';
 import { helpers } from '../../../common/helpers';
-import pluralize from 'pluralize';
 import startCase from 'lodash.startcase';
 
 export const LabeledCategoryFilter = ({
@@ -11,21 +10,35 @@ export const LabeledCategoryFilter = ({
   setFilterCategory
 }) => {
   const displayName = startCase(filterCategory.name);
+  const opts = () => helpers
+    .getOptionsArrayFromKey(options, filterCategory.name)
+    .map(o => {
+      return {
+        value: o[filterCategory.optionValue],
+        label: o[filterCategory.optionDisplay]
+      }
+    });
 
   return (
     <>
       <Form.Label>{displayName}</Form.Label>
-      <Form.Control as='select'
+      <Select
+        isMulti
+        placeholder='Filter by Category...'
+        options={opts()}
         value={filterCategory.value}
-        onChange={e => setFilterCategory(filterCategory.name, e.target.value)}
-      >
-        <Options
-          defaultOptionText={`All ${pluralize(displayName)}`}
-          options={helpers.getOptionsArrayFromKey(options, filterCategory.name)}
-          optionValue={filterCategory.optionValue}
-          optionDisplay={filterCategory.optionDisplay}
-        />
-      </Form.Control>
+        onChange={value => setFilterCategory(filterCategory.name, value)}
+        theme={theme => ({
+          ...theme,
+          borderRadius: 0,
+          borderWidth: 0,
+          colors: {
+            ...theme.colors,
+            neutral0: 'hsl(0, 0%, 30%)',
+            primary25: 'black',
+          },
+        })}
+      />
     </>
   );
 };

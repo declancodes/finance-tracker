@@ -32,7 +32,10 @@ export const FilterPanel = ({
         }
         {filterCategories.length > 0 &&
           filterCategories.map(fc => (
-            <Form.Group key={`lcf-${fc.name}`} as={Col} xs='auto'>
+            <Form.Group
+              key={`lcf-${fc.name}`}
+              as={Col}
+            >
               <LabeledCategoryFilter
                 filterCategory={fc}
                 options={options}

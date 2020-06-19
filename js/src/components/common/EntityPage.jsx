@@ -68,8 +68,11 @@ class EntityPage extends React.Component {
       () => this.setEntities());
   }
 
-  getFilterCategoryValue(name) {
-    return helpers.getValueFromKey(this.state.filterCategories, name);
+  getFilterCategoryValues(name) {
+    const values = helpers.getValueFromKey(this.state.filterCategories, name);
+    return values === undefined || values === null || values === '' ?
+      [] :
+      values.map(v => v.value);
   }
 
   componentDidMount() {
@@ -104,9 +107,9 @@ class EntityPage extends React.Component {
     this.props.getEntities({
       start: this.props.usesDates ? this.state.start.toISOString() : null,
       end: this.props.usesDates ? this.state.end.toISOString() : null,
-      category: this.getFilterCategoryValue('category'),
-      account: this.getFilterCategoryValue('account'),
-      fund: this.getFilterCategoryValue('fund')
+      category: this.getFilterCategoryValues('category'),
+      account: this.getFilterCategoryValues('account'),
+      fund: this.getFilterCategoryValues('fund')
     })
     .then(response => this.setState({ entities: response }));
   }
