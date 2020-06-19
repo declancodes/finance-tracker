@@ -18,32 +18,34 @@ export const LabeledField = ({
   const displayName = startCase(name);
 
   return (
-    <Form.Group as={Row}>
-      <Form.Label
-        column
-        sm={1}
-      >
-        {displayName}
-      </Form.Label>
-      <Col sm={6}>
-        {options !== undefined ? (
-          <LabeledSelectField
-            name={name}
-            displayName={displayName}
-            options={options}
-            optionDisplay={optionDisplay}
-          />
-        ) : fieldType === 'date' ? (
-          <DatePickerField name={name}/>
-        ) : (
-          <Form.Control
-            name={name}
-            type={fieldType}
-            value={props.values[name]}
-            onChange={props.handleChange}
-          />
-        )}
-      </Col>
-    </Form.Group>
+    <div className='container-fluid'>
+      <Form.Row>
+        <Form.Label
+          column
+          sm={1}
+        >
+          {displayName}
+        </Form.Label>
+        <Col sm={6}>
+          {options !== undefined ? (
+            <LabeledSelectField
+              name={name}
+              displayName={displayName}
+              options={options}
+              optionDisplay={optionDisplay}
+            />
+          ) : fieldType === 'date' ? (
+            <DatePickerField name={name}/>
+          ) : (
+            <Form.Control
+              name={name}
+              type={fieldType}
+              value={props.values[name]}
+              onChange={props.handleChange}
+            />
+          )}
+        </Col>
+      </Form.Row>
+    </div>
   );
 };
