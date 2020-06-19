@@ -31,7 +31,6 @@ export const LabeledCategoryFilter = ({
         theme={theme => ({
           ...theme,
           borderRadius: 0,
-          borderWidth: 0,
           colors: {
             ...theme.colors,
             neutral0: 'hsl(0, 0%, 30%)',
