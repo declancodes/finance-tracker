@@ -3,7 +3,7 @@ import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 
 const doExtraModifications = (values) => {
-  const acUuid = values.category;
+  const acUuid = values.category.value;
   values.category = {
     uuid: acUuid
   };

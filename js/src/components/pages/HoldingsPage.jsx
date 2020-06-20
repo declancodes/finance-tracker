@@ -3,12 +3,12 @@ import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 
 const doExtraModifications = (values) => {
-  const aUuid = values.account;
+  const aUuid = values.account.value;
   values.account = {
     uuid: aUuid
   };
 
-  const fUuid = values.fund;
+  const fUuid = values.fund.value;
   values.fund = {
     uuid: fUuid
   };

@@ -4,7 +4,7 @@ import { api } from '../../common/api';
 import { helpers } from '../../common/helpers';
 
 const doExtraModifications = (values) => {
-  const aUuid = values.account;
+  const aUuid = values.account.value;
   values.account = {
     uuid: aUuid
   };
