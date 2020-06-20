@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-import { helpers } from '../../../common/helpers';
+import { helpers } from '../../common/helpers';
 import startCase from 'lodash.startcase';
 
 export const LabeledCategoryFilter = ({

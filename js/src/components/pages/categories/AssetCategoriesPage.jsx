@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategoriesPage } from '../../common/CategoriesPage';
+import { CategoriesPage } from './CategoriesPage';
 import { api } from '../../../common/api';
 
 export const AssetCategoriesPage = () => (

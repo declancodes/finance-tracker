@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { EntityForm } from '../forms/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
-import { helpers } from '../../../common/helpers';
+import { helpers } from '../../common/helpers';
 
 export const EntityRow = ({
   entityName,

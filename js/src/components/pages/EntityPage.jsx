@@ -2,10 +2,10 @@ import React from 'react';
 import { Button, Table } from 'react-bootstrap';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { EntityForm } from './forms/EntityForm';
-import { EntityHeader } from './tables/EntityHeader';
-import { EntityRow } from './tables/EntityRow';
-import { FilterPanel } from './filters/FilterPanel';
+import { EntityForm } from '../forms/EntityForm';
+import { EntityHeader } from '../tables/EntityHeader';
+import { EntityRow } from '../tables/EntityRow';
+import { FilterPanel } from '../filters/FilterPanel';
 import { helpers } from '../../common/helpers';
 
 class EntityPage extends React.Component {

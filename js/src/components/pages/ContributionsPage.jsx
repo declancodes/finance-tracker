@@ -1,5 +1,5 @@
 import React from 'react';
-import EntityPage from '../common/EntityPage';
+import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 import { helpers } from '../../common/helpers';
 

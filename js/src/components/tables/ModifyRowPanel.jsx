@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonPair } from '../ButtonPair';
+import { ButtonPair } from '../common/ButtonPair';
 
 export const ModifyRowPanel = ({ handleEdit, handleDelete }) => (
   <ButtonPair

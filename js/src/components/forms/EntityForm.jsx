@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { LabeledField } from './fields/LabeledField';
-import { ButtonPair } from '../ButtonPair';
+import { ButtonPair } from '../common/ButtonPair';
 
 const LabeledFieldOrNull = (entity, field, fieldType, props, options, optionDisplay) => (
   entity.hasOwnProperty(field) &&

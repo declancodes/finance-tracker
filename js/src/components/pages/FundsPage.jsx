@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import EntityPage from '../common/EntityPage';
+import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 
 const doExtraModifications = (values) => {
