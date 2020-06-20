@@ -322,7 +322,10 @@ func (c *AccountController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 }
 
 func updateAccountValueFromHoldings(db *sqlx.DB, a *models.Account) {
-	hs, err := fundRepo.GetHoldings(db, map[string]interface{}{"account": a.Name})
+	mValues := map[string]interface{}{
+		"accounts": []string{a.Name},
+	}
+	hs, err := fundRepo.GetHoldings(db, mValues)
 	if err != nil {
 		logError(err)
 		return
