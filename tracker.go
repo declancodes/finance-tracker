@@ -50,6 +50,7 @@ func main() {
 	ac := controllers.AccountController{}
 	ec := controllers.ExpenseController{}
 	fc := controllers.FundController{}
+	pc := controllers.PortfolioController{}
 
 	r := mux.NewRouter()
 
@@ -101,6 +102,24 @@ func main() {
 	r.HandleFunc("/holdings/{uuid}", fc.GetHolding(db)).Methods("GET")
 	r.HandleFunc("/holdings/{uuid}", fc.UpdateHolding(db)).Methods("PUT")
 	r.HandleFunc("/holdings/{uuid}", fc.DeleteHolding(db)).Methods("DELETE")
+
+	r.HandleFunc("/portfolios", pc.CreatePortfolio(db)).Methods("POST")
+	r.HandleFunc("/portfolios", pc.GetPortfolios(db)).Methods("GET")
+	r.HandleFunc("/portfolios/{uuid}", pc.GetPortfolio(db)).Methods("GET")
+	r.HandleFunc("/portfolios/{uuid}", pc.UpdatePortfolio(db)).Methods("PUT")
+	r.HandleFunc("/portfolios/{uuid}", pc.DeletePortfolio(db)).Methods("DELETE")
+
+	r.HandleFunc("/portfolioholdingmappings", pc.CreatePortfolioHoldingMapping(db)).Methods("POST")
+	r.HandleFunc("/portfolioholdingmappings", pc.GetPortfolioHoldingMappings(db)).Methods("GET")
+	r.HandleFunc("/portfolioholdingmappings/{uuid}", pc.GetPortfolioHoldingMapping(db)).Methods("GET")
+	r.HandleFunc("/portfolioholdingmappings/{uuid}", pc.UpdatePortfolioHoldingMapping(db)).Methods("PUT")
+	r.HandleFunc("/portfolioholdingmappings/{uuid}", pc.DeletePortfolioHoldingMapping(db)).Methods("DELETE")
+
+	r.HandleFunc("/portfolioassetcategorymappings", pc.CreatePortfolioAssetCategoryMapping(db)).Methods("POST")
+	r.HandleFunc("/portfolioassetcategorymappings", pc.GetPortfolioAssetCategoryMappings(db)).Methods("GET")
+	r.HandleFunc("/portfolioassetcategorymappings/{uuid}", pc.GetPortfolioAssetCategoryMapping(db)).Methods("GET")
+	r.HandleFunc("/portfolioassetcategorymappings/{uuid}", pc.UpdatePortfolioAssetCategoryMapping(db)).Methods("PUT")
+	r.HandleFunc("/portfolioassetcategorymappings/{uuid}", pc.DeletePortfolioAssetCategoryMapping(db)).Methods("DELETE")
 
 	r.Use(loggingMiddleware)
 
