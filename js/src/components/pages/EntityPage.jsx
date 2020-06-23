@@ -174,9 +174,7 @@ class EntityPage extends React.Component {
             doFinalState={() => this.setIsCreating(false)}
           />
         ) : (
-          <Button
-            onClick={() => this.setIsCreating(true)}
-          >
+          <Button onClick={() => this.setIsCreating(true)}>
             {`Create ${this.props.entityName}`}
           </Button>
         )}
