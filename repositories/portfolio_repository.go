@@ -172,9 +172,6 @@ func (r *PortfolioRepository) GetPortfolio(db *sqlx.DB, pUUID uuid.UUID) (*model
 	if err != nil {
 		return nil, err
 	}
-	if len(ps) > 1 {
-		return nil, fmt.Errorf("more than one Portfolio with ID: %v", pUUID)
-	}
 
 	return ps[0], nil
 }
@@ -213,9 +210,6 @@ func (r *PortfolioRepository) GetPortfolioHoldingMapping(db *sqlx.DB, phmUUID uu
 	phms, err := r.GetPortfolioHoldingMappings(db, mValues)
 	if err != nil {
 		return nil, err
-	}
-	if len(phms) > 1 {
-		return nil, fmt.Errorf("more than one PortfolioHoldingMapping with ID: %v", phmUUID)
 	}
 
 	return phms[0], nil
@@ -256,9 +250,6 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacm
 	phms, err := r.GetPortfolioAssetCategoryMappings(db, mValues)
 	if err != nil {
 		return nil, err
-	}
-	if len(phms) > 1 {
-		return nil, fmt.Errorf("more than one PortfolioHoldingMapping with ID: %v", pacmUUID)
 	}
 
 	return phms[0], nil

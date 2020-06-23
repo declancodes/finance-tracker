@@ -146,9 +146,6 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (a *models.
 	if err != nil {
 		return a, err
 	}
-	if len(as) > 1 {
-		return a, fmt.Errorf("more than one Account with ID: %v", aUUID)
-	}
 
 	return as[0], nil
 }
@@ -188,9 +185,6 @@ func (r *AccountRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (c mod
 	cs, err := r.GetContributions(db, mValues)
 	if err != nil {
 		return c, err
-	}
-	if len(cs) > 1 {
-		return c, fmt.Errorf("more than one Contribution with ID: %v", cUUID)
 	}
 
 	return cs[0], nil

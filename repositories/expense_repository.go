@@ -105,9 +105,6 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 	if err != nil {
 		return e, err
 	}
-	if len(es) > 1 {
-		return e, fmt.Errorf("more than one Expense with ID: %v", eUUID)
-	}
 
 	return es[0], nil
 }

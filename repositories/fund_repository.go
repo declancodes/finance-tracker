@@ -154,9 +154,6 @@ func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (f models.Fund, e
 	if err != nil {
 		return f, err
 	}
-	if len(fs) > 1 {
-		return f, fmt.Errorf("more than one Fund with ID: %v", fUUID)
-	}
 
 	return fs[0], nil
 }
@@ -196,9 +193,6 @@ func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h *models.Hol
 	hs, err := r.GetHoldings(db, mValues)
 	if err != nil {
 		return h, err
-	}
-	if len(hs) > 1 {
-		return h, fmt.Errorf("more than one Holding with ID: %v", hUUID)
 	}
 
 	return hs[0], nil
