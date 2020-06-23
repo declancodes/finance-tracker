@@ -77,33 +77,43 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.U
 }
 
 // GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.
-func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (ec models.ExpenseCategory, err error) {
+func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (*models.ExpenseCategory, error) {
 	query := fmt.Sprintf(`
 	%s
 	WHERE
 		expense_category_uuid = $1;`, getExpenseCategoriesQuery)
 
-	err = db.Get(&ec, query, ecUUID.String())
-	return ec, err
+	var ec *models.ExpenseCategory
+	err := db.Get(&ec, query, ecUUID.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return ec, nil
 }
 
 // GetExpenseCategories retrieves ExpenseCategory entities from db.
-func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) (ecs []models.ExpenseCategory, err error) {
+func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) ([]*models.ExpenseCategory, error) {
 	query := fmt.Sprintf(`%s;`, getExpenseCategoriesQuery)
 
-	err = db.Select(&ecs, query)
-	return ecs, err
+	var ecs []*models.ExpenseCategory
+	err := db.Select(&ecs, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return ecs, nil
 }
 
 // GetExpense retrieves Expense with eUUID from db.
-func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.Expense, err error) {
+func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (*models.Expense, error) {
 	mValues := map[string]interface{}{
 		"expense": eUUID.String(),
 	}
 
 	es, err := r.GetExpenses(db, mValues)
 	if err != nil {
-		return e, err
+		return nil, err
 	}
 
 	return es[0], nil
@@ -111,7 +121,7 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (e models.E
 
 // GetExpenses retrieves Expense entities from db.
 // Filters for Expense retrieval are applied to the query based on the key-value pairs in mValues.
-func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interface{}) (es []models.Expense, err error) {
+func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Expense, error) {
 	mFilters := map[string]string{
 		"expense":    "expense.expense_uuid = ",
 		"categories": "expense_category.name IN ",
@@ -133,8 +143,13 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 
 	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
+	var es []*models.Expense
 	err = db.Select(&es, q, args...)
-	return es, err
+	if err != nil {
+		return nil, err
+	}
+
+	return es, nil
 }
 
 // UpdateExpenseCategory updates an ExpenseCategory in db.

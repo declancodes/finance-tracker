@@ -126,33 +126,43 @@ func (r *FundRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.UUID
 }
 
 // GetAssetCategory retrieves the AssetCategory with acUUID from db.
-func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acUUID uuid.UUID) (ac models.AssetCategory, err error) {
+func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acUUID uuid.UUID) (*models.AssetCategory, error) {
 	query := fmt.Sprintf(`
 	%s
 	WHERE
 		asset_category_uuid = $1;`, getAssetCategoriesQuery)
 
-	err = db.Get(&ac, query, acUUID.String())
-	return ac, err
+	var ac *models.AssetCategory
+	err := db.Get(&ac, query, acUUID.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return ac, nil
 }
 
 // GetAssetCategories retrieves AssetCategory entities from db.
-func (r *FundRepository) GetAssetCategories(db *sqlx.DB) (acs []models.AssetCategory, err error) {
+func (r *FundRepository) GetAssetCategories(db *sqlx.DB) ([]*models.AssetCategory, error) {
 	query := fmt.Sprintf(`%s;`, getAssetCategoriesQuery)
 
-	err = db.Select(&acs, query)
-	return acs, err
+	var acs []*models.AssetCategory
+	err := db.Select(&acs, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return acs, nil
 }
 
 // GetFund retrieves the Fund with fUUID from db.
-func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (f models.Fund, err error) {
+func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (*models.Fund, error) {
 	mValues := map[string]interface{}{
 		"fund": fUUID.String(),
 	}
 
 	fs, err := r.GetFunds(db, mValues)
 	if err != nil {
-		return f, err
+		return nil, err
 	}
 
 	return fs[0], nil
@@ -160,7 +170,7 @@ func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (f models.Fund, e
 
 // GetFunds retrieves Fund entities from db.
 // Filters for Fund retrieval are applied to the query based on the key-value pairs in mValues.
-func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (fs []models.Fund, err error) {
+func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Fund, error) {
 	mFilters := map[string]string{
 		"fund":     "fund.fund_uuid = ",
 		"category": "asset_category.name IN ",
@@ -168,7 +178,7 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
-		return fs, err
+		return nil, err
 	}
 
 	query := fmt.Sprintf("%s %s", getFundsQuery, clauses)
@@ -180,19 +190,24 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 
 	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
+	var fs []*models.Fund
 	err = db.Select(&fs, q, args...)
-	return fs, err
+	if err != nil {
+		return nil, err
+	}
+
+	return fs, nil
 }
 
 // GetHolding retrieves Holding with hUUID from db.
-func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h *models.Holding, err error) {
+func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (*models.Holding, error) {
 	mValues := map[string]interface{}{
 		"holding": hUUID.String(),
 	}
 
 	hs, err := r.GetHoldings(db, mValues)
 	if err != nil {
-		return h, err
+		return nil, err
 	}
 
 	return hs[0], nil
@@ -200,7 +215,7 @@ func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (h *models.Hol
 
 // GetHoldings retrieves Holding entities from db.
 // Filters for Holding retrieval are applied to the query based on the key-value pairs in mValues.
-func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) (hs []*models.Holding, err error) {
+func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Holding, error) {
 	mFilters := map[string]string{
 		"holding":    "holding.holding_uuid = ",
 		"accounts":   "account.name IN ",
@@ -210,7 +225,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
-		return hs, err
+		return nil, err
 	}
 
 	query := fmt.Sprintf("%s %s", getHoldingsQuery, clauses)
@@ -224,10 +239,11 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 
 	rows, err := db.Queryx(q, args...)
 	if err != nil {
-		return hs, err
+		return nil, err
 	}
 	defer rows.Close()
 
+	var hs []*models.Holding
 	for rows.Next() {
 		var h models.Holding
 
@@ -248,6 +264,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 
 		hs = append(hs, &h)
 	}
+
 	return hs, nil
 }
 

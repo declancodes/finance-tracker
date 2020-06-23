@@ -198,7 +198,11 @@ func (r *PortfolioRepository) GetPortfolios(db *sqlx.DB, mValues map[string]inte
 
 	var ps []*models.Portfolio
 	err = db.Select(&ps, q, args...)
-	return ps, err
+	if err != nil {
+		return nil, err
+	}
+
+	return ps, nil
 }
 
 // GetPortfolioHoldingMapping retrieves PortfolioHoldingMapping with phmUUID from db.
@@ -238,7 +242,11 @@ func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues m
 
 	var phms []*models.PortfolioHoldingMapping
 	err = db.Select(&phms, q, args...)
-	return phms, err
+	if err != nil {
+		return nil, err
+	}
+
+	return phms, nil
 }
 
 // GetPortfolioAssetCategoryMapping retrieves PortfolioAssetCategoryMapping with pacmUUID from db.
@@ -278,7 +286,11 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMappings(db *sqlx.DB, mVa
 
 	var pacms []*models.PortfolioAssetCategoryMapping
 	err = db.Select(&pacms, q, args...)
-	return pacms, err
+	if err != nil {
+		return nil, err
+	}
+
+	return pacms, nil
 }
 
 // UpdatePortfolio updates a Portfolio in db.

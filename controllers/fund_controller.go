@@ -309,7 +309,7 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 			}
 			f.SharePrice = sp
 
-			err = fundRepo.UpdateFund(db, f)
+			err = fundRepo.UpdateFund(db, *f)
 			if err != nil {
 				errorExecutingFund(w, err)
 				return
