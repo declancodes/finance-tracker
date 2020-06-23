@@ -38,6 +38,17 @@ func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]strin
 	return fmt.Sprintf("%s %s;", where, strings.Join(conditions, " AND ")), values, nil
 }
 
+func getCreateQueryAndVals(query string, es interface{}) (string, []interface{}, error) {
+	q, args, err := sqlx.Named(query, es)
+	if err != nil {
+		return "", nil, err
+	}
+
+	q = sqlx.Rebind(sqlx.DOLLAR, q)
+
+	return q, args, nil
+}
+
 func createAndGetUUID(db *sqlx.DB, query string, e interface{}) (uuid.UUID, error) {
 	rows, err := db.NamedQuery(query, e)
 	if err != nil {

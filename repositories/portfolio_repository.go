@@ -73,8 +73,8 @@ const (
 		ON portfolio_asset_category_mapping.asset_category_uuid = asset_category.asset_category_uuid`
 )
 
-// CreatePortfolio creates a Portfolio in db.
-func (r *PortfolioRepository) CreatePortfolio(db *sqlx.DB, p models.Portfolio) (uuid.UUID, error) {
+// CreatePortfolios creates a Portfolio in db.
+func (r *PortfolioRepository) CreatePortfolios(db *sqlx.DB, ps []*models.Portfolio) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio (
 		portfolio_uuid,
@@ -88,11 +88,22 @@ func (r *PortfolioRepository) CreatePortfolio(db *sqlx.DB, p models.Portfolio) (
 	)
 	RETURNING portfolio_uuid;`
 
-	return createAndGetUUID(db, query, p)
+	q, args, err := getCreateQueryAndVals(query, ps)
+	if err != nil {
+		return nil, err
+	}
+
+	var pIDs []uuid.UUID
+	err = db.Select(&pIDs, q, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return pIDs, nil
 }
 
-// CreatePortfolioHoldingMapping creates a PortfolioHoldingMapping in db.
-func (r *PortfolioRepository) CreatePortfolioHoldingMapping(db *sqlx.DB, phm models.PortfolioHoldingMapping) (uuid.UUID, error) {
+// CreatePortfolioHoldingMappings creates a PortfolioHoldingMapping in db.
+func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms []*models.PortfolioHoldingMapping) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio_holding_mapping (
 		portfolio_holding_mapping_uuid,
@@ -106,11 +117,22 @@ func (r *PortfolioRepository) CreatePortfolioHoldingMapping(db *sqlx.DB, phm mod
 	)
 	RETURNING portfolio_holding_mapping_uuid;`
 
-	return createAndGetUUID(db, query, phm)
+	q, args, err := getCreateQueryAndVals(query, phms)
+	if err != nil {
+		return nil, err
+	}
+
+	var phmIDs []uuid.UUID
+	err = db.Select(&phmIDs, q, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return phmIDs, nil
 }
 
-// CreatePortfolioAssetCategoryMapping creates a PortfolioAssetCategoryMapping in db.
-func (r *PortfolioRepository) CreatePortfolioAssetCategoryMapping(db *sqlx.DB, pacm models.PortfolioAssetCategoryMapping) (uuid.UUID, error) {
+// CreatePortfolioAssetCategoryMappings creates a PortfolioAssetCategoryMapping in db.
+func (r *PortfolioRepository) CreatePortfolioAssetCategoryMappings(db *sqlx.DB, pacms []*models.PortfolioAssetCategoryMapping) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio_asset_category_mapping (
 		portfolio_asset_category_mapping_uuid,
@@ -126,7 +148,18 @@ func (r *PortfolioRepository) CreatePortfolioAssetCategoryMapping(db *sqlx.DB, p
 	)
 	RETURNING portfolio_asset_category_mapping_uuid;`
 
-	return createAndGetUUID(db, query, pacm)
+	q, args, err := getCreateQueryAndVals(query, pacms)
+	if err != nil {
+		return nil, err
+	}
+
+	var pacmIDs []uuid.UUID
+	err = db.Select(&pacmIDs, q, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return pacmIDs, nil
 }
 
 // GetPortfolio retrieves Portfolio with pUUID from db.
@@ -192,7 +225,7 @@ func (r *PortfolioRepository) GetPortfolioHoldingMapping(db *sqlx.DB, phmUUID uu
 func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues map[string]interface{}) ([]*models.PortfolioHoldingMapping, error) {
 	mFilters := map[string]string{
 		"mapping":    "portfolio_holding_mapping.portfolio_holding_mapping_uuid = ",
-		"portfolios": "portfolio.portfolio_uuid = ",
+		"portfolios": "portfolio.portfolio_uuid IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
@@ -234,8 +267,8 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacm
 // GetPortfolioAssetCategoryMappings gets PortfolioAssetCategoryMappings from db.
 func (r *PortfolioRepository) GetPortfolioAssetCategoryMappings(db *sqlx.DB, mValues map[string]interface{}) ([]*models.PortfolioAssetCategoryMapping, error) {
 	mFilters := map[string]string{
-		"mapping":   "portfolio_asset_category_mapping.portfolio_asset_category_mapping_uuid = ",
-		"portfolio": "portfolio.portfolio_uuid = ",
+		"mapping":    "portfolio_asset_category_mapping.portfolio_asset_category_mapping_uuid = ",
+		"portfolios": "portfolio.portfolio_uuid IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)

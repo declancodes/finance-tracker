@@ -11,6 +11,9 @@ const EXPENSE_CATEGORIES_URL = `${API_URL}/expensecategories`;
 const EXPENSES_URL = `${API_URL}/expenses`;
 const FUNDS_URL = `${API_URL}/funds`;
 const HOLDINGS_URL = `${API_URL}/holdings`;
+const PORTFOLIOS_URL = `${API_URL}/portfolios`;
+const PORTFOLIO_HOLDING_MAPPINGS_URL = `${API_URL}/portfolioholdingmappings`;
+const PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL = `${API_URL}/portfolioassetcategorymappings`;
 
 function create(url, values) {
   return axios.post(url, values)
@@ -197,5 +200,62 @@ export const api = {
 
   deleteHolding(uuid) {
     return remove(`${HOLDINGS_URL}/${uuid}`)
+  },
+
+  createPortfolio(values) {
+    return create(PORTFOLIOS_URL, values);
+  },
+
+  getPortfolios(filterParams) {
+    return sort(
+      get(PORTFOLIOS_URL, filterParams),
+      ['name']
+    );
+  },
+
+  updatePortfolio(values) {
+    return update(`${PORTFOLIOS_URL}/${values.uuid}`, values)
+  },
+
+  deletePortfolio(uuid) {
+    return remove(`${PORTFOLIOS_URL}/${uuid}`)
+  },
+
+  createPortfolioHoldingMapping(values) {
+    return create(PORTFOLIO_HOLDING_MAPPINGS_URL, values);
+  },
+
+  getPortfolioHoldingMappings(filterParams) {
+    return sort(
+      get(PORTFOLIO_HOLDING_MAPPINGS_URL, filterParams),
+      ['uuid']
+    );
+  },
+
+  updatePortfolioHoldingMapping(values) {
+    return update(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${values.uuid}`, values)
+  },
+
+  deletePortfolioHoldingMapping(uuid) {
+    return remove(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${uuid}`)
+  },
+
+  createPortfolioAssetCategoryMapping(values) {
+    return create(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, values);
+  },
+
+  getPortfolioAssetCategoryMappings(filterParams) {
+    return sort(
+      get(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, filterParams),
+      ['uuid']
+    );
+  },
+
+  updatePortfolioAssetCategoryMapping(values) {
+    return update(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${values.uuid}`, values)
+  },
+
+  deletePortfolioAssetCategoryMapping(uuid) {
+    return remove(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${uuid}`)
   }
 };

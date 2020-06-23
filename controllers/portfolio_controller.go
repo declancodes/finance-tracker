@@ -8,6 +8,7 @@ import (
 	"github.com/DeclanCodes/finance-tracker/repositories"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/shopspring/decimal"
 )
 
 // PortfolioController is the means for interacting with Portfolio entities from an http router.
@@ -50,13 +51,44 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		p.ID, _ = uuid.NewUUID()
-		pUUID, err := portfolioRepo.CreatePortfolio(db, p)
+		pUUIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{&p})
 		if err != nil {
 			errorCreating(w, "portfolio", err)
 			return
 		}
 
-		created(w, pUUID)
+		var phms []*models.PortfolioHoldingMapping
+		for _, h := range p.Holdings {
+			phmID, _ := uuid.NewUUID()
+			phms = append(phms, &models.PortfolioHoldingMapping{
+				ID:        phmID,
+				Portfolio: p,
+				Holding:   h,
+			})
+		}
+		_, err = portfolioRepo.CreatePortfolioHoldingMappings(db, phms)
+		if err != nil {
+			errorCreating(w, "portfolio", err)
+			return
+		}
+
+		var pacms []*models.PortfolioAssetCategoryMapping
+		for ac, per := range p.AssetAllocation {
+			pacmID, _ := uuid.NewUUID()
+			pacms = append(pacms, &models.PortfolioAssetCategoryMapping{
+				ID:            pacmID,
+				Portfolio:     p,
+				AssetCategory: *ac,
+				Percentage:    per,
+			})
+		}
+		_, err = portfolioRepo.CreatePortfolioAssetCategoryMappings(db, pacms)
+		if err != nil {
+			errorCreating(w, "portfolio", err)
+			return
+		}
+
+		created(w, pUUIDs[0])
 	}
 }
 
@@ -71,13 +103,13 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 		}
 
 		phm.ID, _ = uuid.NewUUID()
-		phmUUID, err := portfolioRepo.CreatePortfolioHoldingMapping(db, phm)
+		phmUUIDs, err := portfolioRepo.CreatePortfolioHoldingMappings(db, []*models.PortfolioHoldingMapping{&phm})
 		if err != nil {
 			errorCreating(w, "portfolio holding mapping", err)
 			return
 		}
 
-		created(w, phmUUID)
+		created(w, phmUUIDs[0])
 	}
 }
 
@@ -92,13 +124,13 @@ func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 		}
 
 		pacm.ID, _ = uuid.NewUUID()
-		pacmUUID, err := portfolioRepo.CreatePortfolioAssetCategoryMapping(db, pacm)
+		pacmUUIDs, err := portfolioRepo.CreatePortfolioAssetCategoryMappings(db, []*models.PortfolioAssetCategoryMapping{&pacm})
 		if err != nil {
 			errorCreating(w, "portfolio asset category mapping", err)
 			return
 		}
 
-		created(w, pacmUUID)
+		created(w, pacmUUIDs[0])
 	}
 }
 
@@ -130,6 +162,56 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 		if err != nil {
 			errorExecutingPortfolio(w, err)
 			return
+		}
+
+		pIDs := make([]uuid.UUID, len(ps))
+		for i, p := range ps {
+			pIDs[i] = p.ID
+		}
+		mValues := map[string]interface{}{
+			"portfolios": pIDs,
+		}
+
+		phms, err := portfolioRepo.GetPortfolioHoldingMappings(db, mValues)
+		if err != nil {
+			errorExecutingPortfolio(w, err)
+			return
+		}
+		phmsMap := make(map[string][]models.Holding)
+		for _, phm := range phms {
+			pID := phm.Portfolio.ID.String()
+			if _, ok := phmsMap[pID]; ok {
+				phmsMap[pID] = append(phmsMap[pID], phm.Holding)
+			} else {
+				phmsMap[pID] = []models.Holding{phm.Holding}
+			}
+		}
+
+		pacms, err := portfolioRepo.GetPortfolioAssetCategoryMappings(db, mValues)
+		if err != nil {
+			errorExecutingPortfolio(w, err)
+			return
+		}
+		pacmsMap := make(map[string]map[*models.AssetCategory]decimal.Decimal)
+		for _, pacm := range pacms {
+			pID := pacm.Portfolio.ID.String()
+			if _, ok := pacmsMap[pID]; ok {
+				pacmsMap[pID][&pacm.AssetCategory] = pacm.Percentage
+			} else {
+				pacmsMap[pID] = map[*models.AssetCategory]decimal.Decimal{
+					&pacm.AssetCategory: pacm.Percentage,
+				}
+			}
+		}
+
+		for _, p := range ps {
+			pID := p.ID.String()
+			if hs, ok := phmsMap[pID]; ok {
+				p.Holdings = hs
+			}
+			if ms, ok := pacmsMap[pID]; ok {
+				p.AssetAllocation = ms
+			}
 		}
 
 		addJSONContentHeader(w)
