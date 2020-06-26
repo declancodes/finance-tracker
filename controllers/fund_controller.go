@@ -55,7 +55,7 @@ func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		ac.ID, _ = uuid.NewUUID()
+		ac.ID = uuid.New()
 		acUUID, err := fundRepo.CreateAssetCategory(db, ac)
 		if err != nil {
 			errorCreating(w, "asset category", err)
@@ -76,7 +76,7 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		f.ID, _ = uuid.NewUUID()
+		f.ID = uuid.New()
 		f.TickerSymbol = strings.ToUpper(f.TickerSymbol)
 		if f.SharePrice.Equal(decimal.Zero) {
 			sp, err := getSharePrice(f.TickerSymbol)
@@ -107,7 +107,7 @@ func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		h.ID, _ = uuid.NewUUID()
+		h.ID = uuid.New()
 		hUUID, err := fundRepo.CreateHolding(db, h)
 		if err != nil {
 			errorCreating(w, "holding", err)

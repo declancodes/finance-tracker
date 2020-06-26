@@ -41,7 +41,7 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		ec.ID, _ = uuid.NewUUID()
+		ec.ID = uuid.New()
 		ecUUID, err := expenseRepo.CreateExpenseCategory(db, ec)
 		if err != nil {
 			errorCreating(w, "expense category", err)
@@ -62,7 +62,7 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		e.ID, _ = uuid.NewUUID()
+		e.ID = uuid.New()
 		eUUID, err := expenseRepo.CreateExpense(db, e)
 		if err != nil {
 			errorCreating(w, "expense", err)

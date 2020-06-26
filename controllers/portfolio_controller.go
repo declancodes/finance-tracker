@@ -50,7 +50,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		p.ID, _ = uuid.NewUUID()
+		p.ID = uuid.New()
 		pUUIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{&p})
 		if err != nil {
 			errorCreating(w, "portfolio", err)
@@ -59,7 +59,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 
 		var phms []*models.PortfolioHoldingMapping
 		for _, h := range p.Holdings {
-			phmID, _ := uuid.NewUUID()
+			phmID := uuid.New()
 			phms = append(phms, &models.PortfolioHoldingMapping{
 				ID:        phmID,
 				Portfolio: p,
@@ -74,7 +74,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 
 		var pacms []*models.PortfolioAssetCategoryMapping
 		for ac, per := range p.AssetAllocation {
-			pacmID, _ := uuid.NewUUID()
+			pacmID := uuid.New()
 			pacms = append(pacms, &models.PortfolioAssetCategoryMapping{
 				ID:            pacmID,
 				Portfolio:     p,
@@ -102,7 +102,7 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 			return
 		}
 
-		phm.ID, _ = uuid.NewUUID()
+		phm.ID = uuid.New()
 		phmUUIDs, err := portfolioRepo.CreatePortfolioHoldingMappings(db, []*models.PortfolioHoldingMapping{&phm})
 		if err != nil {
 			errorCreating(w, "portfolio holding mapping", err)
@@ -123,7 +123,7 @@ func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 			return
 		}
 
-		pacm.ID, _ = uuid.NewUUID()
+		pacm.ID = uuid.New()
 		pacmUUIDs, err := portfolioRepo.CreatePortfolioAssetCategoryMappings(db, []*models.PortfolioAssetCategoryMapping{&pacm})
 		if err != nil {
 			errorCreating(w, "portfolio asset category mapping", err)
