@@ -172,8 +172,8 @@ func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (*models.Fund, er
 // Filters for Fund retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Fund, error) {
 	mFilters := map[string]string{
-		"fund":     "fund.fund_uuid = ",
-		"category": "asset_category.name IN ",
+		"fund":       "fund.fund_uuid = ",
+		"categories": "asset_category.name IN ",
 	}
 
 	clauses, values, err := buildQueryClauses(mValues, mFilters)
