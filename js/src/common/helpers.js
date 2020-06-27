@@ -25,7 +25,8 @@ export const helpers = {
   },
 
   displayPercentage(num, places) {
-    return (Math.round(num * 100000) / 1000).toFixed(places);
+    const percentageStr = (Math.round(num * 100000) / 1000).toFixed(places);
+    return parseFloat(percentageStr);
   },
 
   titleCase(str) {
