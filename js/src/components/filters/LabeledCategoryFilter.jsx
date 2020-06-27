@@ -2,14 +2,13 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import { DarklyReactSelect } from '../common/DarklyReactSelect';
 import { helpers } from '../../common/helpers';
-import startCase from 'lodash.startcase';
 
 export const LabeledCategoryFilter = ({
   filterCategory,
   options,
   setFilterCategory
 }) => {
-  const displayName = startCase(filterCategory.name);
+  const displayName = helpers.titleCase(filterCategory.name);
   const opts = helpers
     .getOptionsArrayFromKey(options, filterCategory.name)
     .map(o => {

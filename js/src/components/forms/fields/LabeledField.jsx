@@ -1,12 +1,8 @@
 import React from 'react';
-import {
-  Form,
-  Row,
-  Col
-} from 'react-bootstrap';
+import { Col, Form } from 'react-bootstrap';
 import { DatePickerField } from './DatePickerField';
 import { LabeledSelectField } from './LabeledSelectField';
-import startCase from 'lodash.startcase';
+import { helpers } from '../../../common/helpers';
 
 export const LabeledField = ({
   name,
@@ -15,7 +11,7 @@ export const LabeledField = ({
   optionDisplay,
   props
 }) => {
-  const displayName = startCase(name);
+  const displayName = helpers.titleCase(name);
 
   return (
     <div className='container-fluid'>

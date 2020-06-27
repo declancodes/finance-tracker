@@ -16,7 +16,6 @@
     "bootswatch": "^4.5.0",
     "formik": "^2.1.4",
     "lodash.sortby": "^4.7.0",
-    "lodash.startcase": "^4.4.0",
     "moment": "^2.25.3",
     "pluralize": "^8.0.0",
     "query-string": "^6.12.1",

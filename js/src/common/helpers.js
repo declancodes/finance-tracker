@@ -28,6 +28,12 @@ export const helpers = {
     return (Math.round(num * 100000) / 1000).toFixed(places);
   },
 
+  titleCase(str) {
+    return str.split(' ')
+      .map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+      .join(' ');
+  },
+
   getOptionsFromKey(options, name, defaultValue) {
     if (!this.isNonEmptyArray(options)) {
       return defaultValue;

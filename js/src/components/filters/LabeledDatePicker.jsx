@@ -1,11 +1,11 @@
 import React from 'react';
 import { Col, Form } from 'react-bootstrap';
-import startCase from 'lodash.startcase';
 import { FormDatePicker } from '../common/FormDatePicker';
+import { helpers } from '../../common/helpers';
 
 export const LabeledDatePicker = ({ ...props }) => (
   <Form.Group as={Col} xs='auto'>
-    <Form.Label>{startCase(props.name)}</Form.Label>
+    <Form.Label>{helpers.titleCase(props.name)}</Form.Label>
     <FormDatePicker
       {...props}
     />
