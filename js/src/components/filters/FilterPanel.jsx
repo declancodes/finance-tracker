@@ -20,12 +20,12 @@ export const FilterPanel = ({
           <>
             <LabeledDatePicker
               name='from'
-              initial={start}
+              selected={start}
               onChange={val => setStart(val)}
             />
             <LabeledDatePicker
               name='to'
-              initial={end}
+              selected={end}
               onChange={val => setEnd(val)}
             />
           </>

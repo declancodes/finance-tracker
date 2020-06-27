@@ -116,6 +116,7 @@ class EntityPage extends React.Component {
 
   render() {
     const entityPluralName = pluralize(this.props.entityName);
+
     return (
       <div>
         <h3>{entityPluralName}</h3>
@@ -142,11 +143,11 @@ class EntityPage extends React.Component {
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>
             {this.state.entities.length > 0 ? (
-              this.state.entities.map(entity => (
+              this.state.entities.map(e => (
                 <EntityRow
-                  key={entity.uuid}
+                  key={e.uuid}
                   entityName={this.props.entityName}
-                  entity={entity}
+                  entity={e}
                   getInitialValues={this.props.getInitialValues}
                   options={this.state.options}
                   doExtraModifications={this.props.doExtraModifications}
