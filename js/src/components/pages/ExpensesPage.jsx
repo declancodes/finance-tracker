@@ -4,7 +4,9 @@ import { api } from '../../common/api';
 import { helpers } from '../../common/helpers';
 
 const doExtraModifications = (values) => {
-  const ecUuid = values.category.value;
+  const ecUuid = values.category.value === undefined ?
+    values.category :
+    values.category.value;
   values.category = {
     uuid: ecUuid
   };

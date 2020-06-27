@@ -3,7 +3,9 @@ import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 
 const doExtraModifications = (values) => {
-  const acUuid = values.category.value;
+  const acUuid = values.category.value === undefined ?
+    values.category :
+    values.category.value;
   values.category = {
     uuid: acUuid
   };
@@ -18,7 +20,7 @@ const getInitialValues = (fund) => {
 
 export const PortfolioPage = () => (
   <EntityPage
-    entityName='Fund'
+    entityName='Portfolio'
     blankEntity={{
       uuid: '',
       name: '',
@@ -32,7 +34,7 @@ export const PortfolioPage = () => (
     deleteEntity={api.deletePortfolio}
     getOptions={[
       {name: 'category', value: api.getAssetCategories},
-      {name: 'funds', value: api.getFunds}
+      {name: 'holdings', value: api.getHoldings}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

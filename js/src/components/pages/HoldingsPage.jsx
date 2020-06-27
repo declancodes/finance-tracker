@@ -3,12 +3,16 @@ import EntityPage from './EntityPage';
 import { api } from '../../common/api';
 
 const doExtraModifications = (values) => {
-  const aUuid = values.account.value;
+  const aUuid = values.account.value === undefined ?
+    values.account :
+    values.account.value;
   values.account = {
     uuid: aUuid
   };
 
-  const fUuid = values.fund.value;
+  const fUuid = values.fund.value === undefined ?
+    values.fund :
+    values.fund.value;
   values.fund = {
     uuid: fUuid
   };
