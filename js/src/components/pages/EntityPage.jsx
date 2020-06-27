@@ -167,7 +167,7 @@ class EntityPage extends React.Component {
           <EntityForm
             entityName={this.props.entityName}
             entity={this.props.blankEntity}
-            isCreateMode={true}
+            isCreateMode
             options={this.state.options}
             doExtraModifications={this.props.doExtraModifications}
             doSubmit={this.handleCreate}

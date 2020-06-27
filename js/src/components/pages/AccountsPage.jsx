@@ -28,7 +28,7 @@ export const AccountsPage = () => (
       description: '',
       amount: 0
     }}
-    usesFilters={true}
+    usesFilters
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}

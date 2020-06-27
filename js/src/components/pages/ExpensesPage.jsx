@@ -34,8 +34,8 @@ export const ExpensesPage = () => (
       date: '',
       amount: 0
     }}
-    usesFilters={true}
-    usesDates={true}
+    usesFilters
+    usesDates
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}

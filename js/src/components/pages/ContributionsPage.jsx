@@ -34,8 +34,8 @@ export const ContributionsPage = () => (
       date: '',
       amount: 0
     }}
-    usesFilters={true}
-    usesDates={true}
+    usesFilters
+    usesDates
     filterCategories={[
       {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}

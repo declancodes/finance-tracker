@@ -34,7 +34,6 @@ export const EntityRow = ({
             entityName={entityName}
             entity={entity}
             getInitialValues={getInitialValues}
-            isCreateMode={false}
             options={options}
             doExtraModifications={doExtraModifications}
             doSubmit={handleUpdate}

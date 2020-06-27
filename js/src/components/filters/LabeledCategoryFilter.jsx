@@ -10,7 +10,7 @@ export const LabeledCategoryFilter = ({
   setFilterCategory
 }) => {
   const displayName = startCase(filterCategory.name);
-  const opts = () => helpers
+  const opts = helpers
     .getOptionsArrayFromKey(options, filterCategory.name)
     .map(o => {
       return {
@@ -24,8 +24,8 @@ export const LabeledCategoryFilter = ({
       <Form.Label>{displayName}</Form.Label>
       <DarklyReactSelect
         isMulti
-        placeholder='Filter by Category...'
-        options={opts()}
+        placeholder={`Filter by ${displayName}...`}
+        options={opts}
         value={filterCategory.value}
         onChange={value => setFilterCategory(filterCategory.name, value)}
       />

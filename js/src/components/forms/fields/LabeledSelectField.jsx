@@ -6,6 +6,7 @@ import { DarklyReactSelect } from '../../common/DarklyReactSelect';
 export const LabeledSelectField = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
+
   const opts = helpers
     .getOptionsArrayFromKey(props.options, props.name)
     .map(o => {

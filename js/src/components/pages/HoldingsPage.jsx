@@ -37,7 +37,7 @@ export const HoldingsPage = () => (
       value: 0,
       effectiveExpense: 0
     }}
-    usesFilters={true}
+    usesFilters
     filterCategories={[
       {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'},
       {name: 'fund', value: '', optionValue: 'tickerSymbol', optionDisplay: 'tickerSymbol'}

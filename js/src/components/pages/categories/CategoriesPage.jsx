@@ -15,7 +15,6 @@ export const CategoriesPage = ({
       name: '',
       description: ''
     }}
-    usesFilters={false}
     createEntity={createCategory}
     getEntities={getCategories}
     updateEntity={updateCategory}

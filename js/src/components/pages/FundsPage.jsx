@@ -30,7 +30,7 @@ export const FundsPage = () => (
       sharePrice: 0,
       expenseRatio: 0
     }}
-    usesFilters={true}
+    usesFilters
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
