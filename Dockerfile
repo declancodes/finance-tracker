@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN go mod download \
-    && go build -o tracker .
+RUN go mod download && \
+    go build -o tracker .
 
 ENTRYPOINT [ "./tracker" ]
