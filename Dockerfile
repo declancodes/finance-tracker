@@ -1,13 +1,10 @@
-FROM golang
+FROM golang:1.14
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-
-RUN go mod download
-
 COPY . .
 
-RUN go build -o tracker .
+RUN go mod download \
+    && go build -o tracker .
 
-CMD [ "./tracker" ]
+ENTRYPOINT [ "./tracker" ]
