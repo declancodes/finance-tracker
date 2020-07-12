@@ -97,7 +97,7 @@ func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 // GetExpenseCategories gets ExpenseCategory entities.
 func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ecs, err := expenseRepo.GetExpenseCategories(db)
+		ecs, err := expenseRepo.GetExpenseCategories(db, getFilters(r))
 		if err != nil {
 			errorExecutingExpenseCategory(w, err)
 			return

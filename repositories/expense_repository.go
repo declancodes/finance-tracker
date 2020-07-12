@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -10,29 +8,6 @@ import (
 
 // ExpenseRepository is the means for interacting with Expense storage.
 type ExpenseRepository struct{}
-
-const (
-	getExpenseCategoriesQuery = `
-	SELECT
-		expense_category_uuid,
-		name,
-		description
-	FROM expense_category`
-
-	getExpensesQuery = `
-	SELECT
-		expense.expense_uuid,
-		expense_category.expense_category_uuid AS "expense_category.expense_category_uuid",
-		expense_category.name AS "expense_category.name",
-		expense_category.description AS "expense_category.description",
-		expense.name,
-		expense.description,
-		expense.amount,
-		expense.date_incurred
-	FROM expense
-	INNER JOIN expense_category
-		ON expense.expense_category_uuid = expense_category.expense_category_uuid`
-)
 
 // CreateExpenseCategories creates ExpenseCategory entities in db.
 func (r *ExpenseRepository) CreateExpenseCategories(db *sqlx.DB, ecs []*models.ExpenseCategory) ([]uuid.UUID, error) {
@@ -86,26 +61,39 @@ func (r *ExpenseRepository) CreateExpenses(db *sqlx.DB, es []*models.Expense) ([
 
 // GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.
 func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (*models.ExpenseCategory, error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		expense_category_uuid = $1;`, getExpenseCategoriesQuery)
+	mValues := map[string]interface{}{
+		"expense_category": ecUUID.String(),
+	}
 
-	var ec *models.ExpenseCategory
-	err := db.Get(&ec, query, ecUUID.String())
+	ecs, err := r.GetExpenseCategories(db, mValues)
 	if err != nil {
 		return nil, err
 	}
 
-	return ec, nil
+	return ecs[0], nil
 }
 
 // GetExpenseCategories retrieves ExpenseCategory entities from db.
-func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB) ([]*models.ExpenseCategory, error) {
-	query := fmt.Sprintf(`%s;`, getExpenseCategoriesQuery)
+// Filters for ExpenseCategory retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB, mValues map[string]interface{}) ([]*models.ExpenseCategory, error) {
+	query := `
+	SELECT
+		expense_category.expense_category_uuid,
+		expense_category.name,
+		expense_category.description
+	FROM expense_category`
+
+	mFilters := map[string]string{
+		"expense_category": "expense_category.expense_category_uuid = ",
+	}
+
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
+	if err != nil {
+		return nil, err
+	}
 
 	var ecs []*models.ExpenseCategory
-	err := db.Select(&ecs, query)
+	err = db.Select(&ecs, q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,6 +118,20 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (*models.Ex
 // GetExpenses retrieves Expense entities from db.
 // Filters for Expense retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Expense, error) {
+	query := `
+	SELECT
+		expense.expense_uuid,
+		expense_category.expense_category_uuid AS "expense_category.expense_category_uuid",
+		expense_category.name AS "expense_category.name",
+		expense_category.description AS "expense_category.description",
+		expense.name,
+		expense.description,
+		expense.amount,
+		expense.date_incurred
+	FROM expense
+	INNER JOIN expense_category
+		ON expense.expense_category_uuid = expense_category.expense_category_uuid`
+
 	mFilters := map[string]string{
 		"expense":    "expense.expense_uuid = ",
 		"categories": "expense_category.name IN ",
@@ -137,7 +139,7 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 		"end":        "expense.date_incurred <= ",
 	}
 
-	q, args, err := getGetQueryAndValues(getExpensesQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}

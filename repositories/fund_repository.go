@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -14,9 +12,9 @@ type FundRepository struct{}
 const (
 	getAssetCategoriesQuery = `
 	SELECT
-		asset_category_uuid,
-		name,
-		description
+		asset_category.asset_category_uuid,
+		asset_category.name,
+		asset_category.description
 	FROM asset_category`
 
 	getFundsQuery = `
@@ -139,26 +137,32 @@ func (r *FundRepository) CreateHoldings(db *sqlx.DB, hs []*models.Holding) ([]uu
 
 // GetAssetCategory retrieves the AssetCategory with acUUID from db.
 func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acUUID uuid.UUID) (*models.AssetCategory, error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		asset_category_uuid = $1;`, getAssetCategoriesQuery)
+	mValues := map[string]interface{}{
+		"asset_category": acUUID.String(),
+	}
 
-	var ac *models.AssetCategory
-	err := db.Get(&ac, query, acUUID.String())
+	acs, err := r.GetAssetCategories(db, mValues)
 	if err != nil {
 		return nil, err
 	}
 
-	return ac, nil
+	return acs[0], nil
 }
 
 // GetAssetCategories retrieves AssetCategory entities from db.
-func (r *FundRepository) GetAssetCategories(db *sqlx.DB) ([]*models.AssetCategory, error) {
-	query := fmt.Sprintf(`%s;`, getAssetCategoriesQuery)
+// Filters for AssetCategory retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *FundRepository) GetAssetCategories(db *sqlx.DB, mValues map[string]interface{}) ([]*models.AssetCategory, error) {
+	mFilters := map[string]string{
+		"asset_category": "asset_category.asset_category_uuid = ",
+	}
+
+	q, args, err := getGetQueryAndValues(getAssetCategoriesQuery, mValues, mFilters)
+	if err != nil {
+		return nil, err
+	}
 
 	var acs []*models.AssetCategory
-	err := db.Select(&acs, query)
+	err = db.Select(&acs, q, args...)
 	if err != nil {
 		return nil, err
 	}

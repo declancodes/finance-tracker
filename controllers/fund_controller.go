@@ -142,7 +142,7 @@ func (c *FundController) GetAssetCategory(db *sqlx.DB) http.HandlerFunc {
 // GetAssetCategories gets AssetCategory entities.
 func (c *FundController) GetAssetCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acs, err := fundRepo.GetAssetCategories(db)
+		acs, err := fundRepo.GetAssetCategories(db, getFilters(r))
 		if err != nil {
 			errorExecutingAssetCategory(w, err)
 			return

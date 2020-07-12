@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -10,48 +8,6 @@ import (
 
 // AccountRepository is the means for interacting with Account storage.
 type AccountRepository struct{}
-
-const (
-	getAccountCategoriesQuery = `
-	SELECT
-		account_category_uuid,
-		name,
-		description
-	FROM account_category`
-
-	getAccountsQuery = `
-	SELECT
-		account.account_uuid,
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name,
-		account.description,
-		account.amount
-	FROM account
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid`
-
-	getContributionsQuery = `
-	SELECT
-		contribution.contribution_uuid,
-		account.account_uuid AS "account.account_uuid",
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name AS "account.name",
-		account.description AS "account.description",
-		account.amount AS "account.amount",
-		contribution.name,
-		contribution.description,
-		contribution.amount,
-		contribution.date_made
-	FROM contribution
-	INNER JOIN account
-		ON contribution.account_uuid = account.account_uuid
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid`
-)
 
 // CreateAccountCategories creates AccountCategory entities in db.
 func (r *AccountRepository) CreateAccountCategories(db *sqlx.DB, acs []*models.AccountCategory) ([]uuid.UUID, error) {
@@ -131,26 +87,39 @@ func (r *AccountRepository) CreateContributions(db *sqlx.DB, cs []*models.Contri
 
 // GetAccountCategory retrieves the AccountCategory with acUUID from db.
 func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (*models.AccountCategory, error) {
-	query := fmt.Sprintf(`
-	%s
-	WHERE
-		account_category_uuid = $1;`, getAccountCategoriesQuery)
+	mValues := map[string]interface{}{
+		"account_category": acUUID.String(),
+	}
 
-	var ac *models.AccountCategory
-	err := db.Get(&ac, query, acUUID.String())
+	acs, err := r.GetAccountCategories(db, mValues)
 	if err != nil {
 		return nil, err
 	}
 
-	return ac, nil
+	return acs[0], nil
 }
 
 // GetAccountCategories retrieves AccountCategory entities from db.
-func (r *AccountRepository) GetAccountCategories(db *sqlx.DB) ([]*models.AccountCategory, error) {
-	query := fmt.Sprintf(`%s;`, getAccountCategoriesQuery)
+// Filters for AccountCategory retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *AccountRepository) GetAccountCategories(db *sqlx.DB, mValues map[string]interface{}) ([]*models.AccountCategory, error) {
+	query := `
+	SELECT
+		account_category.account_category_uuid,
+		account_category.name,
+		account_category.description
+	FROM account_category`
+
+	mFilters := map[string]string{
+		"account_category": "account_category.account_category_uuid = ",
+	}
+
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
+	if err != nil {
+		return nil, err
+	}
 
 	var acs []*models.AccountCategory
-	err := db.Select(&acs, query)
+	err = db.Select(&acs, q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -175,12 +144,25 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (*models.Ac
 // GetAccounts retrieves Account entities from db.
 // Filters for Account retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Account, error) {
+	query := `
+	SELECT
+		account.account_uuid,
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name,
+		account.description,
+		account.amount
+	FROM account
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
+
 	mFilters := map[string]string{
 		"account":    "account.account_uuid = ",
 		"categories": "account_category.name IN ",
 	}
 
-	q, args, err := getGetQueryAndValues(getAccountsQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +193,26 @@ func (r *AccountRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (*mode
 // GetContributions retrieves Contribution entities from db.
 // Filters for Contribution retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Contribution, error) {
+	query := `
+	SELECT
+		contribution.contribution_uuid,
+		account.account_uuid AS "account.account_uuid",
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name AS "account.name",
+		account.description AS "account.description",
+		account.amount AS "account.amount",
+		contribution.name,
+		contribution.description,
+		contribution.amount,
+		contribution.date_made
+	FROM contribution
+	INNER JOIN account
+		ON contribution.account_uuid = account.account_uuid
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
+
 	mFilters := map[string]string{
 		"contribution": "contribution.contribution_uuid = ",
 		"accounts":     "account.name IN ",
@@ -219,7 +221,7 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 		"end":          "contribution.date_made <= ",
 	}
 
-	q, args, err := getGetQueryAndValues(getContributionsQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}

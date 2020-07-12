@@ -127,7 +127,7 @@ func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 // GetAccountCategories gets AccountCategory entities.
 func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acs, err := accountRepo.GetAccountCategories(db)
+		acs, err := accountRepo.GetAccountCategories(db, getFilters(r))
 		if err != nil {
 			errorExecutingAccountCategory(w, err)
 			return
