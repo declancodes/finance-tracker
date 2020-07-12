@@ -71,7 +71,7 @@ const (
 		ON portfolio_asset_category_mapping.asset_category_uuid = asset_category.asset_category_uuid`
 )
 
-// CreatePortfolios creates a Portfolio in db.
+// CreatePortfolios creates Portfolio entities in db.
 func (r *PortfolioRepository) CreatePortfolios(db *sqlx.DB, ps []*models.Portfolio) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio (
@@ -93,7 +93,7 @@ func (r *PortfolioRepository) CreatePortfolios(db *sqlx.DB, ps []*models.Portfol
 	return IDs, nil
 }
 
-// CreatePortfolioHoldingMappings creates a PortfolioHoldingMapping in db.
+// CreatePortfolioHoldingMappings creates PortfolioHoldingMapping entities in db.
 func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms []*models.PortfolioHoldingMapping) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio_holding_mapping (
@@ -115,7 +115,7 @@ func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms [
 	return IDs, nil
 }
 
-// CreatePortfolioAssetCategoryMappings creates a PortfolioAssetCategoryMapping in db.
+// CreatePortfolioAssetCategoryMappings creates PortfolioAssetCategoryMapping entities in db.
 func (r *PortfolioRepository) CreatePortfolioAssetCategoryMappings(db *sqlx.DB, pacms []*models.PortfolioAssetCategoryMapping) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO portfolio_asset_category_mapping (
@@ -244,7 +244,7 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMappings(db *sqlx.DB, mVa
 }
 
 // UpdatePortfolio updates a Portfolio in db.
-func (r *PortfolioRepository) UpdatePortfolio(db *sqlx.DB, p models.Portfolio) error {
+func (r *PortfolioRepository) UpdatePortfolio(db *sqlx.DB, p *models.Portfolio) error {
 	query := `
 	UPDATE portfolio
 	SET
@@ -257,7 +257,7 @@ func (r *PortfolioRepository) UpdatePortfolio(db *sqlx.DB, p models.Portfolio) e
 }
 
 // UpdatePortfolioHoldingMapping updates a PortfolioHoldingMapping in db.
-func (r *PortfolioRepository) UpdatePortfolioHoldingMapping(db *sqlx.DB, phm models.PortfolioHoldingMapping) error {
+func (r *PortfolioRepository) UpdatePortfolioHoldingMapping(db *sqlx.DB, phm *models.PortfolioHoldingMapping) error {
 	query := `
 	UPDATE portfolio_holding_mapping
 	SET
@@ -270,7 +270,7 @@ func (r *PortfolioRepository) UpdatePortfolioHoldingMapping(db *sqlx.DB, phm mod
 }
 
 // UpdatePortfolioAssetCategoryMapping updates a PortfolioAssetCategoryMapping in db.
-func (r *PortfolioRepository) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB, pacm models.PortfolioAssetCategoryMapping) error {
+func (r *PortfolioRepository) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB, pacm *models.PortfolioAssetCategoryMapping) error {
 	query := `
 	UPDATE portfolio_asset_category_mapping
 	SET

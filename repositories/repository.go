@@ -67,14 +67,6 @@ func createAndGetUUIDs(db *sqlx.DB, query string, es interface{}) ([]uuid.UUID, 
 	return IDs, nil
 }
 
-func createAndGetUUID(db *sqlx.DB, query string, e interface{}) (uuid.UUID, error) {
-	IDs, err := createAndGetUUIDs(db, query, e)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	return IDs[0], nil
-}
-
 func getExecuted(r sql.Result, err error) (int64, error) {
 	if err != nil {
 		log.Println(err)

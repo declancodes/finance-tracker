@@ -34,8 +34,8 @@ const (
 		ON expense.expense_category_uuid = expense_category.expense_category_uuid`
 )
 
-// CreateExpenseCategory creates an ExpenseCategory in db.
-func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec *models.ExpenseCategory) (uuid.UUID, error) {
+// CreateExpenseCategories creates ExpenseCategory entities in db.
+func (r *ExpenseRepository) CreateExpenseCategories(db *sqlx.DB, ecs []*models.ExpenseCategory) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO expense_category (
 		expense_category_uuid,
@@ -49,15 +49,15 @@ func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec *models.Expens
 	)
 	RETURNING expense_category_uuid;`
 
-	ID, err := createAndGetUUID(db, query, ec)
+	IDs, err := createAndGetUUIDs(db, query, ecs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
-// CreateExpense creates an Expense in db.
-func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e *models.Expense) (uuid.UUID, error) {
+// CreateExpenses creates Expense entities in db.
+func (r *ExpenseRepository) CreateExpenses(db *sqlx.DB, es []*models.Expense) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO expense (
 		expense_uuid,
@@ -77,11 +77,11 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e *models.Expense) (uuid.
 	)
 	RETURNING expense_uuid;`
 
-	ID, err := createAndGetUUID(db, query, e)
+	IDs, err := createAndGetUUIDs(db, query, es)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
 // GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.

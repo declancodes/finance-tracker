@@ -53,8 +53,8 @@ const (
 		ON account.account_category_uuid = account_category.account_category_uuid`
 )
 
-// CreateAccountCategory creates an AccountCategory in db.
-func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac *models.AccountCategory) (uuid.UUID, error) {
+// CreateAccountCategories creates AccountCategory entities in db.
+func (r *AccountRepository) CreateAccountCategories(db *sqlx.DB, acs []*models.AccountCategory) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO account_category (
 		account_category_uuid,
@@ -68,15 +68,15 @@ func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac *models.Accoun
 	)
 	RETURNING account_category_uuid;`
 
-	ID, err := createAndGetUUID(db, query, ac)
+	IDs, err := createAndGetUUIDs(db, query, acs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
-// CreateAccount creates an Account in db.
-func (r *AccountRepository) CreateAccount(db *sqlx.DB, a *models.Account) (uuid.UUID, error) {
+// CreateAccounts creates Account entities in db.
+func (r *AccountRepository) CreateAccounts(db *sqlx.DB, as []*models.Account) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO account (
 		account_uuid,
@@ -94,15 +94,15 @@ func (r *AccountRepository) CreateAccount(db *sqlx.DB, a *models.Account) (uuid.
 	)
 	RETURNING account_uuid;`
 
-	ID, err := createAndGetUUID(db, query, a)
+	IDs, err := createAndGetUUIDs(db, query, as)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
-// CreateContribution creates a Contribution in db.
-func (r *AccountRepository) CreateContribution(db *sqlx.DB, c *models.Contribution) (uuid.UUID, error) {
+// CreateContributions creates Contribution entities in db.
+func (r *AccountRepository) CreateContributions(db *sqlx.DB, cs []*models.Contribution) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO contribution (
 		contribution_uuid,
@@ -122,11 +122,11 @@ func (r *AccountRepository) CreateContribution(db *sqlx.DB, c *models.Contributi
 	)
 	RETURNING contribution_uuid;`
 
-	ID, err := createAndGetUUID(db, query, c)
+	IDs, err := createAndGetUUIDs(db, query, cs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
 // GetAccountCategory retrieves the AccountCategory with acUUID from db.

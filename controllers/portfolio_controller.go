@@ -43,7 +43,7 @@ func errorExecutingPortfolioAssetCategoryMapping(w http.ResponseWriter, err erro
 // CreatePortfolio creates a Portfolio based on the r *http.Request Body.
 func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var p models.Portfolio
+		var p *models.Portfolio
 		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
 			badRequestPortfolio(w, err)
@@ -51,7 +51,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		p.ID = uuid.New()
-		pUUIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{&p})
+		pUUIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{p})
 		if err != nil {
 			errorCreating(w, "portfolio", err)
 			return
@@ -62,7 +62,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			phmID := uuid.New()
 			phms = append(phms, &models.PortfolioHoldingMapping{
 				ID:        phmID,
-				Portfolio: p,
+				Portfolio: *p,
 				Holding:   h,
 			})
 		}
@@ -77,7 +77,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			pacmID := uuid.New()
 			pacms = append(pacms, &models.PortfolioAssetCategoryMapping{
 				ID:            pacmID,
-				Portfolio:     p,
+				Portfolio:     *p,
 				AssetCategory: *ac,
 				Percentage:    per,
 			})
@@ -95,7 +95,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 // CreatePortfolioHoldingMapping creates a PortfolioHoldingMapping based on the r *http.Request Body.
 func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var phm models.PortfolioHoldingMapping
+		var phm *models.PortfolioHoldingMapping
 		err := json.NewDecoder(r.Body).Decode(&phm)
 		if err != nil {
 			badRequestPortfolioHoldingMapping(w, err)
@@ -103,7 +103,7 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 		}
 
 		phm.ID = uuid.New()
-		phmUUIDs, err := portfolioRepo.CreatePortfolioHoldingMappings(db, []*models.PortfolioHoldingMapping{&phm})
+		phmUUIDs, err := portfolioRepo.CreatePortfolioHoldingMappings(db, []*models.PortfolioHoldingMapping{phm})
 		if err != nil {
 			errorCreating(w, "portfolio holding mapping", err)
 			return
@@ -116,7 +116,7 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 // CreatePortfolioAssetCategoryMapping creates a PortfolioAssetCategoryMapping based on the r *http.Request Body.
 func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var pacm models.PortfolioAssetCategoryMapping
+		var pacm *models.PortfolioAssetCategoryMapping
 		err := json.NewDecoder(r.Body).Decode(&pacm)
 		if err != nil {
 			badRequestPortfolioAssetCategoryMapping(w, err)
@@ -124,7 +124,7 @@ func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 		}
 
 		pacm.ID = uuid.New()
-		pacmUUIDs, err := portfolioRepo.CreatePortfolioAssetCategoryMappings(db, []*models.PortfolioAssetCategoryMapping{&pacm})
+		pacmUUIDs, err := portfolioRepo.CreatePortfolioAssetCategoryMappings(db, []*models.PortfolioAssetCategoryMapping{pacm})
 		if err != nil {
 			errorCreating(w, "portfolio asset category mapping", err)
 			return
@@ -303,7 +303,7 @@ func (c *PortfolioController) UpdatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var p models.Portfolio
+		var p *models.Portfolio
 		err = json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
 			badRequestPortfolio(w, err)
@@ -330,7 +330,7 @@ func (c *PortfolioController) UpdatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 			return
 		}
 
-		var phm models.PortfolioHoldingMapping
+		var phm *models.PortfolioHoldingMapping
 		err = json.NewDecoder(r.Body).Decode(&phm)
 		if err != nil {
 			badRequestPortfolioHoldingMapping(w, err)
@@ -357,7 +357,7 @@ func (c *PortfolioController) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 			return
 		}
 
-		var pacm models.PortfolioAssetCategoryMapping
+		var pacm *models.PortfolioAssetCategoryMapping
 		err = json.NewDecoder(r.Body).Decode(&pacm)
 		if err != nil {
 			badRequestPortfolioAssetCategoryMapping(w, err)

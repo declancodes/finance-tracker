@@ -56,13 +56,13 @@ func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		ac.ID = uuid.New()
-		acUUID, err := fundRepo.CreateAssetCategory(db, ac)
+		acUUIDs, err := fundRepo.CreateAssetCategories(db, []*models.AssetCategory{ac})
 		if err != nil {
 			errorCreating(w, "asset category", err)
 			return
 		}
 
-		created(w, acUUID)
+		created(w, acUUIDs[0])
 	}
 }
 
@@ -87,13 +87,13 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 			f.SharePrice = sp
 		}
 
-		fUUID, err := fundRepo.CreateFund(db, f)
+		fUUIDs, err := fundRepo.CreateFunds(db, []*models.Fund{f})
 		if err != nil {
 			errorCreating(w, "fund", err)
 			return
 		}
 
-		created(w, fUUID)
+		created(w, fUUIDs[0])
 	}
 }
 
@@ -108,13 +108,13 @@ func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.ID = uuid.New()
-		hUUID, err := fundRepo.CreateHolding(db, h)
+		hUUIDs, err := fundRepo.CreateHoldings(db, []*models.Holding{h})
 		if err != nil {
 			errorCreating(w, "holding", err)
 			return
 		}
 
-		created(w, hUUID)
+		created(w, hUUIDs[0])
 	}
 }
 

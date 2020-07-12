@@ -63,8 +63,8 @@ const (
 		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
 )
 
-// CreateAssetCategory creates an AssetCategory in db.
-func (r *FundRepository) CreateAssetCategory(db *sqlx.DB, ac *models.AssetCategory) (uuid.UUID, error) {
+// CreateAssetCategories creates AssetCategory entities in db.
+func (r *FundRepository) CreateAssetCategories(db *sqlx.DB, acs []*models.AssetCategory) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO asset_category (
 		asset_category_uuid,
@@ -78,15 +78,15 @@ func (r *FundRepository) CreateAssetCategory(db *sqlx.DB, ac *models.AssetCatego
 	)
 	RETURNING asset_category_uuid;`
 
-	ID, err := createAndGetUUID(db, query, ac)
+	IDs, err := createAndGetUUIDs(db, query, acs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
-// CreateFund creates a Fund in db.
-func (r *FundRepository) CreateFund(db *sqlx.DB, f *models.Fund) (uuid.UUID, error) {
+// CreateFunds creates Fund entities in db.
+func (r *FundRepository) CreateFunds(db *sqlx.DB, fs []*models.Fund) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO fund (
 		fund_uuid,
@@ -106,15 +106,15 @@ func (r *FundRepository) CreateFund(db *sqlx.DB, f *models.Fund) (uuid.UUID, err
 	)
 	RETURNING fund_uuid;`
 
-	ID, err := createAndGetUUID(db, query, f)
+	IDs, err := createAndGetUUIDs(db, query, fs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
-// CreateHolding creates a Holding in db.
-func (r *FundRepository) CreateHolding(db *sqlx.DB, h *models.Holding) (uuid.UUID, error) {
+// CreateHoldings creates Holding entities in db.
+func (r *FundRepository) CreateHoldings(db *sqlx.DB, hs []*models.Holding) ([]uuid.UUID, error) {
 	query := `
 	INSERT INTO holding (
 		holding_uuid,
@@ -130,11 +130,11 @@ func (r *FundRepository) CreateHolding(db *sqlx.DB, h *models.Holding) (uuid.UUI
 	)
 	RETURNING holding_uuid;`
 
-	ID, err := createAndGetUUID(db, query, h)
+	IDs, err := createAndGetUUIDs(db, query, hs)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
-	return ID, nil
+	return IDs, nil
 }
 
 // GetAssetCategory retrieves the AssetCategory with acUUID from db.
