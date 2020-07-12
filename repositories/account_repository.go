@@ -54,7 +54,7 @@ const (
 )
 
 // CreateAccountCategory creates an AccountCategory in db.
-func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.AccountCategory) (uuid.UUID, error) {
+func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac *models.AccountCategory) (uuid.UUID, error) {
 	query := `
 	INSERT INTO account_category (
 		account_category_uuid,
@@ -68,11 +68,15 @@ func (r *AccountRepository) CreateAccountCategory(db *sqlx.DB, ac models.Account
 	)
 	RETURNING account_category_uuid;`
 
-	return createAndGetUUID(db, query, ac)
+	ID, err := createAndGetUUID(db, query, ac)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // CreateAccount creates an Account in db.
-func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) (uuid.UUID, error) {
+func (r *AccountRepository) CreateAccount(db *sqlx.DB, a *models.Account) (uuid.UUID, error) {
 	query := `
 	INSERT INTO account (
 		account_uuid,
@@ -90,11 +94,15 @@ func (r *AccountRepository) CreateAccount(db *sqlx.DB, a models.Account) (uuid.U
 	)
 	RETURNING account_uuid;`
 
-	return createAndGetUUID(db, query, a)
+	ID, err := createAndGetUUID(db, query, a)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // CreateContribution creates a Contribution in db.
-func (r *AccountRepository) CreateContribution(db *sqlx.DB, c models.Contribution) (uuid.UUID, error) {
+func (r *AccountRepository) CreateContribution(db *sqlx.DB, c *models.Contribution) (uuid.UUID, error) {
 	query := `
 	INSERT INTO contribution (
 		contribution_uuid,
@@ -114,7 +122,11 @@ func (r *AccountRepository) CreateContribution(db *sqlx.DB, c models.Contributio
 	)
 	RETURNING contribution_uuid;`
 
-	return createAndGetUUID(db, query, c)
+	ID, err := createAndGetUUID(db, query, c)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // GetAccountCategory retrieves the AccountCategory with acUUID from db.
@@ -168,19 +180,10 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 		"categories": "account_category.name IN ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getAccountsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getAccountsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var as []*models.Account
 	err = db.Select(&as, q, args...)
@@ -216,19 +219,10 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 		"end":          "contribution.date_made <= ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getContributionsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getContributionsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	rows, err := db.Queryx(q, args...)
 	if err != nil {
@@ -256,7 +250,7 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 }
 
 // UpdateAccountCategory updates an AccountCategory in db.
-func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac models.AccountCategory) error {
+func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac *models.AccountCategory) error {
 	query := `
 	UPDATE account_category
 	SET
@@ -269,7 +263,7 @@ func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac models.Account
 }
 
 // UpdateAccount updates an Account in db.
-func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a models.Account) error {
+func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a *models.Account) error {
 	query := `
 	UPDATE account
 	SET
@@ -284,7 +278,7 @@ func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a models.Account) error {
 }
 
 // UpdateContribution updates a Contribution in db.
-func (r *AccountRepository) UpdateContribution(db *sqlx.DB, c models.Contribution) error {
+func (r *AccountRepository) UpdateContribution(db *sqlx.DB, c *models.Contribution) error {
 	query := `
 	UPDATE contribution
 	SET

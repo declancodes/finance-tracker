@@ -35,7 +35,7 @@ const (
 )
 
 // CreateExpenseCategory creates an ExpenseCategory in db.
-func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) (uuid.UUID, error) {
+func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec *models.ExpenseCategory) (uuid.UUID, error) {
 	query := `
 	INSERT INTO expense_category (
 		expense_category_uuid,
@@ -49,11 +49,15 @@ func (r *ExpenseRepository) CreateExpenseCategory(db *sqlx.DB, ec models.Expense
 	)
 	RETURNING expense_category_uuid;`
 
-	return createAndGetUUID(db, query, ec)
+	ID, err := createAndGetUUID(db, query, ec)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // CreateExpense creates an Expense in db.
-func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.UUID, error) {
+func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e *models.Expense) (uuid.UUID, error) {
 	query := `
 	INSERT INTO expense (
 		expense_uuid,
@@ -73,7 +77,11 @@ func (r *ExpenseRepository) CreateExpense(db *sqlx.DB, e models.Expense) (uuid.U
 	)
 	RETURNING expense_uuid;`
 
-	return createAndGetUUID(db, query, e)
+	ID, err := createAndGetUUID(db, query, e)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.
@@ -129,19 +137,10 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 		"end":        "expense.date_incurred <= ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getExpensesQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getExpensesQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var es []*models.Expense
 	err = db.Select(&es, q, args...)
@@ -153,7 +152,7 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 }
 
 // UpdateExpenseCategory updates an ExpenseCategory in db.
-func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec models.ExpenseCategory) error {
+func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec *models.ExpenseCategory) error {
 	query := `
 	UPDATE expense_category
 	SET
@@ -166,7 +165,7 @@ func (r *ExpenseRepository) UpdateExpenseCategory(db *sqlx.DB, ec models.Expense
 }
 
 // UpdateExpense updates an Expense in db.
-func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e models.Expense) error {
+func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e *models.Expense) error {
 	query := `
 	UPDATE expense
 	SET

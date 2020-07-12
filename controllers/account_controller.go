@@ -43,7 +43,7 @@ func errorExecutingContribution(w http.ResponseWriter, err error) {
 // CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
 func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ac models.AccountCategory
+		var ac *models.AccountCategory
 		err := json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
 			badRequestAccountCategory(w, err)
@@ -64,7 +64,7 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 // CreateAccount creates an Account based on the r *http.Request Body.
 func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var a models.Account
+		var a *models.Account
 		err := json.NewDecoder(r.Body).Decode(&a)
 		if err != nil {
 			badRequestAccount(w, err)
@@ -85,7 +85,7 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 // CreateContribution creates a Contribution based on the r *http.Request Body.
 func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var c models.Contribution
+		var c *models.Contribution
 		err := json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
 			badRequestContribution(w, err)
@@ -228,7 +228,7 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		var ac models.AccountCategory
+		var ac *models.AccountCategory
 		err = json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
 			badRequestAccountCategory(w, err)
@@ -255,7 +255,7 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var a models.Account
+		var a *models.Account
 		err = json.NewDecoder(r.Body).Decode(&a)
 		if err != nil {
 			badRequestAccount(w, err)
@@ -282,7 +282,7 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var c models.Contribution
+		var c *models.Contribution
 		err = json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
 			badRequestContribution(w, err)

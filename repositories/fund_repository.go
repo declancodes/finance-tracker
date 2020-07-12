@@ -64,7 +64,7 @@ const (
 )
 
 // CreateAssetCategory creates an AssetCategory in db.
-func (r *FundRepository) CreateAssetCategory(db *sqlx.DB, ac models.AssetCategory) (uuid.UUID, error) {
+func (r *FundRepository) CreateAssetCategory(db *sqlx.DB, ac *models.AssetCategory) (uuid.UUID, error) {
 	query := `
 	INSERT INTO asset_category (
 		asset_category_uuid,
@@ -78,11 +78,15 @@ func (r *FundRepository) CreateAssetCategory(db *sqlx.DB, ac models.AssetCategor
 	)
 	RETURNING asset_category_uuid;`
 
-	return createAndGetUUID(db, query, ac)
+	ID, err := createAndGetUUID(db, query, ac)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // CreateFund creates a Fund in db.
-func (r *FundRepository) CreateFund(db *sqlx.DB, f models.Fund) (uuid.UUID, error) {
+func (r *FundRepository) CreateFund(db *sqlx.DB, f *models.Fund) (uuid.UUID, error) {
 	query := `
 	INSERT INTO fund (
 		fund_uuid,
@@ -102,11 +106,15 @@ func (r *FundRepository) CreateFund(db *sqlx.DB, f models.Fund) (uuid.UUID, erro
 	)
 	RETURNING fund_uuid;`
 
-	return createAndGetUUID(db, query, f)
+	ID, err := createAndGetUUID(db, query, f)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // CreateHolding creates a Holding in db.
-func (r *FundRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.UUID, error) {
+func (r *FundRepository) CreateHolding(db *sqlx.DB, h *models.Holding) (uuid.UUID, error) {
 	query := `
 	INSERT INTO holding (
 		holding_uuid,
@@ -122,7 +130,11 @@ func (r *FundRepository) CreateHolding(db *sqlx.DB, h models.Holding) (uuid.UUID
 	)
 	RETURNING holding_uuid;`
 
-	return createAndGetUUID(db, query, h)
+	ID, err := createAndGetUUID(db, query, h)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return ID, nil
 }
 
 // GetAssetCategory retrieves the AssetCategory with acUUID from db.
@@ -176,19 +188,10 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 		"categories": "asset_category.name IN ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getFundsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getFundsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var fs []*models.Fund
 	err = db.Select(&fs, q, args...)
@@ -223,19 +226,10 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 		"funds":      "fund.ticker_symbol IN ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getHoldingsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getHoldingsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	rows, err := db.Queryx(q, args...)
 	if err != nil {
@@ -269,7 +263,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 }
 
 // UpdateAssetCategory updates an AssetCategory in db.
-func (r *FundRepository) UpdateAssetCategory(db *sqlx.DB, ac models.AssetCategory) error {
+func (r *FundRepository) UpdateAssetCategory(db *sqlx.DB, ac *models.AssetCategory) error {
 	query := `
 	UPDATE asset_category
 	SET
@@ -282,7 +276,7 @@ func (r *FundRepository) UpdateAssetCategory(db *sqlx.DB, ac models.AssetCategor
 }
 
 // UpdateFund updates a Fund in db.
-func (r *FundRepository) UpdateFund(db *sqlx.DB, f models.Fund) error {
+func (r *FundRepository) UpdateFund(db *sqlx.DB, f *models.Fund) error {
 	query := `
 	UPDATE fund
 	SET
@@ -298,7 +292,7 @@ func (r *FundRepository) UpdateFund(db *sqlx.DB, f models.Fund) error {
 }
 
 // UpdateHolding updates a Holding in db.
-func (r *FundRepository) UpdateHolding(db *sqlx.DB, h models.Holding) error {
+func (r *FundRepository) UpdateHolding(db *sqlx.DB, h *models.Holding) error {
 	query := `
 	UPDATE holding
 	SET

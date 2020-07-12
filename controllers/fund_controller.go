@@ -48,7 +48,7 @@ func errorExecutingHolding(w http.ResponseWriter, err error) {
 // CreateAssetCategory creates an AssetCategory based on the r *http.Request Body.
 func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ac models.AssetCategory
+		var ac *models.AssetCategory
 		err := json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
 			badRequestAssetCategory(w, err)
@@ -69,7 +69,7 @@ func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 // CreateFund creates a Fund based on the r *http.Request Body.
 func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var f models.Fund
+		var f *models.Fund
 		err := json.NewDecoder(r.Body).Decode(&f)
 		if err != nil {
 			badRequestFund(w, err)
@@ -100,7 +100,7 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 // CreateHolding creates a Holding based on the r *http.Request Body.
 func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var h models.Holding
+		var h *models.Holding
 		err := json.NewDecoder(r.Body).Decode(&h)
 		if err != nil {
 			badRequestHolding(w, err)
@@ -237,7 +237,7 @@ func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var ac models.AssetCategory
+		var ac *models.AssetCategory
 		err = json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
 			badRequestAssetCategory(w, err)
@@ -264,7 +264,7 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var f models.Fund
+		var f *models.Fund
 		err = json.NewDecoder(r.Body).Decode(&f)
 		if err != nil {
 			badRequestFund(w, err)
@@ -309,7 +309,7 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 			}
 			f.SharePrice = sp
 
-			err = fundRepo.UpdateFund(db, *f)
+			err = fundRepo.UpdateFund(db, f)
 			if err != nil {
 				errorExecutingFund(w, err)
 				return
@@ -329,7 +329,7 @@ func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var h models.Holding
+		var h *models.Holding
 		err = json.NewDecoder(r.Body).Decode(&h)
 		if err != nil {
 			badRequestHolding(w, err)

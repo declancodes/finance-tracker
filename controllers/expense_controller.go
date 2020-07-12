@@ -34,7 +34,7 @@ func errorExecutingExpense(w http.ResponseWriter, err error) {
 // CreateExpenseCategory creates an ExpenseCategory based on the r *http.Request Body.
 func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ec models.ExpenseCategory
+		var ec *models.ExpenseCategory
 		err := json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
 			badRequestExpenseCategory(w, err)
@@ -55,7 +55,7 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 // CreateExpense creates an Expense based on the r *http.Request Body.
 func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var e models.Expense
+		var e *models.Expense
 		err := json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
 			badRequestExpense(w, err)
@@ -155,7 +155,7 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		var ec models.ExpenseCategory
+		var ec *models.ExpenseCategory
 		err = json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
 			badRequestExpenseCategory(w, err)
@@ -182,7 +182,7 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var e models.Expense
+		var e *models.Expense
 		err = json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
 			badRequestExpense(w, err)

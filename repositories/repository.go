@@ -14,9 +14,6 @@ import (
 // ErrNoRecord is returned by any operation that is performed for a nonexistent record.
 var ErrNoRecord = errors.New("repositories: record does not exist")
 
-// ErrFiltersToMap is returned by any operations expecting filters to map but having differences between those provided.
-var ErrFiltersToMap = errors.New("repositories: mismatched filters to map provided")
-
 func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]string) (string, []interface{}, error) {
 	var values []interface{}
 	var conditions []string
@@ -38,32 +35,44 @@ func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]strin
 	return fmt.Sprintf("%s %s;", where, strings.Join(conditions, " AND ")), values, nil
 }
 
-func getCreateQueryAndVals(query string, es interface{}) (string, []interface{}, error) {
-	q, args, err := sqlx.Named(query, es)
+func getGetQueryAndValues(getQuery string, mValues map[string]interface{}, mFilters map[string]string) (string, []interface{}, error) {
+	clauses, values, err := buildQueryClauses(mValues, mFilters)
 	if err != nil {
 		return "", nil, err
 	}
 
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
+	query := fmt.Sprintf("%s %s", getQuery, clauses)
 
-	return q, args, nil
+	q, args, err := sqlx.In(query, values...)
+	if err != nil {
+		return "", nil, err
+	}
+
+	return postgresRebind(q), args, nil
+}
+
+func createAndGetUUIDs(db *sqlx.DB, query string, es interface{}) ([]uuid.UUID, error) {
+	q, args, err := sqlx.Named(query, es)
+	if err != nil {
+		return nil, err
+	}
+
+	q = postgresRebind(q)
+
+	var IDs []uuid.UUID
+	err = db.Select(&IDs, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	return IDs, nil
 }
 
 func createAndGetUUID(db *sqlx.DB, query string, e interface{}) (uuid.UUID, error) {
-	rows, err := db.NamedQuery(query, e)
+	IDs, err := createAndGetUUIDs(db, query, e)
 	if err != nil {
 		return uuid.Nil, err
 	}
-	defer rows.Close()
-
-	var ID uuid.UUID
-	for rows.Next() {
-		err = rows.Scan(&ID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-	}
-	return ID, nil
+	return IDs[0], nil
 }
 
 func getExecuted(r sql.Result, err error) (int64, error) {
@@ -93,4 +102,8 @@ func deleteEntity(db *sqlx.DB, query string, ID uuid.UUID) error {
 	res, err := db.Exec(query, ID.String())
 	_, err = getExecuted(res, err)
 	return err
+}
+
+func postgresRebind(query string) string {
+	return sqlx.Rebind(sqlx.DOLLAR, query)
 }

@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -88,18 +86,11 @@ func (r *PortfolioRepository) CreatePortfolios(db *sqlx.DB, ps []*models.Portfol
 	)
 	RETURNING portfolio_uuid;`
 
-	q, args, err := getCreateQueryAndVals(query, ps)
+	IDs, err := createAndGetUUIDs(db, query, ps)
 	if err != nil {
 		return nil, err
 	}
-
-	var pIDs []uuid.UUID
-	err = db.Select(&pIDs, q, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	return pIDs, nil
+	return IDs, nil
 }
 
 // CreatePortfolioHoldingMappings creates a PortfolioHoldingMapping in db.
@@ -117,18 +108,11 @@ func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms [
 	)
 	RETURNING portfolio_holding_mapping_uuid;`
 
-	q, args, err := getCreateQueryAndVals(query, phms)
+	IDs, err := createAndGetUUIDs(db, query, phms)
 	if err != nil {
 		return nil, err
 	}
-
-	var phmIDs []uuid.UUID
-	err = db.Select(&phmIDs, q, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	return phmIDs, nil
+	return IDs, nil
 }
 
 // CreatePortfolioAssetCategoryMappings creates a PortfolioAssetCategoryMapping in db.
@@ -148,18 +132,11 @@ func (r *PortfolioRepository) CreatePortfolioAssetCategoryMappings(db *sqlx.DB, 
 	)
 	RETURNING portfolio_asset_category_mapping_uuid;`
 
-	q, args, err := getCreateQueryAndVals(query, pacms)
+	IDs, err := createAndGetUUIDs(db, query, pacms)
 	if err != nil {
 		return nil, err
 	}
-
-	var pacmIDs []uuid.UUID
-	err = db.Select(&pacmIDs, q, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	return pacmIDs, nil
+	return IDs, nil
 }
 
 // GetPortfolio retrieves Portfolio with pUUID from db.
@@ -182,19 +159,10 @@ func (r *PortfolioRepository) GetPortfolios(db *sqlx.DB, mValues map[string]inte
 		"portfolio": "portfolio.portfolio_uuid = ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getPortfoliosQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getPortfoliosQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var ps []*models.Portfolio
 	err = db.Select(&ps, q, args...)
@@ -226,19 +194,10 @@ func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues m
 		"portfolios": "portfolio.portfolio_uuid IN ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getPortfolioHoldingMappingsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getPortfolioHoldingMappingsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var phms []*models.PortfolioHoldingMapping
 	err = db.Select(&phms, q, args...)
@@ -255,12 +214,12 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacm
 		"mapping": pacmUUID.String(),
 	}
 
-	phms, err := r.GetPortfolioAssetCategoryMappings(db, mValues)
+	pacms, err := r.GetPortfolioAssetCategoryMappings(db, mValues)
 	if err != nil {
 		return nil, err
 	}
 
-	return phms[0], nil
+	return pacms[0], nil
 }
 
 // GetPortfolioAssetCategoryMappings gets PortfolioAssetCategoryMappings from db.
@@ -270,19 +229,10 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMappings(db *sqlx.DB, mVa
 		"portfolios": "portfolio.portfolio_uuid IN ",
 	}
 
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
+	q, args, err := getGetQueryAndValues(getPortfolioAssetCategoryMappingsQuery, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
-
-	query := fmt.Sprintf("%s %s", getPortfolioAssetCategoryMappingsQuery, clauses)
-
-	q, args, err := sqlx.In(query, values...)
-	if err != nil {
-		return nil, err
-	}
-
-	q = sqlx.Rebind(sqlx.DOLLAR, q)
 
 	var pacms []*models.PortfolioAssetCategoryMapping
 	err = db.Select(&pacms, q, args...)
