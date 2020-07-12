@@ -34,9 +34,9 @@ func updated(w http.ResponseWriter, ID uuid.UUID) {
 }
 
 func delete(w http.ResponseWriter, r *http.Request, db *sqlx.DB, m string, fn func(*sqlx.DB, uuid.UUID) error) {
-	ID, err := getUUID(r)
+	ID, err := getID(r)
 	if err != nil {
-		badRequestUUID(w, err)
+		badRequestID(w, err)
 		return
 	}
 
@@ -48,8 +48,8 @@ func delete(w http.ResponseWriter, r *http.Request, db *sqlx.DB, m string, fn fu
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func badRequestUUID(w http.ResponseWriter, err error) {
-	badRequest(w, "invalid uuid", err)
+func badRequestID(w http.ResponseWriter, err error) {
+	badRequest(w, "invalid id", err)
 }
 
 func badRequestModel(w http.ResponseWriter, model string, err error) {
@@ -122,9 +122,9 @@ func getTime(s string) time.Time {
 	return t
 }
 
-func getUUID(r *http.Request) (uuid.UUID, error) {
+func getID(r *http.Request) (uuid.UUID, error) {
 	params := mux.Vars(r)
-	ID, err := uuid.Parse(params["uuid"])
+	ID, err := uuid.Parse(params["id"])
 	if err != nil {
 		return uuid.Nil, err
 	}

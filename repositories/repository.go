@@ -51,7 +51,7 @@ func getGetQueryAndValues(getQuery string, mValues map[string]interface{}, mFilt
 	return postgresRebind(q), args, nil
 }
 
-func createAndGetUUIDs(db *sqlx.DB, query string, es interface{}) ([]uuid.UUID, error) {
+func createAndGetIDs(db *sqlx.DB, query string, es interface{}) ([]uuid.UUID, error) {
 	q, args, err := sqlx.Named(query, es)
 	if err != nil {
 		return nil, err

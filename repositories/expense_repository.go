@@ -24,7 +24,7 @@ func (r *ExpenseRepository) CreateExpenseCategories(db *sqlx.DB, ecs []*models.E
 	)
 	RETURNING expense_category_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, ecs)
+	IDs, err := createAndGetIDs(db, query, ecs)
 	if err != nil {
 		return nil, err
 	}
@@ -52,17 +52,17 @@ func (r *ExpenseRepository) CreateExpenses(db *sqlx.DB, es []*models.Expense) ([
 	)
 	RETURNING expense_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, es)
+	IDs, err := createAndGetIDs(db, query, es)
 	if err != nil {
 		return nil, err
 	}
 	return IDs, nil
 }
 
-// GetExpenseCategory retrieves ExpenseCategory with ecUUID from db.
-func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) (*models.ExpenseCategory, error) {
+// GetExpenseCategory retrieves ExpenseCategory with ecID from db.
+func (r *ExpenseRepository) GetExpenseCategory(db *sqlx.DB, ecID uuid.UUID) (*models.ExpenseCategory, error) {
 	mValues := map[string]interface{}{
-		"expense_category": ecUUID.String(),
+		"expense_category": ecID.String(),
 	}
 
 	ecs, err := r.GetExpenseCategories(db, mValues)
@@ -101,10 +101,10 @@ func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB, mValues map[string
 	return ecs, nil
 }
 
-// GetExpense retrieves Expense with eUUID from db.
-func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eUUID uuid.UUID) (*models.Expense, error) {
+// GetExpense retrieves Expense with eID from db.
+func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eID uuid.UUID) (*models.Expense, error) {
 	mValues := map[string]interface{}{
-		"expense": eUUID.String(),
+		"expense": eID.String(),
 	}
 
 	es, err := r.GetExpenses(db, mValues)
@@ -183,21 +183,21 @@ func (r *ExpenseRepository) UpdateExpense(db *sqlx.DB, e *models.Expense) error 
 }
 
 // DeleteExpenseCategory deletes an ExpenseCategory from db.
-func (r *ExpenseRepository) DeleteExpenseCategory(db *sqlx.DB, ecUUID uuid.UUID) error {
+func (r *ExpenseRepository) DeleteExpenseCategory(db *sqlx.DB, ecID uuid.UUID) error {
 	query := `
 	DELETE FROM expense_category
 	WHERE
 		expense_category_uuid = $1;`
 
-	return deleteEntity(db, query, ecUUID)
+	return deleteEntity(db, query, ecID)
 }
 
 // DeleteExpense deletes an Expense from db.
-func (r *ExpenseRepository) DeleteExpense(db *sqlx.DB, eUUID uuid.UUID) error {
+func (r *ExpenseRepository) DeleteExpense(db *sqlx.DB, eID uuid.UUID) error {
 	query := `
 	DELETE FROM expense
 	WHERE
 		expense_uuid = $1;`
 
-	return deleteEntity(db, query, eUUID)
+	return deleteEntity(db, query, eID)
 }

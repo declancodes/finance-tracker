@@ -51,13 +51,13 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 		}
 
 		ac.ID = uuid.New()
-		acUUIDs, err := accountRepo.CreateAccountCategories(db, []*models.AccountCategory{ac})
+		acIDs, err := accountRepo.CreateAccountCategories(db, []*models.AccountCategory{ac})
 		if err != nil {
 			errorCreating(w, "account category", err)
 			return
 		}
 
-		created(w, acUUIDs[0])
+		created(w, acIDs[0])
 	}
 }
 
@@ -72,13 +72,13 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		a.ID = uuid.New()
-		aUUIDs, err := accountRepo.CreateAccounts(db, []*models.Account{a})
+		aIDs, err := accountRepo.CreateAccounts(db, []*models.Account{a})
 		if err != nil {
 			errorCreating(w, "account", err)
 			return
 		}
 
-		created(w, aUUIDs[0])
+		created(w, aIDs[0])
 	}
 }
 
@@ -93,26 +93,26 @@ func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		c.ID = uuid.New()
-		cUUIDs, err := accountRepo.CreateContributions(db, []*models.Contribution{c})
+		cIDs, err := accountRepo.CreateContributions(db, []*models.Contribution{c})
 		if err != nil {
 			errorCreating(w, "contribution", err)
 			return
 		}
 
-		created(w, cUUIDs[0])
+		created(w, cIDs[0])
 	}
 }
 
 // GetAccountCategory gets an AccountCategory.
 func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acUUID, err := getUUID(r)
+		acID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		ac, err := accountRepo.GetAccountCategory(db, acUUID)
+		ac, err := accountRepo.GetAccountCategory(db, acID)
 		if err != nil {
 			errorExecutingAccountCategory(w, err)
 			return
@@ -142,13 +142,13 @@ func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 // GetAccount gets an Account.
 func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		aUUID, err := getUUID(r)
+		aID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		a, err := accountRepo.GetAccount(db, aUUID)
+		a, err := accountRepo.GetAccount(db, aID)
 		if err != nil {
 			errorExecutingAccount(w, err)
 			return
@@ -185,13 +185,13 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 // GetContribution gets a Contribution.
 func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cUUID, err := getUUID(r)
+		cID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		c, err := accountRepo.GetContribution(db, cUUID)
+		c, err := accountRepo.GetContribution(db, cID)
 		if err != nil {
 			errorExecutingContribution(w, err)
 			return
@@ -222,9 +222,9 @@ func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 // UpdateAccountCategory updates an AccountCategory.
 func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acUUID, err := getUUID(r)
+		acID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -235,7 +235,7 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		ac.ID = acUUID
+		ac.ID = acID
 		err = accountRepo.UpdateAccountCategory(db, ac)
 		if err != nil {
 			errorExecutingAccountCategory(w, err)
@@ -249,9 +249,9 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 // UpdateAccount updates an Account.
 func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		aUUID, err := getUUID(r)
+		aID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -262,7 +262,7 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		a.ID = aUUID
+		a.ID = aID
 		err = accountRepo.UpdateAccount(db, a)
 		if err != nil {
 			errorExecutingAccount(w, err)
@@ -276,9 +276,9 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 // UpdateContribution updates a Contribution.
 func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cUUID, err := getUUID(r)
+		cID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -289,7 +289,7 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		c.ID = cUUID
+		c.ID = cID
 		err = accountRepo.UpdateContribution(db, c)
 		if err != nil {
 			errorExecutingContribution(w, err)

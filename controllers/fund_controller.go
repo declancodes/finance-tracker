@@ -56,13 +56,13 @@ func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		ac.ID = uuid.New()
-		acUUIDs, err := fundRepo.CreateAssetCategories(db, []*models.AssetCategory{ac})
+		acIDs, err := fundRepo.CreateAssetCategories(db, []*models.AssetCategory{ac})
 		if err != nil {
 			errorCreating(w, "asset category", err)
 			return
 		}
 
-		created(w, acUUIDs[0])
+		created(w, acIDs[0])
 	}
 }
 
@@ -87,13 +87,13 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 			f.SharePrice = sp
 		}
 
-		fUUIDs, err := fundRepo.CreateFunds(db, []*models.Fund{f})
+		fIDs, err := fundRepo.CreateFunds(db, []*models.Fund{f})
 		if err != nil {
 			errorCreating(w, "fund", err)
 			return
 		}
 
-		created(w, fUUIDs[0])
+		created(w, fIDs[0])
 	}
 }
 
@@ -108,26 +108,26 @@ func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		h.ID = uuid.New()
-		hUUIDs, err := fundRepo.CreateHoldings(db, []*models.Holding{h})
+		hIDs, err := fundRepo.CreateHoldings(db, []*models.Holding{h})
 		if err != nil {
 			errorCreating(w, "holding", err)
 			return
 		}
 
-		created(w, hUUIDs[0])
+		created(w, hIDs[0])
 	}
 }
 
 // GetAssetCategory gets an AssetCategory.
 func (c *FundController) GetAssetCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acUUID, err := getUUID(r)
+		acID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		ac, err := fundRepo.GetAssetCategory(db, acUUID)
+		ac, err := fundRepo.GetAssetCategory(db, acID)
 		if err != nil {
 			errorExecutingAssetCategory(w, err)
 			return
@@ -157,13 +157,13 @@ func (c *FundController) GetAssetCategories(db *sqlx.DB) http.HandlerFunc {
 // GetFund gets a Fund.
 func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fUUID, err := getUUID(r)
+		fID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		f, err := fundRepo.GetFund(db, fUUID)
+		f, err := fundRepo.GetFund(db, fID)
 		if err != nil {
 			errorExecutingFund(w, err)
 			return
@@ -194,13 +194,13 @@ func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 // GetHolding gets a Holding.
 func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		hUUID, err := getUUID(r)
+		hID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		h, err := fundRepo.GetHolding(db, hUUID)
+		h, err := fundRepo.GetHolding(db, hID)
 		if err != nil {
 			errorExecutingHolding(w, err)
 			return
@@ -231,9 +231,9 @@ func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 // UpdateAssetCategory updates an AssetCategory.
 func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		acUUID, err := getUUID(r)
+		acID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -244,7 +244,7 @@ func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		ac.ID = acUUID
+		ac.ID = acID
 		err = fundRepo.UpdateAssetCategory(db, ac)
 		if err != nil {
 			errorExecutingAssetCategory(w, err)
@@ -258,9 +258,9 @@ func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 // UpdateFund updates a Fund.
 func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fUUID, err := getUUID(r)
+		fID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -271,7 +271,7 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		f.ID = fUUID
+		f.ID = fID
 		f.TickerSymbol = strings.ToUpper(f.TickerSymbol)
 		if f.SharePrice.Equal(decimal.Zero) {
 			sp, err := getSharePrice(f.TickerSymbol)
@@ -323,9 +323,9 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 // UpdateHolding updates a Holding.
 func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		hUUID, err := getUUID(r)
+		hID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -336,7 +336,7 @@ func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		h.ID = hUUID
+		h.ID = hID
 		err = fundRepo.UpdateHolding(db, h)
 		if err != nil {
 			errorExecutingHolding(w, err)

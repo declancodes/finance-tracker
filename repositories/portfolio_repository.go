@@ -24,7 +24,7 @@ func (r *PortfolioRepository) CreatePortfolios(db *sqlx.DB, ps []*models.Portfol
 	)
 	RETURNING portfolio_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, ps)
+	IDs, err := createAndGetIDs(db, query, ps)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms [
 	)
 	RETURNING portfolio_holding_mapping_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, phms)
+	IDs, err := createAndGetIDs(db, query, phms)
 	if err != nil {
 		return nil, err
 	}
@@ -70,17 +70,17 @@ func (r *PortfolioRepository) CreatePortfolioAssetCategoryMappings(db *sqlx.DB, 
 	)
 	RETURNING portfolio_asset_category_mapping_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, pacms)
+	IDs, err := createAndGetIDs(db, query, pacms)
 	if err != nil {
 		return nil, err
 	}
 	return IDs, nil
 }
 
-// GetPortfolio retrieves Portfolio with pUUID from db.
-func (r *PortfolioRepository) GetPortfolio(db *sqlx.DB, pUUID uuid.UUID) (*models.Portfolio, error) {
+// GetPortfolio retrieves Portfolio with pID from db.
+func (r *PortfolioRepository) GetPortfolio(db *sqlx.DB, pID uuid.UUID) (*models.Portfolio, error) {
 	mValues := map[string]interface{}{
-		"portfolio": pUUID.String(),
+		"portfolio": pID.String(),
 	}
 
 	ps, err := r.GetPortfolios(db, mValues)
@@ -118,10 +118,10 @@ func (r *PortfolioRepository) GetPortfolios(db *sqlx.DB, mValues map[string]inte
 	return ps, nil
 }
 
-// GetPortfolioHoldingMapping retrieves PortfolioHoldingMapping with phmUUID from db.
-func (r *PortfolioRepository) GetPortfolioHoldingMapping(db *sqlx.DB, phmUUID uuid.UUID) (*models.PortfolioHoldingMapping, error) {
+// GetPortfolioHoldingMapping retrieves PortfolioHoldingMapping with phmID from db.
+func (r *PortfolioRepository) GetPortfolioHoldingMapping(db *sqlx.DB, phmID uuid.UUID) (*models.PortfolioHoldingMapping, error) {
 	mValues := map[string]interface{}{
-		"mapping": phmUUID.String(),
+		"mapping": phmID.String(),
 	}
 
 	phms, err := r.GetPortfolioHoldingMappings(db, mValues)
@@ -190,10 +190,10 @@ func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues m
 	return phms, nil
 }
 
-// GetPortfolioAssetCategoryMapping retrieves PortfolioAssetCategoryMapping with pacmUUID from db.
-func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacmUUID uuid.UUID) (*models.PortfolioAssetCategoryMapping, error) {
+// GetPortfolioAssetCategoryMapping retrieves PortfolioAssetCategoryMapping with pacmID from db.
+func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacmID uuid.UUID) (*models.PortfolioAssetCategoryMapping, error) {
 	mValues := map[string]interface{}{
-		"mapping": pacmUUID.String(),
+		"mapping": pacmID.String(),
 	}
 
 	pacms, err := r.GetPortfolioAssetCategoryMappings(db, mValues)
@@ -282,31 +282,31 @@ func (r *PortfolioRepository) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB, p
 }
 
 // DeletePortfolio deletes a Portfolio from db.
-func (r *PortfolioRepository) DeletePortfolio(db *sqlx.DB, pUUID uuid.UUID) error {
+func (r *PortfolioRepository) DeletePortfolio(db *sqlx.DB, pID uuid.UUID) error {
 	query := `
 	DELETE FROM portfolio
 	WHERE
 		portfolio_uuid = $1;`
 
-	return deleteEntity(db, query, pUUID)
+	return deleteEntity(db, query, pID)
 }
 
 // DeletePortfolioHoldingMapping deletes a PortfolioHoldingMapping from db.
-func (r *PortfolioRepository) DeletePortfolioHoldingMapping(db *sqlx.DB, phmUUID uuid.UUID) error {
+func (r *PortfolioRepository) DeletePortfolioHoldingMapping(db *sqlx.DB, phmID uuid.UUID) error {
 	query := `
 	DELETE FROM portfolio_holding_mapping
 	WHERE
 		portfolio_holding_mapping_uuid = $1;`
 
-	return deleteEntity(db, query, phmUUID)
+	return deleteEntity(db, query, phmID)
 }
 
 // DeletePortfolioAssetCategoryMapping deletes a PortfolioAssetCategoryMapping from db.
-func (r *PortfolioRepository) DeletePortfolioAssetCategoryMapping(db *sqlx.DB, pacmUUID uuid.UUID) error {
+func (r *PortfolioRepository) DeletePortfolioAssetCategoryMapping(db *sqlx.DB, pacmID uuid.UUID) error {
 	query := `
 	DELETE FROM portfolio_asset_category_mapping
 	WHERE
 		portfolio_asset_category_mapping_uuid = $1;`
 
-	return deleteEntity(db, query, pacmUUID)
+	return deleteEntity(db, query, pacmID)
 }

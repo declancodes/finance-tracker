@@ -76,7 +76,7 @@ func (r *FundRepository) CreateAssetCategories(db *sqlx.DB, acs []*models.AssetC
 	)
 	RETURNING asset_category_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, acs)
+	IDs, err := createAndGetIDs(db, query, acs)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (r *FundRepository) CreateFunds(db *sqlx.DB, fs []*models.Fund) ([]uuid.UUI
 	)
 	RETURNING fund_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, fs)
+	IDs, err := createAndGetIDs(db, query, fs)
 	if err != nil {
 		return nil, err
 	}
@@ -128,17 +128,17 @@ func (r *FundRepository) CreateHoldings(db *sqlx.DB, hs []*models.Holding) ([]uu
 	)
 	RETURNING holding_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, hs)
+	IDs, err := createAndGetIDs(db, query, hs)
 	if err != nil {
 		return nil, err
 	}
 	return IDs, nil
 }
 
-// GetAssetCategory retrieves the AssetCategory with acUUID from db.
-func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acUUID uuid.UUID) (*models.AssetCategory, error) {
+// GetAssetCategory retrieves the AssetCategory with acID from db.
+func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acID uuid.UUID) (*models.AssetCategory, error) {
 	mValues := map[string]interface{}{
-		"asset_category": acUUID.String(),
+		"asset_category": acID.String(),
 	}
 
 	acs, err := r.GetAssetCategories(db, mValues)
@@ -170,10 +170,10 @@ func (r *FundRepository) GetAssetCategories(db *sqlx.DB, mValues map[string]inte
 	return acs, nil
 }
 
-// GetFund retrieves the Fund with fUUID from db.
-func (r *FundRepository) GetFund(db *sqlx.DB, fUUID uuid.UUID) (*models.Fund, error) {
+// GetFund retrieves the Fund with fID from db.
+func (r *FundRepository) GetFund(db *sqlx.DB, fID uuid.UUID) (*models.Fund, error) {
 	mValues := map[string]interface{}{
-		"fund": fUUID.String(),
+		"fund": fID.String(),
 	}
 
 	fs, err := r.GetFunds(db, mValues)
@@ -206,10 +206,10 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 	return fs, nil
 }
 
-// GetHolding retrieves Holding with hUUID from db.
-func (r *FundRepository) GetHolding(db *sqlx.DB, hUUID uuid.UUID) (*models.Holding, error) {
+// GetHolding retrieves Holding with hID from db.
+func (r *FundRepository) GetHolding(db *sqlx.DB, hID uuid.UUID) (*models.Holding, error) {
 	mValues := map[string]interface{}{
-		"holding": hUUID.String(),
+		"holding": hID.String(),
 	}
 
 	hs, err := r.GetHoldings(db, mValues)
@@ -310,31 +310,31 @@ func (r *FundRepository) UpdateHolding(db *sqlx.DB, h *models.Holding) error {
 }
 
 // DeleteAssetCategory deletes an AssetCategory from db.
-func (r *FundRepository) DeleteAssetCategory(db *sqlx.DB, acUUID uuid.UUID) error {
+func (r *FundRepository) DeleteAssetCategory(db *sqlx.DB, acID uuid.UUID) error {
 	query := `
 	DELETE FROM asset_category
 	WHERE
 		asset_category_uuid = $1;`
 
-	return deleteEntity(db, query, acUUID)
+	return deleteEntity(db, query, acID)
 }
 
 // DeleteFund deletes a Fund from db.
-func (r *FundRepository) DeleteFund(db *sqlx.DB, fUUID uuid.UUID) error {
+func (r *FundRepository) DeleteFund(db *sqlx.DB, fID uuid.UUID) error {
 	query := `
 	DELETE FROM fund
 	WHERE
 		fund_uuid = $1;`
 
-	return deleteEntity(db, query, fUUID)
+	return deleteEntity(db, query, fID)
 }
 
 // DeleteHolding deletes a Holding from db.
-func (r *FundRepository) DeleteHolding(db *sqlx.DB, hUUID uuid.UUID) error {
+func (r *FundRepository) DeleteHolding(db *sqlx.DB, hID uuid.UUID) error {
 	query := `
 	DELETE FROM holding
 	WHERE
 		holding_uuid = $1;`
 
-	return deleteEntity(db, query, hUUID)
+	return deleteEntity(db, query, hID)
 }

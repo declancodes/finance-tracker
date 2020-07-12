@@ -24,7 +24,7 @@ func (r *AccountRepository) CreateAccountCategories(db *sqlx.DB, acs []*models.A
 	)
 	RETURNING account_category_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, acs)
+	IDs, err := createAndGetIDs(db, query, acs)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (r *AccountRepository) CreateAccounts(db *sqlx.DB, as []*models.Account) ([
 	)
 	RETURNING account_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, as)
+	IDs, err := createAndGetIDs(db, query, as)
 	if err != nil {
 		return nil, err
 	}
@@ -78,17 +78,17 @@ func (r *AccountRepository) CreateContributions(db *sqlx.DB, cs []*models.Contri
 	)
 	RETURNING contribution_uuid;`
 
-	IDs, err := createAndGetUUIDs(db, query, cs)
+	IDs, err := createAndGetIDs(db, query, cs)
 	if err != nil {
 		return nil, err
 	}
 	return IDs, nil
 }
 
-// GetAccountCategory retrieves the AccountCategory with acUUID from db.
-func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acUUID uuid.UUID) (*models.AccountCategory, error) {
+// GetAccountCategory retrieves the AccountCategory with acID from db.
+func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acID uuid.UUID) (*models.AccountCategory, error) {
 	mValues := map[string]interface{}{
-		"account_category": acUUID.String(),
+		"account_category": acID.String(),
 	}
 
 	acs, err := r.GetAccountCategories(db, mValues)
@@ -127,10 +127,10 @@ func (r *AccountRepository) GetAccountCategories(db *sqlx.DB, mValues map[string
 	return acs, nil
 }
 
-// GetAccount retrieves the Account with aUUID from db.
-func (r *AccountRepository) GetAccount(db *sqlx.DB, aUUID uuid.UUID) (*models.Account, error) {
+// GetAccount retrieves the Account with aID from db.
+func (r *AccountRepository) GetAccount(db *sqlx.DB, aID uuid.UUID) (*models.Account, error) {
 	mValues := map[string]interface{}{
-		"account": aUUID.String(),
+		"account": aID.String(),
 	}
 
 	as, err := r.GetAccounts(db, mValues)
@@ -176,10 +176,10 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 	return as, nil
 }
 
-// GetContribution retrieves Contribution with cUUID from db.
-func (r *AccountRepository) GetContribution(db *sqlx.DB, cUUID uuid.UUID) (*models.Contribution, error) {
+// GetContribution retrieves Contribution with cID from db.
+func (r *AccountRepository) GetContribution(db *sqlx.DB, cID uuid.UUID) (*models.Contribution, error) {
 	mValues := map[string]interface{}{
-		"contribution": cUUID.String(),
+		"contribution": cID.String(),
 	}
 
 	cs, err := r.GetContributions(db, mValues)
@@ -296,31 +296,31 @@ func (r *AccountRepository) UpdateContribution(db *sqlx.DB, c *models.Contributi
 }
 
 // DeleteAccountCategory deletes an AccountCategory from db.
-func (r *AccountRepository) DeleteAccountCategory(db *sqlx.DB, acUUID uuid.UUID) error {
+func (r *AccountRepository) DeleteAccountCategory(db *sqlx.DB, acID uuid.UUID) error {
 	query := `
 	DELETE FROM account_category
 	WHERE
 		account_category_uuid = $1;`
 
-	return deleteEntity(db, query, acUUID)
+	return deleteEntity(db, query, acID)
 }
 
 // DeleteAccount deletes an Account from db.
-func (r *AccountRepository) DeleteAccount(db *sqlx.DB, aUUID uuid.UUID) error {
+func (r *AccountRepository) DeleteAccount(db *sqlx.DB, aID uuid.UUID) error {
 	query := `
 	DELETE FROM account
 	WHERE
 		account_uuid = $1;`
 
-	return deleteEntity(db, query, aUUID)
+	return deleteEntity(db, query, aID)
 }
 
 // DeleteContribution deletes a Contribution from db.
-func (r *AccountRepository) DeleteContribution(db *sqlx.DB, cUUID uuid.UUID) error {
+func (r *AccountRepository) DeleteContribution(db *sqlx.DB, cID uuid.UUID) error {
 	query := `
 	DELETE FROM contribution
 	WHERE
 		contribution_uuid = $1;`
 
-	return deleteEntity(db, query, cUUID)
+	return deleteEntity(db, query, cID)
 }

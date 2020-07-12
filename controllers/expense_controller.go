@@ -42,13 +42,13 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 		}
 
 		ec.ID = uuid.New()
-		ecUUIDs, err := expenseRepo.CreateExpenseCategories(db, []*models.ExpenseCategory{ec})
+		ecIDs, err := expenseRepo.CreateExpenseCategories(db, []*models.ExpenseCategory{ec})
 		if err != nil {
 			errorCreating(w, "expense category", err)
 			return
 		}
 
-		created(w, ecUUIDs[0])
+		created(w, ecIDs[0])
 	}
 }
 
@@ -63,26 +63,26 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		e.ID = uuid.New()
-		eUUIDs, err := expenseRepo.CreateExpenses(db, []*models.Expense{e})
+		eIDs, err := expenseRepo.CreateExpenses(db, []*models.Expense{e})
 		if err != nil {
 			errorCreating(w, "expense", err)
 			return
 		}
 
-		created(w, eUUIDs[0])
+		created(w, eIDs[0])
 	}
 }
 
 // GetExpenseCategory gets an ExpenseCategory.
 func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ecUUID, err := getUUID(r)
+		ecID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		ec, err := expenseRepo.GetExpenseCategory(db, ecUUID)
+		ec, err := expenseRepo.GetExpenseCategory(db, ecID)
 		if err != nil {
 			errorExecutingExpenseCategory(w, err)
 			return
@@ -112,13 +112,13 @@ func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 // GetExpense gets an Expense.
 func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		eUUID, err := getUUID(r)
+		eID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
-		e, err := expenseRepo.GetExpense(db, eUUID)
+		e, err := expenseRepo.GetExpense(db, eID)
 		if err != nil {
 			errorExecutingExpense(w, err)
 			return
@@ -149,9 +149,9 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 // UpdateExpenseCategory updates an ExpenseCategory.
 func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ecUUID, err := getUUID(r)
+		ecID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -162,7 +162,7 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			return
 		}
 
-		ec.ID = ecUUID
+		ec.ID = ecID
 		err = expenseRepo.UpdateExpenseCategory(db, ec)
 		if err != nil {
 			errorExecutingExpenseCategory(w, err)
@@ -176,9 +176,9 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 // UpdateExpense updates an Expense.
 func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		eUUID, err := getUUID(r)
+		eID, err := getID(r)
 		if err != nil {
-			badRequestUUID(w, err)
+			badRequestID(w, err)
 			return
 		}
 
@@ -189,7 +189,7 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		e.ID = eUUID
+		e.ID = eID
 		err = expenseRepo.UpdateExpense(db, e)
 		if err != nil {
 			errorExecutingExpense(w, err)
