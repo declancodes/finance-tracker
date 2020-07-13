@@ -42,7 +42,6 @@ func getGetQueryAndValues(getQuery string, mValues map[string]interface{}, mFilt
 	if err != nil {
 		return "", nil, err
 	}
-
 	return postgresRebind(q), args, nil
 }
 

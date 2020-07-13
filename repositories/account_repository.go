@@ -95,7 +95,6 @@ func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acID uuid.UUID) (*mo
 	if err != nil {
 		return nil, err
 	}
-
 	return acs[0], nil
 }
 
@@ -123,7 +122,6 @@ func (r *AccountRepository) GetAccountCategories(db *sqlx.DB, mValues map[string
 	if err != nil {
 		return nil, err
 	}
-
 	return acs, nil
 }
 
@@ -137,7 +135,6 @@ func (r *AccountRepository) GetAccount(db *sqlx.DB, aID uuid.UUID) (*models.Acco
 	if err != nil {
 		return nil, err
 	}
-
 	return as[0], nil
 }
 
@@ -172,7 +169,6 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 	if err != nil {
 		return nil, err
 	}
-
 	return as, nil
 }
 
@@ -186,7 +182,6 @@ func (r *AccountRepository) GetContribution(db *sqlx.DB, cID uuid.UUID) (*models
 	if err != nil {
 		return nil, err
 	}
-
 	return cs[0], nil
 }
 
@@ -247,7 +242,6 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 
 		cs = append(cs, &c)
 	}
-
 	return cs, nil
 }
 

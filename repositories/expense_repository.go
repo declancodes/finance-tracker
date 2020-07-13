@@ -97,7 +97,6 @@ func (r *ExpenseRepository) GetExpenseCategories(db *sqlx.DB, mValues map[string
 	if err != nil {
 		return nil, err
 	}
-
 	return ecs, nil
 }
 
@@ -111,7 +110,6 @@ func (r *ExpenseRepository) GetExpense(db *sqlx.DB, eID uuid.UUID) (*models.Expe
 	if err != nil {
 		return nil, err
 	}
-
 	return es[0], nil
 }
 
@@ -149,7 +147,6 @@ func (r *ExpenseRepository) GetExpenses(db *sqlx.DB, mValues map[string]interfac
 	if err != nil {
 		return nil, err
 	}
-
 	return es, nil
 }
 

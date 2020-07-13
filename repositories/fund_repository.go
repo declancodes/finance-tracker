@@ -9,58 +9,6 @@ import (
 // FundRepository is the means for interacting with Fund storage.
 type FundRepository struct{}
 
-const (
-	getAssetCategoriesQuery = `
-	SELECT
-		asset_category.asset_category_uuid,
-		asset_category.name,
-		asset_category.description
-	FROM asset_category`
-
-	getFundsQuery = `
-	SELECT
-		fund.fund_uuid,
-		asset_category.asset_category_uuid AS "asset_category.asset_category_uuid",
-		asset_category.name AS "asset_category.name",
-		asset_category.description AS "asset_category.description",
-		fund.name,
-		fund.ticker_symbol,
-		fund.share_price,
-		fund.expense_ratio
-	FROM fund
-	INNER JOIN asset_category
-		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
-
-	getHoldingsQuery = `
-	SELECT
-		holding.holding_uuid,
-		account.account_uuid AS "account.account_uuid",
-		account_category.account_category_uuid AS "account_category.account_category_uuid",
-		account_category.name AS "account_category.name",
-		account_category.description AS "account_category.description",
-		account.name AS "account.name",
-		account.description AS "account.description",
-		account.amount AS "account.amount",
-		fund.fund_uuid AS "fund.fund_uuid",
-		asset_category.asset_category_uuid AS "asset_category.asset_category_uuid",
-		asset_category.name AS "asset_category.name",
-		asset_category.description AS "asset_category.description",
-		fund.name AS "fund.name",
-		fund.ticker_symbol AS "fund.ticker_symbol",
-		fund.share_price AS "fund.share_price",
-		fund.expense_ratio AS "fund.expense_ratio",
-		holding.shares
-	FROM holding
-	INNER JOIN account
-		ON holding.account_uuid = account.account_uuid
-	INNER JOIN account_category
-		ON account.account_category_uuid = account_category.account_category_uuid
-	INNER JOIN fund
-		ON holding.fund_uuid = fund.fund_uuid
-	INNER JOIN asset_category
-		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
-)
-
 // CreateAssetCategories creates AssetCategory entities in db.
 func (r *FundRepository) CreateAssetCategories(db *sqlx.DB, acs []*models.AssetCategory) ([]uuid.UUID, error) {
 	query := `
@@ -145,18 +93,24 @@ func (r *FundRepository) GetAssetCategory(db *sqlx.DB, acID uuid.UUID) (*models.
 	if err != nil {
 		return nil, err
 	}
-
 	return acs[0], nil
 }
 
 // GetAssetCategories retrieves AssetCategory entities from db.
 // Filters for AssetCategory retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *FundRepository) GetAssetCategories(db *sqlx.DB, mValues map[string]interface{}) ([]*models.AssetCategory, error) {
+	query := `
+	SELECT
+		asset_category.asset_category_uuid,
+		asset_category.name,
+		asset_category.description
+	FROM asset_category`
+
 	mFilters := map[string]string{
 		"asset_category": "asset_category.asset_category_uuid = ",
 	}
 
-	q, args, err := getGetQueryAndValues(getAssetCategoriesQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +120,6 @@ func (r *FundRepository) GetAssetCategories(db *sqlx.DB, mValues map[string]inte
 	if err != nil {
 		return nil, err
 	}
-
 	return acs, nil
 }
 
@@ -180,19 +133,32 @@ func (r *FundRepository) GetFund(db *sqlx.DB, fID uuid.UUID) (*models.Fund, erro
 	if err != nil {
 		return nil, err
 	}
-
 	return fs[0], nil
 }
 
 // GetFunds retrieves Fund entities from db.
 // Filters for Fund retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Fund, error) {
+	query := `
+	SELECT
+		fund.fund_uuid,
+		asset_category.asset_category_uuid AS "asset_category.asset_category_uuid",
+		asset_category.name AS "asset_category.name",
+		asset_category.description AS "asset_category.description",
+		fund.name,
+		fund.ticker_symbol,
+		fund.share_price,
+		fund.expense_ratio
+	FROM fund
+	INNER JOIN asset_category
+		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
+
 	mFilters := map[string]string{
 		"fund":       "fund.fund_uuid = ",
 		"categories": "asset_category.name IN ",
 	}
 
-	q, args, err := getGetQueryAndValues(getFundsQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +168,6 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 	if err != nil {
 		return nil, err
 	}
-
 	return fs, nil
 }
 
@@ -216,13 +181,41 @@ func (r *FundRepository) GetHolding(db *sqlx.DB, hID uuid.UUID) (*models.Holding
 	if err != nil {
 		return nil, err
 	}
-
 	return hs[0], nil
 }
 
 // GetHoldings retrieves Holding entities from db.
 // Filters for Holding retrieval are applied to the query based on the key-value pairs in mValues.
 func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Holding, error) {
+	query := `
+	SELECT
+		holding.holding_uuid,
+		account.account_uuid AS "account.account_uuid",
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name AS "account.name",
+		account.description AS "account.description",
+		account.amount AS "account.amount",
+		fund.fund_uuid AS "fund.fund_uuid",
+		asset_category.asset_category_uuid AS "asset_category.asset_category_uuid",
+		asset_category.name AS "asset_category.name",
+		asset_category.description AS "asset_category.description",
+		fund.name AS "fund.name",
+		fund.ticker_symbol AS "fund.ticker_symbol",
+		fund.share_price AS "fund.share_price",
+		fund.expense_ratio AS "fund.expense_ratio",
+		holding.shares
+	FROM holding
+	INNER JOIN account
+		ON holding.account_uuid = account.account_uuid
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid
+	INNER JOIN fund
+		ON holding.fund_uuid = fund.fund_uuid
+	INNER JOIN asset_category
+		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
+
 	mFilters := map[string]string{
 		"holding":    "holding.holding_uuid = ",
 		"accounts":   "account.name IN ",
@@ -230,7 +223,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 		"funds":      "fund.ticker_symbol IN ",
 	}
 
-	q, args, err := getGetQueryAndValues(getHoldingsQuery, mValues, mFilters)
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +255,6 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 
 		hs = append(hs, &h)
 	}
-
 	return hs, nil
 }
 

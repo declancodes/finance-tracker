@@ -30,6 +30,5 @@ func DbConn() (db *sqlx.DB) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	return db
 }

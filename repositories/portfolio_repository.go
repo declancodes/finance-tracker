@@ -87,7 +87,6 @@ func (r *PortfolioRepository) GetPortfolio(db *sqlx.DB, pID uuid.UUID) (*models.
 	if err != nil {
 		return nil, err
 	}
-
 	return ps[0], nil
 }
 
@@ -114,7 +113,6 @@ func (r *PortfolioRepository) GetPortfolios(db *sqlx.DB, mValues map[string]inte
 	if err != nil {
 		return nil, err
 	}
-
 	return ps, nil
 }
 
@@ -128,7 +126,6 @@ func (r *PortfolioRepository) GetPortfolioHoldingMapping(db *sqlx.DB, phmID uuid
 	if err != nil {
 		return nil, err
 	}
-
 	return phms[0], nil
 }
 
@@ -186,7 +183,6 @@ func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues m
 	if err != nil {
 		return nil, err
 	}
-
 	return phms, nil
 }
 
@@ -200,7 +196,6 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMapping(db *sqlx.DB, pacm
 	if err != nil {
 		return nil, err
 	}
-
 	return pacms[0], nil
 }
 
@@ -237,7 +232,6 @@ func (r *PortfolioRepository) GetPortfolioAssetCategoryMappings(db *sqlx.DB, mVa
 	if err != nil {
 		return nil, err
 	}
-
 	return pacms, nil
 }
 
