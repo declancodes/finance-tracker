@@ -11,33 +11,39 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+const (
+	portfolio                     = "portfolio"
+	portfolioHoldingMapping       = "portfolio holding mapping"
+	portfolioAssetCategoryMapping = "portfolio asset category mapping"
+)
+
 // PortfolioController is the means for interacting with Portfolio entities from an http router.
 type PortfolioController struct{}
 
 var portfolioRepo = repositories.PortfolioRepository{}
 
 func badRequestPortfolio(w http.ResponseWriter, err error) {
-	badRequestModel(w, "portfolio", err)
+	badRequestModel(w, portfolio, err)
 }
 
 func badRequestPortfolioHoldingMapping(w http.ResponseWriter, err error) {
-	badRequestModel(w, "portfolio holding mapping", err)
+	badRequestModel(w, portfolioHoldingMapping, err)
 }
 
 func badRequestPortfolioAssetCategoryMapping(w http.ResponseWriter, err error) {
-	badRequestModel(w, "portfolio asset category mapping", err)
+	badRequestModel(w, portfolioAssetCategoryMapping, err)
 }
 
 func errorExecutingPortfolio(w http.ResponseWriter, err error) {
-	errorExecuting(w, "portfolio", err)
+	errorExecuting(w, portfolio, err)
 }
 
 func errorExecutingPortfolioHoldingMapping(w http.ResponseWriter, err error) {
-	errorExecuting(w, "portfolio holding mapping", err)
+	errorExecuting(w, portfolioHoldingMapping, err)
 }
 
 func errorExecutingPortfolioAssetCategoryMapping(w http.ResponseWriter, err error) {
-	errorExecuting(w, "portfolio asset category mapping", err)
+	errorExecuting(w, portfolioAssetCategoryMapping, err)
 }
 
 // CreatePortfolio creates a Portfolio based on the r *http.Request Body.
@@ -53,7 +59,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		p.ID = uuid.New()
 		pIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{p})
 		if err != nil {
-			errorCreating(w, "portfolio", err)
+			errorCreating(w, portfolio, err)
 			return
 		}
 
@@ -68,7 +74,7 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		}
 		_, err = portfolioRepo.CreatePortfolioHoldingMappings(db, phms)
 		if err != nil {
-			errorCreating(w, "portfolio", err)
+			errorCreating(w, portfolio, err)
 			return
 		}
 
@@ -84,10 +90,9 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		}
 		_, err = portfolioRepo.CreatePortfolioAssetCategoryMappings(db, pacms)
 		if err != nil {
-			errorCreating(w, "portfolio", err)
+			errorCreating(w, portfolio, err)
 			return
 		}
-
 		created(w, pIDs[0])
 	}
 }
@@ -105,10 +110,9 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 		phm.ID = uuid.New()
 		phmIDs, err := portfolioRepo.CreatePortfolioHoldingMappings(db, []*models.PortfolioHoldingMapping{phm})
 		if err != nil {
-			errorCreating(w, "portfolio holding mapping", err)
+			errorCreating(w, portfolioHoldingMapping, err)
 			return
 		}
-
 		created(w, phmIDs[0])
 	}
 }
@@ -126,10 +130,9 @@ func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 		pacm.ID = uuid.New()
 		pacmIDs, err := portfolioRepo.CreatePortfolioAssetCategoryMappings(db, []*models.PortfolioAssetCategoryMapping{pacm})
 		if err != nil {
-			errorCreating(w, "portfolio asset category mapping", err)
+			errorCreating(w, portfolioAssetCategoryMapping, err)
 			return
 		}
-
 		created(w, pacmIDs[0])
 	}
 }
@@ -148,10 +151,7 @@ func (c *PortfolioController) GetPortfolio(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingPortfolio(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(p)
-		logError(err)
+		read(w, p, portfolio)
 	}
 }
 
@@ -213,10 +213,7 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 				p.AssetAllocation = ms
 			}
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(ps)
-		logError(err)
+		read(w, ps, portfolio)
 	}
 }
 
@@ -229,15 +226,12 @@ func (c *PortfolioController) GetPortfolioHoldingMapping(db *sqlx.DB) http.Handl
 			return
 		}
 
-		f, err := portfolioRepo.GetPortfolioHoldingMapping(db, phmID)
+		phm, err := portfolioRepo.GetPortfolioHoldingMapping(db, phmID)
 		if err != nil {
 			errorExecutingPortfolioHoldingMapping(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(f)
-		logError(err)
+		read(w, phm, portfolioHoldingMapping)
 	}
 }
 
@@ -245,15 +239,11 @@ func (c *PortfolioController) GetPortfolioHoldingMapping(db *sqlx.DB) http.Handl
 func (c *PortfolioController) GetPortfolioHoldingMappings(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		phms, err := portfolioRepo.GetPortfolioHoldingMappings(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingPortfolioHoldingMapping(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(phms)
-		logError(err)
+		read(w, phms, portfolioHoldingMapping)
 	}
 }
 
@@ -266,31 +256,24 @@ func (c *PortfolioController) GetPortfolioAssetCategoryMapping(db *sqlx.DB) http
 			return
 		}
 
-		pcam, err := portfolioRepo.GetPortfolioAssetCategoryMapping(db, pcamID)
+		pacm, err := portfolioRepo.GetPortfolioAssetCategoryMapping(db, pcamID)
 		if err != nil {
 			errorExecutingPortfolioAssetCategoryMapping(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(pcam)
-		logError(err)
+		read(w, pacm, portfolioAssetCategoryMapping)
 	}
 }
 
 // GetPortfolioAssetCategoryMappings gets PortfolioAssetCategoryMapping entities.
 func (c *PortfolioController) GetPortfolioAssetCategoryMappings(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		hs, err := portfolioRepo.GetPortfolioAssetCategoryMappings(db, getFilters(r))
-
+		pacms, err := portfolioRepo.GetPortfolioAssetCategoryMappings(db, getFilters(r))
 		if err != nil {
 			errorExecutingPortfolioAssetCategoryMapping(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(hs)
-		logError(err)
+		read(w, pacms, portfolioAssetCategoryMapping)
 	}
 }
 
@@ -316,7 +299,6 @@ func (c *PortfolioController) UpdatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingPortfolio(w, err)
 			return
 		}
-
 		updated(w, p.ID)
 	}
 }
@@ -343,7 +325,6 @@ func (c *PortfolioController) UpdatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 			errorExecutingPortfolioHoldingMapping(w, err)
 			return
 		}
-
 		updated(w, phm.ID)
 	}
 }
@@ -370,7 +351,6 @@ func (c *PortfolioController) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 			errorExecutingPortfolioAssetCategoryMapping(w, err)
 			return
 		}
-
 		updated(w, pacm.ID)
 	}
 }
@@ -378,20 +358,20 @@ func (c *PortfolioController) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 // DeletePortfolio deletes a Portfolio.
 func (c *PortfolioController) DeletePortfolio(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "portfolio", portfolioRepo.DeletePortfolio)
+		delete(w, r, db, portfolio, portfolioRepo.DeletePortfolio)
 	}
 }
 
 // DeletePortfolioHoldingMapping deletes a PortfolioHoldingMapping.
 func (c *PortfolioController) DeletePortfolioHoldingMapping(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "portfolio holding mapping", portfolioRepo.DeletePortfolioHoldingMapping)
+		delete(w, r, db, portfolioHoldingMapping, portfolioRepo.DeletePortfolioHoldingMapping)
 	}
 }
 
 // DeletePortfolioAssetCategoryMapping deletes a PortfolioAssetCategoryMapping.
 func (c *PortfolioController) DeletePortfolioAssetCategoryMapping(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "portfolio asset category mapping", portfolioRepo.DeletePortfolioAssetCategoryMapping)
+		delete(w, r, db, portfolioAssetCategoryMapping, portfolioRepo.DeletePortfolioAssetCategoryMapping)
 	}
 }

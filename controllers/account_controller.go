@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/DeclanCodes/finance-tracker/models"
@@ -11,33 +12,39 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+const (
+	accountCategory = "account category"
+	account         = "account"
+	contribution    = "contribution"
+)
+
 // AccountController is the means for interacting with Account entities from an http router.
 type AccountController struct{}
 
 var accountRepo = repositories.AccountRepository{}
 
 func badRequestAccountCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, "account category", err)
+	badRequestModel(w, accountCategory, err)
 }
 
 func badRequestAccount(w http.ResponseWriter, err error) {
-	badRequestModel(w, "account", err)
+	badRequestModel(w, account, err)
 }
 
 func badRequestContribution(w http.ResponseWriter, err error) {
-	badRequestModel(w, "contribution", err)
+	badRequestModel(w, contribution, err)
 }
 
 func errorExecutingAccountCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, "account category", err)
+	errorExecuting(w, accountCategory, err)
 }
 
 func errorExecutingAccount(w http.ResponseWriter, err error) {
-	errorExecuting(w, "account", err)
+	errorExecuting(w, account, err)
 }
 
 func errorExecutingContribution(w http.ResponseWriter, err error) {
-	errorExecuting(w, "contribution", err)
+	errorExecuting(w, contribution, err)
 }
 
 // CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
@@ -53,10 +60,9 @@ func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 		ac.ID = uuid.New()
 		acIDs, err := accountRepo.CreateAccountCategories(db, []*models.AccountCategory{ac})
 		if err != nil {
-			errorCreating(w, "account category", err)
+			errorCreating(w, accountCategory, err)
 			return
 		}
-
 		created(w, acIDs[0])
 	}
 }
@@ -74,10 +80,9 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 		a.ID = uuid.New()
 		aIDs, err := accountRepo.CreateAccounts(db, []*models.Account{a})
 		if err != nil {
-			errorCreating(w, "account", err)
+			errorCreating(w, account, err)
 			return
 		}
-
 		created(w, aIDs[0])
 	}
 }
@@ -95,10 +100,9 @@ func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 		c.ID = uuid.New()
 		cIDs, err := accountRepo.CreateContributions(db, []*models.Contribution{c})
 		if err != nil {
-			errorCreating(w, "contribution", err)
+			errorCreating(w, contribution, err)
 			return
 		}
-
 		created(w, cIDs[0])
 	}
 }
@@ -117,10 +121,7 @@ func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAccountCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(ac)
-		logError(err)
+		read(w, ac, accountCategory)
 	}
 }
 
@@ -132,10 +133,7 @@ func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAccountCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(acs)
-		logError(err)
+		read(w, acs, accountCategory)
 	}
 }
 
@@ -156,9 +154,7 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 
 		updateAccountValueFromHoldings(db, a)
 
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(a)
-		logError(err)
+		read(w, a, account)
 	}
 }
 
@@ -166,7 +162,6 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		as, err := accountRepo.GetAccounts(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingAccount(w, err)
 			return
@@ -175,10 +170,7 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 		for _, a := range as {
 			updateAccountValueFromHoldings(db, a)
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(as)
-		logError(err)
+		read(w, as, account)
 	}
 }
 
@@ -196,10 +188,7 @@ func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingContribution(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(c)
-		logError(err)
+		read(w, c, contribution)
 	}
 }
 
@@ -207,15 +196,11 @@ func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cs, err := accountRepo.GetContributions(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingContribution(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(cs)
-		logError(err)
+		read(w, cs, contribution)
 	}
 }
 
@@ -241,7 +226,6 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 			errorExecutingAccountCategory(w, err)
 			return
 		}
-
 		updated(w, ac.ID)
 	}
 }
@@ -268,7 +252,6 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAccount(w, err)
 			return
 		}
-
 		updated(w, a.ID)
 	}
 }
@@ -295,7 +278,6 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingContribution(w, err)
 			return
 		}
-
 		updated(w, c.ID)
 	}
 }
@@ -303,21 +285,21 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 // DeleteAccountCategory deletes an AccountCategory.
 func (c *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "account category", accountRepo.DeleteAccountCategory)
+		delete(w, r, db, accountCategory, accountRepo.DeleteAccountCategory)
 	}
 }
 
 // DeleteAccount deletes an Account.
 func (c *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "account", accountRepo.DeleteAccount)
+		delete(w, r, db, account, accountRepo.DeleteAccount)
 	}
 }
 
 // DeleteContribution deletes a Contribution.
 func (c *AccountController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "contribution", accountRepo.DeleteContribution)
+		delete(w, r, db, contribution, accountRepo.DeleteContribution)
 	}
 }
 
@@ -327,7 +309,7 @@ func updateAccountValueFromHoldings(db *sqlx.DB, a *models.Account) {
 	}
 	hs, err := fundRepo.GetHoldings(db, mValues)
 	if err != nil {
-		logError(err)
+		log.Println(err)
 		return
 	}
 

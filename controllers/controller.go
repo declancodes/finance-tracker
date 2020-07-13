@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
@@ -13,19 +14,18 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func logError(err error) {
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func addJSONContentHeader(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
 func created(w http.ResponseWriter, ID uuid.UUID) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(ID.String()))
+}
+
+func read(w http.ResponseWriter, es interface{}, m string) {
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(es)
+	if err != nil {
+		errorExecuting(w, m, err)
+	}
 }
 
 func updated(w http.ResponseWriter, ID uuid.UUID) {
@@ -44,7 +44,6 @@ func delete(w http.ResponseWriter, r *http.Request, db *sqlx.DB, m string, fn fu
 	if err != nil {
 		errorExecuting(w, m, err)
 	}
-
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -57,23 +56,26 @@ func badRequestModel(w http.ResponseWriter, model string, err error) {
 }
 
 func badRequest(w http.ResponseWriter, msg string, err error) {
-	http.Error(w, msg, http.StatusBadRequest)
-	log.Println(err)
+	httpError(w, msg, http.StatusBadRequest, err)
 }
 
 func errorCreating(w http.ResponseWriter, m string, err error) {
-	http.Error(w, "error creating "+m, http.StatusInternalServerError)
-	log.Println(err)
+	httpError(w, "error creating "+m, http.StatusInternalServerError, err)
 }
 
 func errorExecuting(w http.ResponseWriter, m string, err error) {
+	msg, httpStatusCode := "", 0
 	switch err {
 	case sql.ErrNoRows, repositories.ErrNoRecord:
-		http.Error(w, m+" does not exist", http.StatusNotFound)
+		msg, httpStatusCode = m+" does not exist", http.StatusNotFound
 	default:
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg, httpStatusCode = "error executing"+m, http.StatusInternalServerError
 	}
+	httpError(w, msg, httpStatusCode, err)
+}
 
+func httpError(w http.ResponseWriter, msg string, httpStatusCode int, err error) {
+	http.Error(w, msg, httpStatusCode)
 	log.Println(err)
 }
 
@@ -88,13 +90,13 @@ func getFilters(r *http.Request) map[string]interface{} {
 	end := getTime(q.Get("end"))
 
 	mValues := make(map[string]interface{})
-	if accNames != nil && len(accNames) > 0 {
+	if len(accNames) > 0 {
 		mValues["accounts"] = accNames
 	}
-	if catNames != nil && len(catNames) > 0 {
+	if len(catNames) > 0 {
 		mValues["categories"] = catNames
 	}
-	if fundSymbols != nil && len(fundSymbols) > 0 {
+	if len(fundSymbols) > 0 {
 		mValues["funds"] = fundSymbols
 	}
 	if !start.IsZero() {

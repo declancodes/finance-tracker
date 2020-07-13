@@ -16,33 +16,39 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+const (
+	assetCategory = "asset category"
+	fund          = "fund"
+	holding       = "holding"
+)
+
 // FundController is the means for interacting with Fund entities from an http router.
 type FundController struct{}
 
 var fundRepo = repositories.FundRepository{}
 
 func badRequestAssetCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, "asset category", err)
+	badRequestModel(w, assetCategory, err)
 }
 
 func badRequestFund(w http.ResponseWriter, err error) {
-	badRequestModel(w, "fund", err)
+	badRequestModel(w, fund, err)
 }
 
 func badRequestHolding(w http.ResponseWriter, err error) {
-	badRequestModel(w, "holding", err)
+	badRequestModel(w, holding, err)
 }
 
 func errorExecutingAssetCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, "asset category", err)
+	errorExecuting(w, assetCategory, err)
 }
 
 func errorExecutingFund(w http.ResponseWriter, err error) {
-	errorExecuting(w, "fund", err)
+	errorExecuting(w, fund, err)
 }
 
 func errorExecutingHolding(w http.ResponseWriter, err error) {
-	errorExecuting(w, "holding", err)
+	errorExecuting(w, holding, err)
 }
 
 // CreateAssetCategory creates an AssetCategory based on the r *http.Request Body.
@@ -58,10 +64,9 @@ func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 		ac.ID = uuid.New()
 		acIDs, err := fundRepo.CreateAssetCategories(db, []*models.AssetCategory{ac})
 		if err != nil {
-			errorCreating(w, "asset category", err)
+			errorCreating(w, assetCategory, err)
 			return
 		}
-
 		created(w, acIDs[0])
 	}
 }
@@ -89,10 +94,9 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 
 		fIDs, err := fundRepo.CreateFunds(db, []*models.Fund{f})
 		if err != nil {
-			errorCreating(w, "fund", err)
+			errorCreating(w, fund, err)
 			return
 		}
-
 		created(w, fIDs[0])
 	}
 }
@@ -110,10 +114,9 @@ func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		h.ID = uuid.New()
 		hIDs, err := fundRepo.CreateHoldings(db, []*models.Holding{h})
 		if err != nil {
-			errorCreating(w, "holding", err)
+			errorCreating(w, holding, err)
 			return
 		}
-
 		created(w, hIDs[0])
 	}
 }
@@ -132,10 +135,7 @@ func (c *FundController) GetAssetCategory(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAssetCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(ac)
-		logError(err)
+		read(w, ac, assetCategory)
 	}
 }
 
@@ -147,10 +147,7 @@ func (c *FundController) GetAssetCategories(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAssetCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(acs)
-		logError(err)
+		read(w, acs, assetCategory)
 	}
 }
 
@@ -168,10 +165,7 @@ func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingFund(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(f)
-		logError(err)
+		read(w, f, fund)
 	}
 }
 
@@ -179,15 +173,11 @@ func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fs, err := fundRepo.GetFunds(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingFund(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(fs)
-		logError(err)
+		read(w, fs, fund)
 	}
 }
 
@@ -205,10 +195,7 @@ func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingHolding(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(h)
-		logError(err)
+		read(w, h, holding)
 	}
 }
 
@@ -216,15 +203,11 @@ func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hs, err := fundRepo.GetHoldings(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingHolding(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(hs)
-		logError(err)
+		read(w, hs, holding)
 	}
 }
 
@@ -250,7 +233,6 @@ func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingAssetCategory(w, err)
 			return
 		}
-
 		updated(w, ac.ID)
 	}
 }
@@ -287,7 +269,6 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingFund(w, err)
 			return
 		}
-
 		updated(w, f.ID)
 	}
 }
@@ -315,7 +296,6 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 				return
 			}
 		}
-
 		w.WriteHeader(http.StatusOK)
 	}
 }
@@ -342,7 +322,6 @@ func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingHolding(w, err)
 			return
 		}
-
 		updated(w, h.ID)
 	}
 }
@@ -350,21 +329,21 @@ func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 // DeleteAssetCategory deletes an AssetCategory.
 func (c *FundController) DeleteAssetCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "asset category", fundRepo.DeleteAssetCategory)
+		delete(w, r, db, assetCategory, fundRepo.DeleteAssetCategory)
 	}
 }
 
 // DeleteFund deletes a Fund.
 func (c *FundController) DeleteFund(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "fund", fundRepo.DeleteFund)
+		delete(w, r, db, fund, fundRepo.DeleteFund)
 	}
 }
 
 // DeleteHolding deletes a Holding.
 func (c *FundController) DeleteHolding(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "holding", fundRepo.DeleteHolding)
+		delete(w, r, db, holding, fundRepo.DeleteHolding)
 	}
 }
 

@@ -10,25 +10,30 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const (
+	expenseCategory = "expense category"
+	expense         = "expense"
+)
+
 // ExpenseController is the means for interacting with Expense entities from an http router.
 type ExpenseController struct{}
 
 var expenseRepo = repositories.ExpenseRepository{}
 
 func badRequestExpenseCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, "expense category", err)
+	badRequestModel(w, expenseCategory, err)
 }
 
 func badRequestExpense(w http.ResponseWriter, err error) {
-	badRequestModel(w, "expense", err)
+	badRequestModel(w, expense, err)
 }
 
 func errorExecutingExpenseCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, "expense category", err)
+	errorExecuting(w, expenseCategory, err)
 }
 
 func errorExecutingExpense(w http.ResponseWriter, err error) {
-	errorExecuting(w, "expense", err)
+	errorExecuting(w, expense, err)
 }
 
 // CreateExpenseCategory creates an ExpenseCategory based on the r *http.Request Body.
@@ -44,10 +49,9 @@ func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 		ec.ID = uuid.New()
 		ecIDs, err := expenseRepo.CreateExpenseCategories(db, []*models.ExpenseCategory{ec})
 		if err != nil {
-			errorCreating(w, "expense category", err)
+			errorCreating(w, expenseCategory, err)
 			return
 		}
-
 		created(w, ecIDs[0])
 	}
 }
@@ -65,10 +69,9 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 		e.ID = uuid.New()
 		eIDs, err := expenseRepo.CreateExpenses(db, []*models.Expense{e})
 		if err != nil {
-			errorCreating(w, "expense", err)
+			errorCreating(w, expense, err)
 			return
 		}
-
 		created(w, eIDs[0])
 	}
 }
@@ -87,10 +90,7 @@ func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingExpenseCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(ec)
-		logError(err)
+		read(w, ec, expenseCategory)
 	}
 }
 
@@ -102,10 +102,7 @@ func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingExpenseCategory(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(ecs)
-		logError(err)
+		read(w, ecs, expenseCategory)
 	}
 }
 
@@ -123,10 +120,7 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingExpense(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(e)
-		logError(err)
+		read(w, e, expense)
 	}
 }
 
@@ -134,15 +128,11 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		es, err := expenseRepo.GetExpenses(db, getFilters(r))
-
 		if err != nil {
 			errorExecutingExpense(w, err)
 			return
 		}
-
-		addJSONContentHeader(w)
-		err = json.NewEncoder(w).Encode(es)
-		logError(err)
+		read(w, es, expense)
 	}
 }
 
@@ -168,7 +158,6 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 			errorExecutingExpenseCategory(w, err)
 			return
 		}
-
 		updated(w, ec.ID)
 	}
 }
@@ -195,7 +184,6 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 			errorExecutingExpense(w, err)
 			return
 		}
-
 		updated(w, e.ID)
 	}
 }
@@ -203,13 +191,13 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 // DeleteExpenseCategory deletes an ExpenseCategory.
 func (c *ExpenseController) DeleteExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "expense category", expenseRepo.DeleteExpenseCategory)
+		delete(w, r, db, expenseCategory, expenseRepo.DeleteExpenseCategory)
 	}
 }
 
 // DeleteExpense deletes an Expense.
 func (c *ExpenseController) DeleteExpense(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		delete(w, r, db, "expense", expenseRepo.DeleteExpense)
+		delete(w, r, db, expense, expenseRepo.DeleteExpense)
 	}
 }
