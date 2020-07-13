@@ -22,37 +22,13 @@ type PortfolioController struct{}
 
 var portfolioRepo = repositories.PortfolioRepository{}
 
-func badRequestPortfolio(w http.ResponseWriter, err error) {
-	badRequestModel(w, portfolio, err)
-}
-
-func badRequestPortfolioHoldingMapping(w http.ResponseWriter, err error) {
-	badRequestModel(w, portfolioHoldingMapping, err)
-}
-
-func badRequestPortfolioAssetCategoryMapping(w http.ResponseWriter, err error) {
-	badRequestModel(w, portfolioAssetCategoryMapping, err)
-}
-
-func errorExecutingPortfolio(w http.ResponseWriter, err error) {
-	errorExecuting(w, portfolio, err)
-}
-
-func errorExecutingPortfolioHoldingMapping(w http.ResponseWriter, err error) {
-	errorExecuting(w, portfolioHoldingMapping, err)
-}
-
-func errorExecutingPortfolioAssetCategoryMapping(w http.ResponseWriter, err error) {
-	errorExecuting(w, portfolioAssetCategoryMapping, err)
-}
-
 // CreatePortfolio creates a Portfolio based on the r *http.Request Body.
 func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var p *models.Portfolio
 		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
-			badRequestPortfolio(w, err)
+			badRequestModel(w, portfolio, err)
 			return
 		}
 
@@ -103,7 +79,7 @@ func (c *PortfolioController) CreatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 		var phm *models.PortfolioHoldingMapping
 		err := json.NewDecoder(r.Body).Decode(&phm)
 		if err != nil {
-			badRequestPortfolioHoldingMapping(w, err)
+			badRequestModel(w, portfolioHoldingMapping, err)
 			return
 		}
 
@@ -123,7 +99,7 @@ func (c *PortfolioController) CreatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 		var pacm *models.PortfolioAssetCategoryMapping
 		err := json.NewDecoder(r.Body).Decode(&pacm)
 		if err != nil {
-			badRequestPortfolioAssetCategoryMapping(w, err)
+			badRequestModel(w, portfolioAssetCategoryMapping, err)
 			return
 		}
 
@@ -148,7 +124,7 @@ func (c *PortfolioController) GetPortfolio(db *sqlx.DB) http.HandlerFunc {
 
 		p, err := portfolioRepo.GetPortfolio(db, pID)
 		if err != nil {
-			errorExecutingPortfolio(w, err)
+			errorExecuting(w, portfolio, err)
 			return
 		}
 		read(w, p, portfolio)
@@ -160,7 +136,7 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ps, err := portfolioRepo.GetPortfolios(db, getFilters(r))
 		if err != nil {
-			errorExecutingPortfolio(w, err)
+			errorExecuting(w, portfolio, err)
 			return
 		}
 
@@ -174,7 +150,7 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 
 		phms, err := portfolioRepo.GetPortfolioHoldingMappings(db, mValues)
 		if err != nil {
-			errorExecutingPortfolio(w, err)
+			errorExecuting(w, portfolio, err)
 			return
 		}
 		phmsMap := make(map[string][]models.Holding)
@@ -189,7 +165,7 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 
 		pacms, err := portfolioRepo.GetPortfolioAssetCategoryMappings(db, mValues)
 		if err != nil {
-			errorExecutingPortfolio(w, err)
+			errorExecuting(w, portfolio, err)
 			return
 		}
 		pacmsMap := make(map[string]map[*models.AssetCategory]decimal.Decimal)
@@ -228,7 +204,7 @@ func (c *PortfolioController) GetPortfolioHoldingMapping(db *sqlx.DB) http.Handl
 
 		phm, err := portfolioRepo.GetPortfolioHoldingMapping(db, phmID)
 		if err != nil {
-			errorExecutingPortfolioHoldingMapping(w, err)
+			errorExecuting(w, portfolioHoldingMapping, err)
 			return
 		}
 		read(w, phm, portfolioHoldingMapping)
@@ -240,7 +216,7 @@ func (c *PortfolioController) GetPortfolioHoldingMappings(db *sqlx.DB) http.Hand
 	return func(w http.ResponseWriter, r *http.Request) {
 		phms, err := portfolioRepo.GetPortfolioHoldingMappings(db, getFilters(r))
 		if err != nil {
-			errorExecutingPortfolioHoldingMapping(w, err)
+			errorExecuting(w, portfolioHoldingMapping, err)
 			return
 		}
 		read(w, phms, portfolioHoldingMapping)
@@ -258,7 +234,7 @@ func (c *PortfolioController) GetPortfolioAssetCategoryMapping(db *sqlx.DB) http
 
 		pacm, err := portfolioRepo.GetPortfolioAssetCategoryMapping(db, pcamID)
 		if err != nil {
-			errorExecutingPortfolioAssetCategoryMapping(w, err)
+			errorExecuting(w, portfolioAssetCategoryMapping, err)
 			return
 		}
 		read(w, pacm, portfolioAssetCategoryMapping)
@@ -270,7 +246,7 @@ func (c *PortfolioController) GetPortfolioAssetCategoryMappings(db *sqlx.DB) htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		pacms, err := portfolioRepo.GetPortfolioAssetCategoryMappings(db, getFilters(r))
 		if err != nil {
-			errorExecutingPortfolioAssetCategoryMapping(w, err)
+			errorExecuting(w, portfolioAssetCategoryMapping, err)
 			return
 		}
 		read(w, pacms, portfolioAssetCategoryMapping)
@@ -289,14 +265,14 @@ func (c *PortfolioController) UpdatePortfolio(db *sqlx.DB) http.HandlerFunc {
 		var p *models.Portfolio
 		err = json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
-			badRequestPortfolio(w, err)
+			badRequestModel(w, portfolio, err)
 			return
 		}
 
 		p.ID = pID
 		err = portfolioRepo.UpdatePortfolio(db, p)
 		if err != nil {
-			errorExecutingPortfolio(w, err)
+			errorExecuting(w, portfolio, err)
 			return
 		}
 		updated(w, p.ID)
@@ -315,14 +291,14 @@ func (c *PortfolioController) UpdatePortfolioHoldingMapping(db *sqlx.DB) http.Ha
 		var phm *models.PortfolioHoldingMapping
 		err = json.NewDecoder(r.Body).Decode(&phm)
 		if err != nil {
-			badRequestPortfolioHoldingMapping(w, err)
+			badRequestModel(w, portfolioHoldingMapping, err)
 			return
 		}
 
 		phm.ID = phmID
 		err = portfolioRepo.UpdatePortfolioHoldingMapping(db, phm)
 		if err != nil {
-			errorExecutingPortfolioHoldingMapping(w, err)
+			errorExecuting(w, portfolioHoldingMapping, err)
 			return
 		}
 		updated(w, phm.ID)
@@ -341,14 +317,14 @@ func (c *PortfolioController) UpdatePortfolioAssetCategoryMapping(db *sqlx.DB) h
 		var pacm *models.PortfolioAssetCategoryMapping
 		err = json.NewDecoder(r.Body).Decode(&pacm)
 		if err != nil {
-			badRequestPortfolioAssetCategoryMapping(w, err)
+			badRequestModel(w, portfolioAssetCategoryMapping, err)
 			return
 		}
 
 		pacm.ID = pacmID
 		err = portfolioRepo.UpdatePortfolioAssetCategoryMapping(db, pacm)
 		if err != nil {
-			errorExecutingPortfolioAssetCategoryMapping(w, err)
+			errorExecuting(w, portfolioAssetCategoryMapping, err)
 			return
 		}
 		updated(w, pacm.ID)

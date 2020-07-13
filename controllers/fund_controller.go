@@ -27,37 +27,13 @@ type FundController struct{}
 
 var fundRepo = repositories.FundRepository{}
 
-func badRequestAssetCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, assetCategory, err)
-}
-
-func badRequestFund(w http.ResponseWriter, err error) {
-	badRequestModel(w, fund, err)
-}
-
-func badRequestHolding(w http.ResponseWriter, err error) {
-	badRequestModel(w, holding, err)
-}
-
-func errorExecutingAssetCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, assetCategory, err)
-}
-
-func errorExecutingFund(w http.ResponseWriter, err error) {
-	errorExecuting(w, fund, err)
-}
-
-func errorExecutingHolding(w http.ResponseWriter, err error) {
-	errorExecuting(w, holding, err)
-}
-
 // CreateAssetCategory creates an AssetCategory based on the r *http.Request Body.
 func (c *FundController) CreateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ac *models.AssetCategory
 		err := json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
-			badRequestAssetCategory(w, err)
+			badRequestModel(w, assetCategory, err)
 			return
 		}
 
@@ -77,7 +53,7 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 		var f *models.Fund
 		err := json.NewDecoder(r.Body).Decode(&f)
 		if err != nil {
-			badRequestFund(w, err)
+			badRequestModel(w, fund, err)
 			return
 		}
 
@@ -86,7 +62,7 @@ func (c *FundController) CreateFund(db *sqlx.DB) http.HandlerFunc {
 		if f.SharePrice.Equal(decimal.Zero) {
 			sp, err := getSharePrice(f.TickerSymbol)
 			if err != nil {
-				errorExecutingFund(w, err)
+				errorExecuting(w, fund, err)
 				return
 			}
 			f.SharePrice = sp
@@ -107,7 +83,7 @@ func (c *FundController) CreateHolding(db *sqlx.DB) http.HandlerFunc {
 		var h *models.Holding
 		err := json.NewDecoder(r.Body).Decode(&h)
 		if err != nil {
-			badRequestHolding(w, err)
+			badRequestModel(w, holding, err)
 			return
 		}
 
@@ -132,7 +108,7 @@ func (c *FundController) GetAssetCategory(db *sqlx.DB) http.HandlerFunc {
 
 		ac, err := fundRepo.GetAssetCategory(db, acID)
 		if err != nil {
-			errorExecutingAssetCategory(w, err)
+			errorExecuting(w, assetCategory, err)
 			return
 		}
 		read(w, ac, assetCategory)
@@ -144,7 +120,7 @@ func (c *FundController) GetAssetCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		acs, err := fundRepo.GetAssetCategories(db, getFilters(r))
 		if err != nil {
-			errorExecutingAssetCategory(w, err)
+			errorExecuting(w, assetCategory, err)
 			return
 		}
 		read(w, acs, assetCategory)
@@ -162,7 +138,7 @@ func (c *FundController) GetFund(db *sqlx.DB) http.HandlerFunc {
 
 		f, err := fundRepo.GetFund(db, fID)
 		if err != nil {
-			errorExecutingFund(w, err)
+			errorExecuting(w, fund, err)
 			return
 		}
 		read(w, f, fund)
@@ -174,7 +150,7 @@ func (c *FundController) GetFunds(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fs, err := fundRepo.GetFunds(db, getFilters(r))
 		if err != nil {
-			errorExecutingFund(w, err)
+			errorExecuting(w, fund, err)
 			return
 		}
 		read(w, fs, fund)
@@ -192,7 +168,7 @@ func (c *FundController) GetHolding(db *sqlx.DB) http.HandlerFunc {
 
 		h, err := fundRepo.GetHolding(db, hID)
 		if err != nil {
-			errorExecutingHolding(w, err)
+			errorExecuting(w, holding, err)
 			return
 		}
 		read(w, h, holding)
@@ -204,7 +180,7 @@ func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hs, err := fundRepo.GetHoldings(db, getFilters(r))
 		if err != nil {
-			errorExecutingHolding(w, err)
+			errorExecuting(w, holding, err)
 			return
 		}
 		read(w, hs, holding)
@@ -223,14 +199,14 @@ func (c *FundController) UpdateAssetCategory(db *sqlx.DB) http.HandlerFunc {
 		var ac *models.AssetCategory
 		err = json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
-			badRequestAssetCategory(w, err)
+			badRequestModel(w, assetCategory, err)
 			return
 		}
 
 		ac.ID = acID
 		err = fundRepo.UpdateAssetCategory(db, ac)
 		if err != nil {
-			errorExecutingAssetCategory(w, err)
+			errorExecuting(w, assetCategory, err)
 			return
 		}
 		updated(w, ac.ID)
@@ -249,7 +225,7 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 		var f *models.Fund
 		err = json.NewDecoder(r.Body).Decode(&f)
 		if err != nil {
-			badRequestFund(w, err)
+			badRequestModel(w, fund, err)
 			return
 		}
 
@@ -258,7 +234,7 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 		if f.SharePrice.Equal(decimal.Zero) {
 			sp, err := getSharePrice(f.TickerSymbol)
 			if err != nil {
-				errorExecutingFund(w, err)
+				errorExecuting(w, fund, err)
 				return
 			}
 			f.SharePrice = sp
@@ -266,7 +242,7 @@ func (c *FundController) UpdateFund(db *sqlx.DB) http.HandlerFunc {
 
 		err = fundRepo.UpdateFund(db, f)
 		if err != nil {
-			errorExecutingFund(w, err)
+			errorExecuting(w, fund, err)
 			return
 		}
 		updated(w, f.ID)
@@ -278,21 +254,21 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fs, err := fundRepo.GetFunds(db, getFilters(r))
 		if err != nil {
-			errorExecutingFund(w, err)
+			errorExecuting(w, fund, err)
 			return
 		}
 
 		for _, f := range fs {
 			sp, err := getSharePrice(f.TickerSymbol)
 			if err != nil {
-				errorExecutingFund(w, err)
+				errorExecuting(w, fund, err)
 				return
 			}
 			f.SharePrice = sp
 
 			err = fundRepo.UpdateFund(db, f)
 			if err != nil {
-				errorExecutingFund(w, err)
+				errorExecuting(w, fund, err)
 				return
 			}
 		}
@@ -312,14 +288,14 @@ func (c *FundController) UpdateHolding(db *sqlx.DB) http.HandlerFunc {
 		var h *models.Holding
 		err = json.NewDecoder(r.Body).Decode(&h)
 		if err != nil {
-			badRequestHolding(w, err)
+			badRequestModel(w, holding, err)
 			return
 		}
 
 		h.ID = hID
 		err = fundRepo.UpdateHolding(db, h)
 		if err != nil {
-			errorExecutingHolding(w, err)
+			errorExecuting(w, holding, err)
 			return
 		}
 		updated(w, h.ID)

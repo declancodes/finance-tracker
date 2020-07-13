@@ -20,29 +20,13 @@ type ExpenseController struct{}
 
 var expenseRepo = repositories.ExpenseRepository{}
 
-func badRequestExpenseCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, expenseCategory, err)
-}
-
-func badRequestExpense(w http.ResponseWriter, err error) {
-	badRequestModel(w, expense, err)
-}
-
-func errorExecutingExpenseCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, expenseCategory, err)
-}
-
-func errorExecutingExpense(w http.ResponseWriter, err error) {
-	errorExecuting(w, expense, err)
-}
-
 // CreateExpenseCategory creates an ExpenseCategory based on the r *http.Request Body.
 func (c *ExpenseController) CreateExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ec *models.ExpenseCategory
 		err := json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
-			badRequestExpenseCategory(w, err)
+			badRequestModel(w, expenseCategory, err)
 			return
 		}
 
@@ -62,7 +46,7 @@ func (c *ExpenseController) CreateExpense(db *sqlx.DB) http.HandlerFunc {
 		var e *models.Expense
 		err := json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
-			badRequestExpense(w, err)
+			badRequestModel(w, expense, err)
 			return
 		}
 
@@ -87,7 +71,7 @@ func (c *ExpenseController) GetExpenseCategory(db *sqlx.DB) http.HandlerFunc {
 
 		ec, err := expenseRepo.GetExpenseCategory(db, ecID)
 		if err != nil {
-			errorExecutingExpenseCategory(w, err)
+			errorExecuting(w, expenseCategory, err)
 			return
 		}
 		read(w, ec, expenseCategory)
@@ -99,7 +83,7 @@ func (c *ExpenseController) GetExpenseCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ecs, err := expenseRepo.GetExpenseCategories(db, getFilters(r))
 		if err != nil {
-			errorExecutingExpenseCategory(w, err)
+			errorExecuting(w, expenseCategory, err)
 			return
 		}
 		read(w, ecs, expenseCategory)
@@ -117,7 +101,7 @@ func (c *ExpenseController) GetExpense(db *sqlx.DB) http.HandlerFunc {
 
 		e, err := expenseRepo.GetExpense(db, eID)
 		if err != nil {
-			errorExecutingExpense(w, err)
+			errorExecuting(w, expense, err)
 			return
 		}
 		read(w, e, expense)
@@ -129,7 +113,7 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		es, err := expenseRepo.GetExpenses(db, getFilters(r))
 		if err != nil {
-			errorExecutingExpense(w, err)
+			errorExecuting(w, expense, err)
 			return
 		}
 		read(w, es, expense)
@@ -148,14 +132,14 @@ func (c *ExpenseController) UpdateExpenseCategory(db *sqlx.DB) http.HandlerFunc 
 		var ec *models.ExpenseCategory
 		err = json.NewDecoder(r.Body).Decode(&ec)
 		if err != nil {
-			badRequestExpenseCategory(w, err)
+			badRequestModel(w, expenseCategory, err)
 			return
 		}
 
 		ec.ID = ecID
 		err = expenseRepo.UpdateExpenseCategory(db, ec)
 		if err != nil {
-			errorExecutingExpenseCategory(w, err)
+			errorExecuting(w, expenseCategory, err)
 			return
 		}
 		updated(w, ec.ID)
@@ -174,14 +158,14 @@ func (c *ExpenseController) UpdateExpense(db *sqlx.DB) http.HandlerFunc {
 		var e *models.Expense
 		err = json.NewDecoder(r.Body).Decode(&e)
 		if err != nil {
-			badRequestExpense(w, err)
+			badRequestModel(w, expense, err)
 			return
 		}
 
 		e.ID = eID
 		err = expenseRepo.UpdateExpense(db, e)
 		if err != nil {
-			errorExecutingExpense(w, err)
+			errorExecuting(w, expense, err)
 			return
 		}
 		updated(w, e.ID)

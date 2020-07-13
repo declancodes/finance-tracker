@@ -23,37 +23,13 @@ type AccountController struct{}
 
 var accountRepo = repositories.AccountRepository{}
 
-func badRequestAccountCategory(w http.ResponseWriter, err error) {
-	badRequestModel(w, accountCategory, err)
-}
-
-func badRequestAccount(w http.ResponseWriter, err error) {
-	badRequestModel(w, account, err)
-}
-
-func badRequestContribution(w http.ResponseWriter, err error) {
-	badRequestModel(w, contribution, err)
-}
-
-func errorExecutingAccountCategory(w http.ResponseWriter, err error) {
-	errorExecuting(w, accountCategory, err)
-}
-
-func errorExecutingAccount(w http.ResponseWriter, err error) {
-	errorExecuting(w, account, err)
-}
-
-func errorExecutingContribution(w http.ResponseWriter, err error) {
-	errorExecuting(w, contribution, err)
-}
-
 // CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
 func (c *AccountController) CreateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ac *models.AccountCategory
 		err := json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
-			badRequestAccountCategory(w, err)
+			badRequestModel(w, accountCategory, err)
 			return
 		}
 
@@ -73,7 +49,7 @@ func (c *AccountController) CreateAccount(db *sqlx.DB) http.HandlerFunc {
 		var a *models.Account
 		err := json.NewDecoder(r.Body).Decode(&a)
 		if err != nil {
-			badRequestAccount(w, err)
+			badRequestModel(w, account, err)
 			return
 		}
 
@@ -93,7 +69,7 @@ func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 		var c *models.Contribution
 		err := json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
-			badRequestContribution(w, err)
+			badRequestModel(w, contribution, err)
 			return
 		}
 
@@ -118,7 +94,7 @@ func (c *AccountController) GetAccountCategory(db *sqlx.DB) http.HandlerFunc {
 
 		ac, err := accountRepo.GetAccountCategory(db, acID)
 		if err != nil {
-			errorExecutingAccountCategory(w, err)
+			errorExecuting(w, accountCategory, err)
 			return
 		}
 		read(w, ac, accountCategory)
@@ -130,7 +106,7 @@ func (c *AccountController) GetAccountCategories(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		acs, err := accountRepo.GetAccountCategories(db, getFilters(r))
 		if err != nil {
-			errorExecutingAccountCategory(w, err)
+			errorExecuting(w, accountCategory, err)
 			return
 		}
 		read(w, acs, accountCategory)
@@ -148,7 +124,7 @@ func (c *AccountController) GetAccount(db *sqlx.DB) http.HandlerFunc {
 
 		a, err := accountRepo.GetAccount(db, aID)
 		if err != nil {
-			errorExecutingAccount(w, err)
+			errorExecuting(w, account, err)
 			return
 		}
 
@@ -163,7 +139,7 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		as, err := accountRepo.GetAccounts(db, getFilters(r))
 		if err != nil {
-			errorExecutingAccount(w, err)
+			errorExecuting(w, account, err)
 			return
 		}
 
@@ -185,7 +161,7 @@ func (c *AccountController) GetContribution(db *sqlx.DB) http.HandlerFunc {
 
 		c, err := accountRepo.GetContribution(db, cID)
 		if err != nil {
-			errorExecutingContribution(w, err)
+			errorExecuting(w, contribution, err)
 			return
 		}
 		read(w, c, contribution)
@@ -197,7 +173,7 @@ func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cs, err := accountRepo.GetContributions(db, getFilters(r))
 		if err != nil {
-			errorExecutingContribution(w, err)
+			errorExecuting(w, contribution, err)
 			return
 		}
 		read(w, cs, contribution)
@@ -216,14 +192,14 @@ func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc 
 		var ac *models.AccountCategory
 		err = json.NewDecoder(r.Body).Decode(&ac)
 		if err != nil {
-			badRequestAccountCategory(w, err)
+			badRequestModel(w, accountCategory, err)
 			return
 		}
 
 		ac.ID = acID
 		err = accountRepo.UpdateAccountCategory(db, ac)
 		if err != nil {
-			errorExecutingAccountCategory(w, err)
+			errorExecuting(w, accountCategory, err)
 			return
 		}
 		updated(w, ac.ID)
@@ -242,14 +218,14 @@ func (c *AccountController) UpdateAccount(db *sqlx.DB) http.HandlerFunc {
 		var a *models.Account
 		err = json.NewDecoder(r.Body).Decode(&a)
 		if err != nil {
-			badRequestAccount(w, err)
+			badRequestModel(w, account, err)
 			return
 		}
 
 		a.ID = aID
 		err = accountRepo.UpdateAccount(db, a)
 		if err != nil {
-			errorExecutingAccount(w, err)
+			errorExecuting(w, account, err)
 			return
 		}
 		updated(w, a.ID)
@@ -268,14 +244,14 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 		var c *models.Contribution
 		err = json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
-			badRequestContribution(w, err)
+			badRequestModel(w, contribution, err)
 			return
 		}
 
 		c.ID = cID
 		err = accountRepo.UpdateContribution(db, c)
 		if err != nil {
-			errorExecutingContribution(w, err)
+			errorExecuting(w, contribution, err)
 			return
 		}
 		updated(w, c.ID)
