@@ -3,7 +3,6 @@ package repositories
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"strings"
 
@@ -14,34 +13,30 @@ import (
 // ErrNoRecord is returned by any operation that is performed for a nonexistent record.
 var ErrNoRecord = errors.New("repositories: record does not exist")
 
-func buildQueryClauses(mValues map[string]interface{}, mFilters map[string]string) (string, []interface{}, error) {
+func buildQueryClauses(baseQuery string, mValues map[string]interface{}, mFilters map[string]string) (string, []interface{}) {
 	var values []interface{}
 	var conditions []string
 
-	if len(mValues) > 0 {
-		for k := range mFilters {
-			if val, ok := mValues[k]; ok {
-				values = append(values, val)
-				conditions = append(conditions, fmt.Sprintf("%s(?)", mFilters[k]))
-			}
+	for fKey, fVal := range mFilters {
+		if val, ok := mValues[fKey]; ok {
+			values = append(values, val)
+			conditions = append(conditions, fVal+"(?)")
 		}
 	}
 
-	where := ""
-	if len(conditions) > 0 {
-		where = "WHERE"
-	}
+	var qb strings.Builder
 
-	return fmt.Sprintf("%s %s;", where, strings.Join(conditions, " AND ")), values, nil
+	qb.WriteString(baseQuery)
+	if len(conditions) > 0 {
+		qb.WriteString(" WHERE " + strings.Join(conditions, " AND "))
+	}
+	qb.WriteString(";")
+
+	return qb.String(), values
 }
 
 func getGetQueryAndValues(getQuery string, mValues map[string]interface{}, mFilters map[string]string) (string, []interface{}, error) {
-	clauses, values, err := buildQueryClauses(mValues, mFilters)
-	if err != nil {
-		return "", nil, err
-	}
-
-	query := fmt.Sprintf("%s %s", getQuery, clauses)
+	query, values := buildQueryClauses(getQuery, mValues, mFilters)
 
 	q, args, err := sqlx.In(query, values...)
 	if err != nil {
