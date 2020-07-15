@@ -4,6 +4,8 @@ services:
   web:
     ports:
       - 3000:3000
+    volumes:
+      - ./web:/app
 
   app:
     ports:
