@@ -1,9 +1,19 @@
 version: "3.7"
 
 services:
+  web:
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    ports:
+      - 3000
+    depends_on:
+      - app
+
   app:
     build:
       context: .
+      dockerfile: app.Dockerfile
     environment:
       DB_USER: postgres
       DB_PASSWORD: admin

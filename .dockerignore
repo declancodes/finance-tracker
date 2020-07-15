@@ -1,4 +1,2 @@
-.git*
-js/
-docker-compose.*
-*.md
+dist
+node_modules

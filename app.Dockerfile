@@ -2,7 +2,7 @@ FROM golang:1.14
 
 WORKDIR /app
 
-COPY . .
+COPY /app .
 
 RUN go mod download && \
     go build -o tracker .
