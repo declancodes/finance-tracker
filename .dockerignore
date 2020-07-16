@@ -1,2 +1,17 @@
+# JS
 **/dist
 **/node_modules
+
+# Flyway
+flyway/
+
+# Docker
+docker-compose.*
+*.Dockerfile
+*.dockerignore
+
+# Git
+*.git*
+
+# Markdown
+*.md
