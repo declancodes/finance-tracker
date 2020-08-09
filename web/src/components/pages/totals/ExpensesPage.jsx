@@ -1,7 +1,7 @@
 import React from 'react';
-import EntityPage from './EntityPage';
-import { api } from '../../common/api';
-import { helpers } from '../../common/helpers';
+import EntityPage from '../EntityPage';
+import { api } from '../../../common/api';
+import { helpers } from '../../../common/helpers';
 
 const doExtraModifications = (values) => {
   const ecUuid = values.category.value === undefined ?
@@ -34,13 +34,14 @@ export const ExpensesPage = () => (
       date: '',
       amount: 0
     }}
+    hasTotal
     usesFilters
     usesDates
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
     createEntity={api.createExpense}
-    getEntities={api.getExpenses}
+    getEntities={api.getExpensesTotal}
     updateEntity={api.updateExpense}
     deleteEntity={api.deleteExpense}
     getOptions={[

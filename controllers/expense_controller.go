@@ -8,6 +8,7 @@ import (
 	"github.com/DeclanCodes/finance-tracker/repositories"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -17,6 +18,11 @@ const (
 
 // ExpenseController is the means for interacting with Expense entities from an http router.
 type ExpenseController struct{}
+
+type expensesResponse struct {
+	Expenses []*models.Expense `json:"expenses"`
+	Total    decimal.Decimal   `json:"total"`
+}
 
 var expenseRepo = repositories.ExpenseRepository{}
 
@@ -116,7 +122,18 @@ func (c *ExpenseController) GetExpenses(db *sqlx.DB) http.HandlerFunc {
 			errorExecuting(w, expense, err)
 			return
 		}
-		read(w, es, expense)
+
+		var t decimal.Decimal
+		for _, e := range es {
+			t = t.Add(e.Amount)
+		}
+
+		resp := expensesResponse{
+			Expenses: es,
+			Total:    t,
+		}
+
+		read(w, resp, expense)
 	}
 }
 

@@ -39,10 +39,21 @@ function remove(url) {
 function sort(promise, order) {
   return promise
     .then(response =>
-      (response.data === null || response.data === undefined)
-        ? []
-        : sortBy(response.data, order)
+      response.data === undefined || response.data === null
+          ? []
+          : sortBy(response.data, order)
     );
+}
+
+function sortTotal(promise, property, order) {
+  return promise
+    .then(response => {
+      const hasNoData = response.data === undefined || response.data === null;
+      return {
+        entities: hasNoData ? [] : sortBy(response.data[property], order),
+        total: hasNoData ? 0 : response.data.total
+      };
+    });
 }
 
 export const api = {
@@ -70,8 +81,16 @@ export const api = {
   },
 
   getAccounts(filterParams) {
-    return sort(
+    return api.getAccountsTotal(filterParams)
+      .then(response => {
+        return response.entities;
+      });
+  },
+
+  getAccountsTotal(filterParams) {
+    return sortTotal(
       get(ACCOUNTS_URL, filterParams),
+      'accounts',
       ['category.name', 'name']
     );
   },
@@ -108,8 +127,16 @@ export const api = {
   },
 
   getContributions(filterParams) {
-    return sort(
+    return api.getContributionsTotal(filterParams)
+      .then(response => {
+        return response.entities;
+      });
+  },
+
+  getContributionsTotal(filterParams) {
+    return sortTotal(
       get(CONTRIBUTIONS_URL, filterParams),
+      'contributions',
       ['date', 'account.name', 'amount']
     );
   },
@@ -146,8 +173,16 @@ export const api = {
   },
 
   getExpenses(filterParams) {
-    return sort(
+    return api.getExpensesTotal(filterParams)
+      .then(response => {
+        return response.entities;
+      });
+  },
+
+  getExpensesTotal(filterParams) {
+    return sortTotal(
       get(EXPENSES_URL, filterParams),
+      'expenses',
       ['date', 'category.name', 'amount']
     );
   },
@@ -188,8 +223,16 @@ export const api = {
   },
 
   getHoldings(filterParams) {
-    return sort(
+    return api.getHoldingsTotal(filterParams)
+      .then(response => {
+        return response.entities;
+      });
+  },
+
+  getHoldingsTotal(filterParams) {
+    return sortTotal(
       get(HOLDINGS_URL, filterParams),
+      'holdings',
       ['account.name', 'fund.tickerSymbol']
     );
   },

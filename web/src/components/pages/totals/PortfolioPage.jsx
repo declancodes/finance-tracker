@@ -1,6 +1,6 @@
 import React from 'react';
-import EntityPage from './EntityPage';
-import { api } from '../../common/api';
+import EntityPage from '../EntityPage';
+import { api } from '../../../common/api';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?

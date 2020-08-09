@@ -13,6 +13,7 @@ class EntityPage extends React.Component {
     super(props);
     this.state = {
       entities: [],
+      total: 0,
       options: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
@@ -111,7 +112,14 @@ class EntityPage extends React.Component {
       account: this.getFilterCategoryValues('account'),
       fund: this.getFilterCategoryValues('fund')
     })
-    .then(response => this.setState({ entities: response }));
+    .then(response => {
+      this.setState(this.props.hasTotal ? {
+        entities: response.entities,
+        total: response.total
+      } : {
+        entities: response
+      });
+    });
   }
 
   render() {
@@ -160,6 +168,12 @@ class EntityPage extends React.Component {
                 <td colSpan={Object.keys(this.props.blankEntity).length}>
                   No {entityPluralName}
                 </td>
+              </tr>
+            )}
+            {this.props.hasTotal && (
+              <tr>
+                <td colSpan={Object.keys(this.props.blankEntity).length - 2}>Total</td>
+                <td>{helpers.displayCurrency(this.state.total)}</td>
               </tr>
             )}
           </tbody>

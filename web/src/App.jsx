@@ -9,16 +9,16 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import { AccountsPage } from './components/pages/AccountsPage';
+import { AccountsPage } from './components/pages/totals/AccountsPage';
 import { AccountCategoriesPage } from './components/pages/categories/AccountCategoriesPage';
 import { AssetCategoriesPage } from './components/pages/categories/AssetCategoriesPage';
-import { ContributionsPage } from './components/pages/ContributionsPage';
-import { ExpensesPage } from './components/pages/ExpensesPage';
+import { ContributionsPage } from './components/pages/totals/ContributionsPage';
+import { ExpensesPage } from './components/pages/totals/ExpensesPage';
 import { ExpenseCategoriesPage } from './components/pages/categories/ExpenseCategoriesPage';
 import { FundsPage } from './components/pages/FundsPage';
-import { HoldingsPage } from './components/pages/HoldingsPage';
+import { HoldingsPage } from './components/pages/totals/HoldingsPage';
 import { HomePage } from './components/pages/HomePage';
-import { PortfolioPage } from './components/pages/PortfolioPage';
+import { PortfolioPage } from './components/pages/totals/PortfolioPage';
 import { LinkItem } from './components/nav/LinkItem';
 import { Dropdown } from './components/nav/Dropdown';
 

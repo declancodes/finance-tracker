@@ -21,6 +21,16 @@ const (
 // AccountController is the means for interacting with Account entities from an http router.
 type AccountController struct{}
 
+type accountsResponse struct {
+	Accounts []*models.Account `json:"accounts"`
+	Total    decimal.Decimal   `json:"total"`
+}
+
+type contributionsResponse struct {
+	Contributions []*models.Contribution `json:"contributions"`
+	Total         decimal.Decimal        `json:"total"`
+}
+
 var accountRepo = repositories.AccountRepository{}
 
 // CreateAccountCategory creates an AccountCategory based on the r *http.Request Body.
@@ -143,10 +153,18 @@ func (c *AccountController) GetAccounts(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		var t decimal.Decimal
 		for _, a := range as {
 			updateAccountValueFromHoldings(db, a)
+			t = t.Add(a.Amount)
 		}
-		read(w, as, account)
+
+		resp := accountsResponse{
+			Accounts: as,
+			Total:    t,
+		}
+
+		read(w, resp, account)
 	}
 }
 
@@ -176,7 +194,18 @@ func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 			errorExecuting(w, contribution, err)
 			return
 		}
-		read(w, cs, contribution)
+
+		var t decimal.Decimal
+		for _, c := range cs {
+			t = t.Add(c.Amount)
+		}
+
+		resp := contributionsResponse{
+			Contributions: cs,
+			Total:         t,
+		}
+
+		read(w, resp, contribution)
 	}
 }
 

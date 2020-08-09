@@ -25,6 +25,11 @@ const (
 // FundController is the means for interacting with Fund entities from an http router.
 type FundController struct{}
 
+type holdingsResponse struct {
+	Holdings []*models.Holding `json:"holdings"`
+	Total    decimal.Decimal   `json:"total"`
+}
+
 var fundRepo = repositories.FundRepository{}
 
 // CreateAssetCategory creates an AssetCategory based on the r *http.Request Body.
@@ -183,7 +188,18 @@ func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 			errorExecuting(w, holding, err)
 			return
 		}
-		read(w, hs, holding)
+
+		var t decimal.Decimal
+		for _, h := range hs {
+			t = t.Add(h.Value)
+		}
+
+		resp := holdingsResponse{
+			Holdings: hs,
+			Total:    t,
+		}
+
+		read(w, resp, holding)
 	}
 }
 

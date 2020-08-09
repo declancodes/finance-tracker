@@ -1,6 +1,6 @@
 import React from 'react';
-import EntityPage from './EntityPage';
-import { api } from '../../common/api';
+import EntityPage from '../EntityPage';
+import { api } from '../../../common/api';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?
@@ -28,12 +28,13 @@ export const AccountsPage = () => (
       description: '',
       amount: 0
     }}
+    hasTotal
     usesFilters
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
     createEntity={api.createAccount}
-    getEntities={api.getAccounts}
+    getEntities={api.getAccountsTotal}
     updateEntity={api.updateAccount}
     deleteEntity={api.deleteAccount}
     getOptions={[
