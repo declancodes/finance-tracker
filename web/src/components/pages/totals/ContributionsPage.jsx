@@ -1,7 +1,16 @@
 import React from 'react';
 import EntityPage from '../EntityPage';
-import { api } from '../../../common/api';
-import { helpers } from '../../../common/helpers';
+import {
+  createContribution,
+  getContributionsTotal,
+  updateContribution,
+  deleteContribution,
+  getAccounts
+} from '../../../common/api';
+import {
+  consumeDate,
+  displayDate
+} from '../../../common/helpers';
 
 const doExtraModifications = (values) => {
   const aUuid = values.account.value === undefined ?
@@ -11,14 +20,14 @@ const doExtraModifications = (values) => {
     uuid: aUuid
   };
 
-  const dateToSubmit = helpers.consumeDate(values.date);
+  const dateToSubmit = consumeDate(values.date);
   values.date = dateToSubmit;
 }
 
 const getInitialValues = (contribution) => {
   let initialValues = JSON.parse(JSON.stringify(contribution));
   initialValues.account = contribution.account.uuid;
-  initialValues.date = helpers.displayDate(contribution.date);
+  initialValues.date = displayDate(contribution.date);
 
   return initialValues;
 }
@@ -40,12 +49,12 @@ export const ContributionsPage = () => (
     filterCategories={[
       {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
-    createEntity={api.createContribution}
-    getEntities={api.getContributionsTotal}
-    updateEntity={api.updateContribution}
-    deleteEntity={api.deleteContribution}
+    createEntity={createContribution}
+    getEntities={getContributionsTotal}
+    updateEntity={updateContribution}
+    deleteEntity={deleteContribution}
     getOptions={[
-      {name: 'account', value: api.getAccounts}
+      {name: 'account', value: getAccounts}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

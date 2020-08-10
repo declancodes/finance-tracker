@@ -15,28 +15,33 @@ const PORTFOLIOS_URL = `${API_URL}/portfolios`;
 const PORTFOLIO_HOLDING_MAPPINGS_URL = `${API_URL}/portfolioholdingmappings`;
 const PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL = `${API_URL}/portfolioassetcategorymappings`;
 
-function create(url, values) {
+const create = (url, values) => {
   return axios.post(url, values)
 }
 
-function get(baseUrl, filterParams) {
-  const url = querystring.stringifyUrl(
-    { url: baseUrl, query: filterParams },
-    { skipNull: true, skipEmptyString: true }
-  );
+const get = (baseUrl, filterParams) => {
+  const parsedUrl = {
+    url: baseUrl,
+    query: filterParams
+  };
+  const options = {
+    skipNull: true,
+    skipEmptyString: true
+  };
+  const url = querystring.stringifyUrl(parsedUrl, options);
 
   return axios.get(url);
 }
 
-function update(url, values) {
+const update = (url, values) => {
   return axios.put(url, values)
 }
 
-function remove(url) {
+const remove = (url) => {
   return axios.delete(url)
 }
 
-function sort(promise, order) {
+const sort = (promise, order) => {
   return promise
     .then(response =>
       response.data === undefined || response.data === null
@@ -45,7 +50,7 @@ function sort(promise, order) {
     );
 }
 
-function sortTotal(promise, property, order) {
+const sortTotal = (promise, property, order) => {
   return promise
     .then(response => {
       const hasNoData = response.data === undefined || response.data === null;
@@ -56,249 +61,247 @@ function sortTotal(promise, property, order) {
     });
 }
 
-export const api = {
-  createAccountCategory(values) {
-    return create(ACCOUNT_CATEGORIES_URL, values);
-  },
+export const createAccountCategory = (values) => {
+  return create(ACCOUNT_CATEGORIES_URL, values);
+}
 
-  getAccountCategories(filterParams) {
-    return sort(
-      get(ACCOUNT_CATEGORIES_URL),
-      ['name']
-    );
-  },
+export const getAccountCategories = (filterParams) => {
+  return sort(
+    get(ACCOUNT_CATEGORIES_URL),
+    ['name']
+  );
+}
 
-  updateAccountCategory(values) {
-    return update(`${ACCOUNT_CATEGORIES_URL}/${values.uuid}`, values)
-  },
+export const updateAccountCategory = (values) => {
+  return update(`${ACCOUNT_CATEGORIES_URL}/${values.uuid}`, values)
+}
 
-  deleteAccountCategory(uuid) {
-    return remove(`${ACCOUNT_CATEGORIES_URL}/${uuid}`)
-  },
+export const deleteAccountCategory = (uuid) => {
+  return remove(`${ACCOUNT_CATEGORIES_URL}/${uuid}`)
+}
 
-  createAccount(values) {
-    return create(ACCOUNTS_URL, values);
-  },
+export const createAccount = (values) => {
+  return create(ACCOUNTS_URL, values);
+}
 
-  getAccounts(filterParams) {
-    return api.getAccountsTotal(filterParams)
-      .then(response => {
-        return response.entities;
-      });
-  },
+export const getAccounts = (filterParams) => {
+  return getAccountsTotal(filterParams)
+    .then(response => {
+      return response.entities;
+    });
+}
 
-  getAccountsTotal(filterParams) {
-    return sortTotal(
-      get(ACCOUNTS_URL, filterParams),
-      'accounts',
-      ['category.name', 'name']
-    );
-  },
+export const getAccountsTotal = (filterParams) => {
+  return sortTotal(
+    get(ACCOUNTS_URL, filterParams),
+    'accounts',
+    ['category.name', 'name']
+  );
+}
 
-  updateAccount(values) {
-    return update(`${ACCOUNTS_URL}/${values.uuid}`, values)
-  },
+export const updateAccount = (values) => {
+  return update(`${ACCOUNTS_URL}/${values.uuid}`, values)
+}
 
-  deleteAccount(uuid) {
-    return remove(`${ACCOUNTS_URL}/${uuid}`)
-  },
+export const deleteAccount = (uuid) => {
+  return remove(`${ACCOUNTS_URL}/${uuid}`)
+}
 
-  createAssetCategory(values) {
-    return create(ASSET_CATEGORIES_URL, values);
-  },
+export const createAssetCategory = (values) => {
+  return create(ASSET_CATEGORIES_URL, values);
+}
 
-  getAssetCategories(filterParams) {
-    return sort(
-      get(ASSET_CATEGORIES_URL),
-      ['name']
-    );
-  },
+export const getAssetCategories = (filterParams) => {
+  return sort(
+    get(ASSET_CATEGORIES_URL),
+    ['name']
+  );
+}
 
-  updateAssetCategory(values) {
-    return update(`${ASSET_CATEGORIES_URL}/${values.uuid}`, values)
-  },
+export const updateAssetCategory = (values) => {
+  return update(`${ASSET_CATEGORIES_URL}/${values.uuid}`, values)
+}
 
-  deleteAssetCategory(uuid) {
-    return remove(`${ASSET_CATEGORIES_URL}/${uuid}`)
-  },
+export const deleteAssetCategory = (uuid) => {
+  return remove(`${ASSET_CATEGORIES_URL}/${uuid}`)
+}
 
-  createContribution(values) {
-    return create(CONTRIBUTIONS_URL, values);
-  },
+export const createContribution = (values) => {
+  return create(CONTRIBUTIONS_URL, values);
+}
 
-  getContributions(filterParams) {
-    return api.getContributionsTotal(filterParams)
-      .then(response => {
-        return response.entities;
-      });
-  },
+export const getContributions = (filterParams) => {
+  return getContributionsTotal(filterParams)
+    .then(response => {
+      return response.entities;
+    });
+}
 
-  getContributionsTotal(filterParams) {
-    return sortTotal(
-      get(CONTRIBUTIONS_URL, filterParams),
-      'contributions',
-      ['date', 'account.name', 'amount']
-    );
-  },
+export const getContributionsTotal = (filterParams) => {
+  return sortTotal(
+    get(CONTRIBUTIONS_URL, filterParams),
+    'contributions',
+    ['date', 'account.name', 'amount']
+  );
+}
 
-  updateContribution(values) {
-    return update(`${CONTRIBUTIONS_URL}/${values.uuid}`, values)
-  },
+export const updateContribution = (values) => {
+  return update(`${CONTRIBUTIONS_URL}/${values.uuid}`, values)
+}
 
-  deleteContribution(uuid) {
-    return remove(`${CONTRIBUTIONS_URL}/${uuid}`)
-  },
+export const deleteContribution = (uuid) => {
+  return remove(`${CONTRIBUTIONS_URL}/${uuid}`)
+}
 
-  createExpenseCategory(values) {
-    return create(EXPENSE_CATEGORIES_URL, values);
-  },
+export const createExpenseCategory = (values) => {
+  return create(EXPENSE_CATEGORIES_URL, values);
+}
 
-  getExpenseCategories(filterParams) {
-    return sort(
-      get(EXPENSE_CATEGORIES_URL),
-      ['name']
-    );
-  },
+export const getExpenseCategories = (filterParams) => {
+  return sort(
+    get(EXPENSE_CATEGORIES_URL),
+    ['name']
+  );
+}
 
-  updateExpenseCategory(values) {
-    return update(`${EXPENSE_CATEGORIES_URL}/${values.uuid}`, values)
-  },
+export const updateExpenseCategory = (values) => {
+  return update(`${EXPENSE_CATEGORIES_URL}/${values.uuid}`, values)
+}
 
-  deleteExpenseCategory(uuid) {
-    return remove(`${EXPENSE_CATEGORIES_URL}/${uuid}`)
-  },
+export const deleteExpenseCategory = (uuid) => {
+  return remove(`${EXPENSE_CATEGORIES_URL}/${uuid}`)
+}
 
-  createExpense(values) {
-    return create(EXPENSES_URL, values);
-  },
+export const createExpense = (values) => {
+  return create(EXPENSES_URL, values);
+}
 
-  getExpenses(filterParams) {
-    return api.getExpensesTotal(filterParams)
-      .then(response => {
-        return response.entities;
-      });
-  },
+export const getExpenses = (filterParams) => {
+  return getExpensesTotal(filterParams)
+    .then(response => {
+      return response.entities;
+    });
+}
 
-  getExpensesTotal(filterParams) {
-    return sortTotal(
-      get(EXPENSES_URL, filterParams),
-      'expenses',
-      ['date', 'category.name', 'amount']
-    );
-  },
+export const getExpensesTotal = (filterParams) => {
+  return sortTotal(
+    get(EXPENSES_URL, filterParams),
+    'expenses',
+    ['date', 'category.name', 'amount']
+  );
+}
 
-  updateExpense(values) {
-    return update(`${EXPENSES_URL}/${values.uuid}`, values)
-  },
+export const updateExpense = (values) => {
+  return update(`${EXPENSES_URL}/${values.uuid}`, values)
+}
 
-  deleteExpense(uuid) {
-    return remove(`${EXPENSES_URL}/${uuid}`)
-  },
+export const deleteExpense = (uuid) => {
+  return remove(`${EXPENSES_URL}/${uuid}`)
+}
 
-  createFund(values) {
-    return create(FUNDS_URL, values);
-  },
+export const createFund = (values) => {
+  return create(FUNDS_URL, values);
+}
 
-  getFunds(filterParams) {
-    return sort(
-      get(FUNDS_URL, filterParams),
-      ['category.name', 'name', 'tickerSymbol']
-    );
-  },
+export const getFunds = (filterParams) => {
+  return sort(
+    get(FUNDS_URL, filterParams),
+    ['category.name', 'name', 'tickerSymbol']
+  );
+}
 
-  updateFund(values) {
-    return update(`${FUNDS_URL}/${values.uuid}`, values)
-  },
+export const updateFund = (values) => {
+  return update(`${FUNDS_URL}/${values.uuid}`, values)
+}
 
-  updateFundSharePrices() {
-    return axios.put(FUNDS_URL);
-  },
+export const updateFundSharePrices = () => {
+  return axios.put(FUNDS_URL);
+}
 
-  deleteFund(uuid) {
-    return remove(`${FUNDS_URL}/${uuid}`)
-  },
+export const deleteFund = (uuid) => {
+  return remove(`${FUNDS_URL}/${uuid}`)
+}
 
-  createHolding(values) {
-    return create(HOLDINGS_URL, values);
-  },
+export const createHolding = (values) => {
+  return create(HOLDINGS_URL, values);
+}
 
-  getHoldings(filterParams) {
-    return api.getHoldingsTotal(filterParams)
-      .then(response => {
-        return response.entities;
-      });
-  },
+export const getHoldings = (filterParams) => {
+  return getHoldingsTotal(filterParams)
+    .then(response => {
+      return response.entities;
+    });
+}
 
-  getHoldingsTotal(filterParams) {
-    return sortTotal(
-      get(HOLDINGS_URL, filterParams),
-      'holdings',
-      ['account.name', 'fund.tickerSymbol']
-    );
-  },
+export const getHoldingsTotal = (filterParams) => {
+  return sortTotal(
+    get(HOLDINGS_URL, filterParams),
+    'holdings',
+    ['account.name', 'fund.tickerSymbol']
+  );
+}
 
-  updateHolding(values) {
-    return update(`${HOLDINGS_URL}/${values.uuid}`, values)
-  },
+export const updateHolding = (values) => {
+  return update(`${HOLDINGS_URL}/${values.uuid}`, values)
+}
 
-  deleteHolding(uuid) {
-    return remove(`${HOLDINGS_URL}/${uuid}`)
-  },
+export const deleteHolding = (uuid) => {
+  return remove(`${HOLDINGS_URL}/${uuid}`)
+}
 
-  createPortfolio(values) {
-    return create(PORTFOLIOS_URL, values);
-  },
+export const createPortfolio = (values) => {
+  return create(PORTFOLIOS_URL, values);
+}
 
-  getPortfolios(filterParams) {
-    return sort(
-      get(PORTFOLIOS_URL, filterParams),
-      ['name']
-    );
-  },
+export const getPortfolios = (filterParams) => {
+  return sort(
+    get(PORTFOLIOS_URL, filterParams),
+    ['name']
+  );
+}
 
-  updatePortfolio(values) {
-    return update(`${PORTFOLIOS_URL}/${values.uuid}`, values)
-  },
+export const updatePortfolio = (values) => {
+  return update(`${PORTFOLIOS_URL}/${values.uuid}`, values)
+}
 
-  deletePortfolio(uuid) {
-    return remove(`${PORTFOLIOS_URL}/${uuid}`)
-  },
+export const deletePortfolio = (uuid) => {
+  return remove(`${PORTFOLIOS_URL}/${uuid}`)
+}
 
-  createPortfolioHoldingMapping(values) {
-    return create(PORTFOLIO_HOLDING_MAPPINGS_URL, values);
-  },
+export const createPortfolioHoldingMapping = (values) => {
+  return create(PORTFOLIO_HOLDING_MAPPINGS_URL, values);
+}
 
-  getPortfolioHoldingMappings(filterParams) {
-    return sort(
-      get(PORTFOLIO_HOLDING_MAPPINGS_URL, filterParams),
-      ['uuid']
-    );
-  },
+export const getPortfolioHoldingMappings = (filterParams) => {
+  return sort(
+    get(PORTFOLIO_HOLDING_MAPPINGS_URL, filterParams),
+    ['uuid']
+  );
+}
 
-  updatePortfolioHoldingMapping(values) {
-    return update(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${values.uuid}`, values)
-  },
+export const updatePortfolioHoldingMapping = (values) => {
+  return update(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${values.uuid}`, values)
+}
 
-  deletePortfolioHoldingMapping(uuid) {
-    return remove(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${uuid}`)
-  },
+export const deletePortfolioHoldingMapping = (uuid) => {
+  return remove(`${PORTFOLIO_HOLDING_MAPPINGS_URL}/${uuid}`)
+}
 
-  createPortfolioAssetCategoryMapping(values) {
-    return create(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, values);
-  },
+export const createPortfolioAssetCategoryMapping = (values) => {
+  return create(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, values);
+}
 
-  getPortfolioAssetCategoryMappings(filterParams) {
-    return sort(
-      get(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, filterParams),
-      ['uuid']
-    );
-  },
+export const getPortfolioAssetCategoryMappings = (filterParams) => {
+  return sort(
+    get(PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL, filterParams),
+    ['uuid']
+  );
+}
 
-  updatePortfolioAssetCategoryMapping(values) {
-    return update(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${values.uuid}`, values)
-  },
+export const updatePortfolioAssetCategoryMapping = (values) => {
+  return update(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${values.uuid}`, values)
+}
 
-  deletePortfolioAssetCategoryMapping(uuid) {
-    return remove(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${uuid}`)
-  }
-};
+export const deletePortfolioAssetCategoryMapping = (uuid) => {
+  return remove(`${PORTFOLIO_ASSET_CATEGORY_MAPPINGS_URL}/${uuid}`)
+}

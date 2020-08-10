@@ -1,16 +1,18 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { DarklyReactSelect } from '../common/DarklyReactSelect';
-import { helpers } from '../../common/helpers';
+import {
+  getOptionsArrayFromKey,
+  titleCase
+} from '../../common/helpers';
 
 export const LabeledCategoryFilter = ({
   filterCategory,
   options,
   setFilterCategory
 }) => {
-  const displayName = helpers.titleCase(filterCategory.name);
-  const opts = helpers
-    .getOptionsArrayFromKey(options, filterCategory.name)
+  const displayName = titleCase(filterCategory.name);
+  const opts = getOptionsArrayFromKey(options, filterCategory.name)
     .map(o => {
       return {
         value: o[filterCategory.optionValue],

@@ -1,6 +1,12 @@
 import React from 'react';
 import EntityPage from '../EntityPage';
-import { api } from '../../../common/api';
+import {
+  createAccount,
+  getAccountsTotal,
+  updateAccount,
+  deleteAccount,
+  getAccountCategories
+} from '../../../common/api';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?
@@ -33,12 +39,12 @@ export const AccountsPage = () => (
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
-    createEntity={api.createAccount}
-    getEntities={api.getAccountsTotal}
-    updateEntity={api.updateAccount}
-    deleteEntity={api.deleteAccount}
+    createEntity={createAccount}
+    getEntities={getAccountsTotal}
+    updateEntity={updateAccount}
+    deleteEntity={deleteAccount}
     getOptions={[
-      {name: 'category', value: api.getAccountCategories}
+      {name: 'category', value: getAccountCategories}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

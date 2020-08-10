@@ -1,14 +1,13 @@
 import React from 'react';
 import { useField, useFormikContext } from 'formik';
-import { helpers } from '../../../common/helpers';
 import { DarklyReactSelect } from '../../common/DarklyReactSelect';
+import { getOptionsArrayFromKey } from '../../../common/helpers';
 
 export const LabeledSelectField = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
 
-  const opts = helpers
-    .getOptionsArrayFromKey(props.options, props.name)
+  const opts = getOptionsArrayFromKey(props.options, props.name)
     .map(o => {
       return {
         value: o['uuid'],

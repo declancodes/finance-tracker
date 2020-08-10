@@ -6,7 +6,10 @@ import { EntityForm } from '../forms/EntityForm';
 import { EntityHeader } from '../tables/EntityHeader';
 import { EntityRow } from '../tables/EntityRow';
 import { FilterPanel } from '../filters/FilterPanel';
-import { helpers } from '../../common/helpers';
+import {
+  displayCurrency,
+  getValueFromKey
+} from '../../common/helpers';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -70,7 +73,7 @@ class EntityPage extends React.Component {
   }
 
   getFilterCategoryValues(name) {
-    const values = helpers.getValueFromKey(this.state.filterCategories, name);
+    const values = getValueFromKey(this.state.filterCategories, name);
     return values === undefined || values === null || values === '' ?
       [] :
       values.map(v => v.value);
@@ -173,7 +176,7 @@ class EntityPage extends React.Component {
             {this.props.hasTotal && (
               <tr>
                 <td colSpan={Object.keys(this.props.blankEntity).length - 2}>Total</td>
-                <td>{helpers.displayCurrency(this.state.total)}</td>
+                <td>{displayCurrency(this.state.total)}</td>
               </tr>
             )}
           </tbody>

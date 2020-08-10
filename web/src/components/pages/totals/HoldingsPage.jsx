@@ -1,6 +1,13 @@
 import React from 'react';
 import EntityPage from '../EntityPage';
-import { api } from '../../../common/api';
+import {
+  createHolding,
+  getHoldingsTotal,
+  updateHolding,
+  deleteHolding,
+  getAccounts,
+  getFunds
+} from '../../../common/api';
 
 const doExtraModifications = (values) => {
   const aUuid = values.account.value === undefined ?
@@ -43,13 +50,13 @@ export const HoldingsPage = () => (
       {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'},
       {name: 'fund', value: '', optionValue: 'tickerSymbol', optionDisplay: 'tickerSymbol'}
     ]}
-    createEntity={api.createHolding}
-    getEntities={api.getHoldingsTotal}
-    updateEntity={api.updateHolding}
-    deleteEntity={api.deleteHolding}
+    createEntity={createHolding}
+    getEntities={getHoldingsTotal}
+    updateEntity={updateHolding}
+    deleteEntity={deleteHolding}
     getOptions={[
-      {name: 'account', value: api.getAccounts},
-      {name: 'fund', value: api.getFunds}
+      {name: 'account', value: getAccounts},
+      {name: 'fund', value: getFunds}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

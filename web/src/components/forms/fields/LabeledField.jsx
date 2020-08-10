@@ -1,8 +1,8 @@
 import React from 'react';
-import { Col, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { DatePickerField } from './DatePickerField';
 import { LabeledSelectField } from './LabeledSelectField';
-import { helpers } from '../../../common/helpers';
+import { titleCase } from '../../../common/helpers';
 
 export const LabeledField = ({
   name,
@@ -11,7 +11,7 @@ export const LabeledField = ({
   optionDisplay,
   props
 }) => {
-  const displayName = helpers.titleCase(name);
+  const displayName = titleCase(name);
 
   return (
     <div className='container-fluid'>

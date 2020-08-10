@@ -1,7 +1,16 @@
 import React from 'react';
 import EntityPage from '../EntityPage';
-import { api } from '../../../common/api';
-import { helpers } from '../../../common/helpers';
+import {
+  createExpense,
+  getExpensesTotal,
+  updateExpense,
+  deleteExpense,
+  getExpenseCategories
+} from '../../../common/api';
+import {
+  consumeDate,
+  displayDate
+} from '../../../common/helpers';
 
 const doExtraModifications = (values) => {
   const ecUuid = values.category.value === undefined ?
@@ -11,14 +20,14 @@ const doExtraModifications = (values) => {
     uuid: ecUuid
   };
 
-  const dateToSubmit = helpers.consumeDate(values.date);
+  const dateToSubmit = consumeDate(values.date);
   values.date = dateToSubmit;
 }
 
 const getInitialValues = (expense) => {
   let initialValues = JSON.parse(JSON.stringify(expense));
   initialValues.category = expense.category.uuid;
-  initialValues.date = helpers.displayDate(expense.date);
+  initialValues.date = displayDate(expense.date);
 
   return initialValues;
 }
@@ -40,12 +49,12 @@ export const ExpensesPage = () => (
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
-    createEntity={api.createExpense}
-    getEntities={api.getExpensesTotal}
-    updateEntity={api.updateExpense}
-    deleteEntity={api.deleteExpense}
+    createEntity={createExpense}
+    getEntities={getExpensesTotal}
+    updateEntity={updateExpense}
+    deleteEntity={deleteExpense}
     getOptions={[
-      {name: 'category', value: api.getExpenseCategories}
+      {name: 'category', value: getExpenseCategories}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}

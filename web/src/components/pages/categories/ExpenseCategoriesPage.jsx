@@ -1,13 +1,18 @@
 import React from 'react';
 import { CategoriesPage } from './CategoriesPage';
-import { api } from '../../../common/api';
+import {
+  createExpenseCategory,
+  getExpenseCategories,
+  updateExpenseCategory,
+  deleteExpenseCategory
+} from '../../../common/api';
 
 export const ExpenseCategoriesPage = () => (
   <CategoriesPage
     categoryType='Expense'
-    createCategory={api.createExpenseCategory}
-    getCategories={api.getExpenseCategories}
-    updateCategory={api.updateExpenseCategory}
-    deleteCategory={api.deleteExpenseCategory}
+    createCategory={createExpenseCategory}
+    getCategories={getExpenseCategories}
+    updateCategory={updateExpenseCategory}
+    deleteCategory={deleteExpenseCategory}
   />
 );

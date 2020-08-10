@@ -1,7 +1,14 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import EntityPage from './EntityPage';
-import { api } from '../../common/api';
+import {
+  createFund,
+  getFunds,
+  updateFund,
+  deleteFund,
+  getAssetCategories,
+  updateFundSharePrices
+} from '../../common/api';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?
@@ -34,17 +41,17 @@ export const FundsPage = () => (
     filterCategories={[
       {name: 'category', value: '', optionValue: 'name', optionDisplay: 'name'}
     ]}
-    createEntity={api.createFund}
-    getEntities={api.getFunds}
-    updateEntity={api.updateFund}
-    deleteEntity={api.deleteFund}
+    createEntity={createFund}
+    getEntities={getFunds}
+    updateEntity={updateFund}
+    deleteEntity={deleteFund}
     getOptions={[
-      {name: 'category', value: api.getAssetCategories}
+      {name: 'category', value: getAssetCategories}
     ]}
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   >
-    <Button onClick={api.updateFundSharePrices}>
+    <Button onClick={updateFundSharePrices}>
       Get latest share prices
     </Button>
   </EntityPage>

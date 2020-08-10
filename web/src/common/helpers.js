@@ -7,52 +7,51 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
   currency: 'USD',
 });
 
-export const helpers = {
-  displayDate(dateString) {
-    return moment(dateString).local().format(dateDisplayFormat);
-  },
+export const displayDate = (dateString) => {
+  return moment(dateString).local().format(dateDisplayFormat);
+}
 
-  consumeDate(dateString) {
-    return moment(dateString).toISOString();
-  },
+export const consumeDate = (dateString) => {
+  return moment(dateString).toISOString();
+}
 
-  displayCurrency(currencyString) {
-    return currencyFormatter.format(currencyString);
-  },
+export const displayCurrency = (currencyString) => {
+  return currencyFormatter.format(currencyString);
+}
 
-  displayDecimals(num, places) {
-    return (Math.round(num * 1000) / 1000).toFixed(places);
-  },
+export const displayDecimals = (num, places) => {
+  return (Math.round(num * 1000) / 1000).toFixed(places);
+}
 
-  displayPercentage(num, places) {
-    const percentageStr = (Math.round(num * 100000) / 1000).toFixed(places);
-    return parseFloat(percentageStr);
-  },
+export const displayPercentage = (num, places) => {
+  const percentageStr = (Math.round(num * 100000) / 1000).toFixed(places);
+  return parseFloat(percentageStr);
+}
 
-  titleCase(str) {
-    return str.split(' ')
-      .map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
-      .join(' ');
-  },
+export const titleCase = (str) => {
+  return str.split(' ')
+    .map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+    .join(' ');
+}
 
-  getOptionsFromKey(options, name, defaultValue) {
-    if (!this.isNonEmptyArray(options)) {
-      return defaultValue;
-    }
+export const getOptionsArrayFromKey = (options, name) => {
+  return getOptionsFromKey(options, name, options);
+}
 
-    const opt = options.filter(o => o.name === name);
-    return this.isNonEmptyArray(opt) ? opt[0].value : defaultValue;
-  },
+export const getValueFromKey = (options, name) => {
+  return getOptionsFromKey(options, name, []);
+}
 
-  getOptionsArrayFromKey(options, name) {
-    return this.getOptionsFromKey(options, name, options);
-  },
-
-  getValueFromKey(options, name) {
-    return this.getOptionsFromKey(options, name, []);
-  },
-
-  isNonEmptyArray(obj) {
-    return Array.isArray(obj) && obj.length > 0;
+const getOptionsFromKey = (options, name, defaultValue) => {
+  if (!isNonEmptyArray(options)) {
+    return defaultValue;
   }
-};
+
+  const opt = options.filter(o => o.name === name);
+  return isNonEmptyArray(opt) ? opt[0].value : defaultValue;
+}
+
+const isNonEmptyArray = (obj) => {
+  return Array.isArray(obj) && obj.length > 0;
+}
+
