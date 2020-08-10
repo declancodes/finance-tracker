@@ -4,10 +4,12 @@ import {
   createPortfolio,
   getPortfolios,
   updatePortfolio,
-  deletePortfolio,
+  deletePortfolio
+} from '../../../common/api/portfolios';
+import {
   getAssetCategories,
   getHoldings
-} from '../../../common/api';
+} from '../../../common/api/funds';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?

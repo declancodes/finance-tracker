@@ -5,7 +5,7 @@ import {
   getAccountCategories,
   updateAccountCategory,
   deleteAccountCategory
-} from '../../../common/api';
+} from '../../../common/api/accounts';
 
 export const AccountCategoriesPage = () => (
   <CategoriesPage

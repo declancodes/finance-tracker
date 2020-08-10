@@ -6,7 +6,7 @@ import {
   updateExpense,
   deleteExpense,
   getExpenseCategories
-} from '../../../common/api';
+} from '../../../common/api/expenses';
 import {
   consumeDate,
   displayDate

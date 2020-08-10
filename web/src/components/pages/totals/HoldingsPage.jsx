@@ -5,9 +5,9 @@ import {
   getHoldingsTotal,
   updateHolding,
   deleteHolding,
-  getAccounts,
   getFunds
-} from '../../../common/api';
+} from '../../../common/api/funds';
+import { getAccounts } from '../../../common/api/accounts';
 
 const doExtraModifications = (values) => {
   const aUuid = values.account.value === undefined ?

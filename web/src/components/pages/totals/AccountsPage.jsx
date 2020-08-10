@@ -6,7 +6,7 @@ import {
   updateAccount,
   deleteAccount,
   getAccountCategories
-} from '../../../common/api';
+} from '../../../common/api/accounts';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?

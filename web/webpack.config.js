@@ -37,5 +37,10 @@ module.exports = {
     hotOnly: true,
     historyApiFallback: true
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      'API_URL': JSON.stringify('http://localhost:8080')
+    })
+  ]
 };

@@ -5,7 +5,7 @@ import {
   getExpenseCategories,
   updateExpenseCategory,
   deleteExpenseCategory
-} from '../../../common/api';
+} from '../../../common/api/expenses';
 
 export const ExpenseCategoriesPage = () => (
   <CategoriesPage

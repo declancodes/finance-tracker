@@ -5,7 +5,7 @@ import {
   getAssetCategories,
   updateAssetCategory,
   deleteAssetCategory
-} from '../../../common/api';
+} from '../../../common/api/funds';
 
 export const AssetCategoriesPage = () => (
   <CategoriesPage

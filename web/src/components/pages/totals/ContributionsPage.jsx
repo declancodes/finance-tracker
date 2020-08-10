@@ -6,7 +6,7 @@ import {
   updateContribution,
   deleteContribution,
   getAccounts
-} from '../../../common/api';
+} from '../../../common/api/accounts';
 import {
   consumeDate,
   displayDate

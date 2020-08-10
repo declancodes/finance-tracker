@@ -8,7 +8,7 @@ import {
   deleteFund,
   getAssetCategories,
   updateFundSharePrices
-} from '../../common/api';
+} from '../../common/api/funds';
 
 const doExtraModifications = (values) => {
   const acUuid = values.category.value === undefined ?
