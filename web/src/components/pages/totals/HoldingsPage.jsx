@@ -44,7 +44,6 @@ export const HoldingsPage = () => (
       value: 0,
       effectiveExpense: 0
     }}
-    hasTotal
     usesFilters
     filterCategories={[
       {name: 'account', value: '', optionValue: 'name', optionDisplay: 'name'},

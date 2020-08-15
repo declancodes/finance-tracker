@@ -43,7 +43,6 @@ export const ContributionsPage = () => (
       date: '',
       amount: 0
     }}
-    hasTotal
     usesFilters
     usesDates
     filterCategories={[

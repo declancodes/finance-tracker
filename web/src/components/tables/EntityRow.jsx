@@ -30,9 +30,9 @@ export const EntityRow = ({
       {entity.hasOwnProperty('amount') && <td>{displayCurrency(entity.amount)}</td>}
       {entity.hasOwnProperty('sharePrice') && <td>{displayCurrency(entity.sharePrice)}</td>}
       {entity.hasOwnProperty('shares') && <td>{displayDecimals(entity.shares, 3)}</td>}
-      {entity.hasOwnProperty('value') && <td>{displayCurrency(entity.value)}</td>}
       {entity.hasOwnProperty('expenseRatio') && <td>{`${displayPercentage(entity.expenseRatio, 3)}%`}</td>}
       {entity.hasOwnProperty('effectiveExpense') && <td>{displayCurrency(entity.effectiveExpense)}</td>}
+      {entity.hasOwnProperty('value') && <td>{displayCurrency(entity.value)}</td>}
       <td>
         {isEditing ? (
           <EntityForm

@@ -16,7 +16,7 @@ class EntityPage extends React.Component {
     super(props);
     this.state = {
       entities: [],
-      total: 0,
+      totals: [],
       options: [],
       start: moment().startOf('month').toDate(),
       end: moment().endOf('month').toDate(),
@@ -116,11 +116,18 @@ class EntityPage extends React.Component {
       fund: this.getFilterCategoryValues('fund')
     })
     .then(response => {
-      this.setState(this.props.hasTotal ? {
+      const hasTotal = response.total !== undefined && response.total !== null;
+      const hasValueTotal = response.valueTotal !== undefined && response.valueTotal !== null;
+
+      this.setState(!hasTotal && !hasValueTotal ? {
+        entities: response,
+        totals: []
+      } : hasTotal ? {
         entities: response.entities,
-        total: response.total
+        totals: [response.total]
       } : {
-        entities: response
+        entities: response.entities,
+        totals: [response.effectiveExpenseTotal, response.valueTotal]
       });
     });
   }
@@ -173,11 +180,13 @@ class EntityPage extends React.Component {
                 </td>
               </tr>
             )}
-            {this.props.hasTotal && (
-              <tr>
-                <td colSpan={Object.keys(this.props.blankEntity).length - 2}>Total</td>
-                <td>{displayCurrency(this.state.total)}</td>
-              </tr>
+            {this.state.totals.length > 0 && (
+                <tr>
+                  <td colSpan={Object.keys(this.props.blankEntity).length - 1 - this.state.totals.length}>Total</td>
+                  {this.state.totals.map((t, i) => (
+                    <td key={i}>{displayCurrency(t)}</td>
+                  ))}
+                </tr>
             )}
           </tbody>
         </Table>

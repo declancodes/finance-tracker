@@ -4,13 +4,25 @@ import {
   get,
   update,
   remove,
-  sort,
-  sortTotal
-} from './base'
+  sort
+} from './base';
+import sortBy from 'lodash.sortby';
 
 const ASSET_CATEGORIES_URL = `${API_URL}/assetcategories`;
 const FUNDS_URL = `${API_URL}/funds`;
 const HOLDINGS_URL = `${API_URL}/holdings`;
+
+const sortHoldingsTotal = (promise, property, order) => {
+  return promise
+    .then(response => {
+      const hasNoData = response.data === undefined || response.data === null;
+      return {
+        entities: hasNoData ? [] : sortBy(response.data[property], order),
+        valueTotal: hasNoData ? 0 : response.data.valueTotal,
+        effectiveExpenseTotal: hasNoData ? 0 : response.data.effectiveExpenseTotal
+      };
+    });
+};
 
 export const createAssetCategory = (values) => {
   return create(ASSET_CATEGORIES_URL, values);
@@ -66,7 +78,7 @@ export const getHoldings = (filterParams) => {
 };
 
 export const getHoldingsTotal = (filterParams) => {
-  return sortTotal(
+  return sortHoldingsTotal(
     get(HOLDINGS_URL, filterParams),
     'holdings',
     ['account.name', 'fund.tickerSymbol']

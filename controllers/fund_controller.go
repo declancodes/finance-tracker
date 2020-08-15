@@ -26,8 +26,9 @@ const (
 type FundController struct{}
 
 type holdingsResponse struct {
-	Holdings []*models.Holding `json:"holdings"`
-	Total    decimal.Decimal   `json:"total"`
+	Holdings              []*models.Holding `json:"holdings"`
+	ValueTotal            decimal.Decimal   `json:"valueTotal"`
+	EffectiveExpenseTotal decimal.Decimal   `json:"effectiveExpenseTotal"`
 }
 
 var fundRepo = repositories.FundRepository{}
@@ -189,14 +190,15 @@ func (c *FundController) GetHoldings(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var t decimal.Decimal
+		at, et := decimal.Zero, decimal.Zero
 		for _, h := range hs {
-			t = t.Add(h.Value)
+			at, et = at.Add(h.Value), et.Add(h.EffectiveExpense)
 		}
 
 		resp := holdingsResponse{
-			Holdings: hs,
-			Total:    t,
+			Holdings:              hs,
+			ValueTotal:            at,
+			EffectiveExpenseTotal: et,
 		}
 
 		read(w, resp, holding)
