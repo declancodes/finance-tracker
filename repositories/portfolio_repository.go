@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"database/sql"
+
 	"github.com/DeclanCodes/finance-tracker/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -41,8 +43,8 @@ func (r *PortfolioRepository) CreatePortfolioHoldingMappings(db *sqlx.DB, phms [
 	)
 	VALUES (
 		:portfolio_holding_mapping_uuid,
-		:portfolio_uuid,
-		:holding_uuid
+		:portfolio.portfolio_uuid,
+		:holding.holding_uuid
 	)
 	RETURNING portfolio_holding_mapping_uuid;`
 
@@ -64,8 +66,8 @@ func (r *PortfolioRepository) CreatePortfolioAssetCategoryMappings(db *sqlx.DB, 
 	)
 	VALUES (
 		:portfolio_asset_category_mapping_uuid,
-		:portfolio_uuid,
-		:asset_category_uuid,
+		:portfolio.portfolio_uuid,
+		:asset_category.asset_category_uuid,
 		:percentage
 	)
 	RETURNING portfolio_asset_category_mapping_uuid;`
@@ -112,6 +114,9 @@ func (r *PortfolioRepository) GetPortfolios(db *sqlx.DB, mValues map[string]inte
 	err = db.Select(&ps, q, args...)
 	if err != nil {
 		return nil, err
+	}
+	if len(ps) == 0 {
+		return nil, sql.ErrNoRows
 	}
 	return ps, nil
 }
@@ -178,10 +183,28 @@ func (r *PortfolioRepository) GetPortfolioHoldingMappings(db *sqlx.DB, mValues m
 		return nil, err
 	}
 
-	var phms []*models.PortfolioHoldingMapping
-	err = db.Select(&phms, q, args...)
+	rows, err := db.Queryx(q, args...)
 	if err != nil {
 		return nil, err
+	}
+	defer rows.Close()
+
+	var phms []*models.PortfolioHoldingMapping
+	for rows.Next() {
+		var phm models.PortfolioHoldingMapping
+
+		err = rows.Scan(&phm.ID,
+			&phm.Portfolio.ID, &phm.Portfolio.Name, &phm.Portfolio.Description,
+			&phm.Holding.ID,
+			&phm.Holding.Account.ID,
+			&phm.Holding.Account.Category.ID, &phm.Holding.Account.Category.Name, &phm.Holding.Account.Category.Description,
+			&phm.Holding.Account.Name, &phm.Holding.Account.Description, &phm.Holding.Account.Amount,
+			&phm.Holding.Fund.ID,
+			&phm.Holding.Fund.Category.ID, &phm.Holding.Fund.Category.Name, &phm.Holding.Fund.Category.Description,
+			&phm.Holding.Fund.Name, &phm.Holding.Fund.TickerSymbol, &phm.Holding.Fund.SharePrice, &phm.Holding.Fund.ExpenseRatio,
+			&phm.Holding.Shares)
+
+		phms = append(phms, &phm)
 	}
 	return phms, nil
 }

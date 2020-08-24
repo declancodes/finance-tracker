@@ -47,11 +47,12 @@ const getOptionsFromKey = (options, name, defaultValue) => {
     return defaultValue;
   }
 
-  const opt = options.filter(o => o.name === name);
-  return isNonEmptyArray(opt) ? opt[0].value : defaultValue;
+  const opt = options.find(o => o.name === name);
+  return opt && isNonEmptyArray(opt.value)
+    ? opt.value
+    : defaultValue;
 }
 
 const isNonEmptyArray = (obj) => {
   return Array.isArray(obj) && obj.length > 0;
 }
-

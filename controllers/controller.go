@@ -69,7 +69,7 @@ func errorExecuting(w http.ResponseWriter, m string, err error) {
 	case sql.ErrNoRows, repositories.ErrNoRecord:
 		msg, httpStatusCode = m+" does not exist", http.StatusNotFound
 	default:
-		msg, httpStatusCode = "error executing"+m, http.StatusInternalServerError
+		msg, httpStatusCode = "error executing "+m, http.StatusInternalServerError
 	}
 	httpError(w, msg, httpStatusCode, err)
 }

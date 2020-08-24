@@ -12,17 +12,29 @@ import {
 } from '../../../common/api/funds';
 
 const doExtraModifications = (values) => {
-  const acUuid = values.category.value === undefined ?
-    values.category :
-    values.category.value;
-  values.category = {
-    uuid: acUuid
-  };
+  const assetAllocation = values.assetAllocation
+    .reduce((acc, aa) => {
+      if (aa.category !== '') {
+        acc.push({
+          category: { uuid: aa.category },
+          percentage: aa.percentage
+        });
+      }
+      return acc;
+    }, []);
+  values.assetAllocation = assetAllocation;
+
+  const holdings = values.holdings.map(h => {
+    return {
+      holding: { uuid: h }
+    };
+  });
+  values.holdings = holdings;
 };
 
-const getInitialValues = (fund) => {
-  let initialValues = JSON.parse(JSON.stringify(fund));
-  initialValues.category = fund.category.uuid;
+const getInitialValues = (portfolio) => {
+  let initialValues = JSON.parse(JSON.stringify(portfolio));
+  initialValues.holdings = portfolio.holdings.map(h => h.holding.uuid);
 
   return initialValues;
 };
@@ -34,8 +46,8 @@ export const PortfolioPage = () => (
       uuid: '',
       name: '',
       description: '',
-      holdings: '',
-      assetAllocation: ''
+      holdings: [],
+      assetAllocation: []
     }}
     createEntity={createPortfolio}
     getEntities={getPortfolios}

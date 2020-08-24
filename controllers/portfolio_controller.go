@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/DeclanCodes/finance-tracker/models"
@@ -25,12 +26,14 @@ var portfolioRepo = repositories.PortfolioRepository{}
 // CreatePortfolio creates a Portfolio based on the r *http.Request Body.
 func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var p *models.Portfolio
-		err := json.NewDecoder(r.Body).Decode(&p)
+		var pDTO *models.PortfolioDTO
+		err := json.NewDecoder(r.Body).Decode(&pDTO)
 		if err != nil {
 			badRequestModel(w, portfolio, err)
 			return
 		}
+
+		p := pDTO.ToPortfolio()
 
 		p.ID = uuid.New()
 		pIDs, err := portfolioRepo.CreatePortfolios(db, []*models.Portfolio{p})
@@ -63,6 +66,12 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 				AssetCategory: *ac,
 				Percentage:    per,
 			})
+
+			log.Println(pacmID)
+			log.Println(p.ID)
+			log.Println(ac.ID)
+			log.Println(per)
+			log.Println()
 		}
 		_, err = portfolioRepo.CreatePortfolioAssetCategoryMappings(db, pacms)
 		if err != nil {
@@ -127,7 +136,8 @@ func (c *PortfolioController) GetPortfolio(db *sqlx.DB) http.HandlerFunc {
 			errorExecuting(w, portfolio, err)
 			return
 		}
-		read(w, p, portfolio)
+		pDTO := p.ToPortfolioDTO()
+		read(w, pDTO, portfolio)
 	}
 }
 
@@ -136,6 +146,11 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ps, err := portfolioRepo.GetPortfolios(db, getFilters(r))
 		if err != nil {
+			errorExecuting(w, portfolio, err)
+			return
+		}
+
+		if len(ps) == 0 {
 			errorExecuting(w, portfolio, err)
 			return
 		}
@@ -189,7 +204,13 @@ func (c *PortfolioController) GetPortfolios(db *sqlx.DB) http.HandlerFunc {
 				p.AssetAllocation = ms
 			}
 		}
-		read(w, ps, portfolio)
+
+		pDTOs := make([]*models.PortfolioDTO, len(ps))
+		for i, p := range ps {
+			pDTOs[i] = p.ToPortfolioDTO()
+		}
+
+		read(w, pDTOs, portfolio)
 	}
 }
 
@@ -262,12 +283,14 @@ func (c *PortfolioController) UpdatePortfolio(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
-		var p *models.Portfolio
-		err = json.NewDecoder(r.Body).Decode(&p)
+		var pDTO *models.PortfolioDTO
+		err = json.NewDecoder(r.Body).Decode(&pDTO)
 		if err != nil {
 			badRequestModel(w, portfolio, err)
 			return
 		}
+
+		p := pDTO.ToPortfolio()
 
 		p.ID = pID
 		err = portfolioRepo.UpdatePortfolio(db, p)

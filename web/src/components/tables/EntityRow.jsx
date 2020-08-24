@@ -32,6 +32,36 @@ export const EntityRow = ({
       {entity.hasOwnProperty('shares') && <td>{displayDecimals(entity.shares, 3)}</td>}
       {entity.hasOwnProperty('expenseRatio') && <td>{`${displayPercentage(entity.expenseRatio, 3)}%`}</td>}
       {entity.hasOwnProperty('effectiveExpense') && <td>{displayCurrency(entity.effectiveExpense)}</td>}
+      {entity.hasOwnProperty('holdings') &&
+        <td>
+          <ul>
+            {entity.holdings.length > 0 ? (
+              entity.holdings.map(h => (
+                <li key={h.holding.uuid}>
+                  {`${h.holding.account.name}: ${h.holding.fund.name}`}
+                </li>
+              ))
+            ) : (
+              <li>None</li>
+            )}
+          </ul>
+        </td>
+      }
+      {entity.hasOwnProperty('assetAllocation') &&
+        <td>
+          <ul>
+            {entity.assetAllocation.length > 0 ? (
+              entity.assetAllocation.map(aa => (
+                <li key={aa.category.uuid}>
+                  {`${aa.category.name}: ${aa.percentage}`}
+                </li>
+              ))
+            ) : (
+              <li>None</li>
+            )}
+          </ul>
+        </td>
+      }
       {entity.hasOwnProperty('value') && <td>{displayCurrency(entity.value)}</td>}
       <td>
         {isEditing ? (

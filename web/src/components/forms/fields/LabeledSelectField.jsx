@@ -7,23 +7,48 @@ export const LabeledSelectField = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
 
-  const opts = getOptionsArrayFromKey(props.options, props.name)
+  const {
+    options,
+    name,
+    optionDisplay,
+    isMulti,
+    displayName
+  } = props;
+
+  const opts = getOptionsArrayFromKey(options, name)
     .map(o => {
       return {
-        value: o['uuid'],
-        label: o[props.optionDisplay]
+        value: o.uuid,
+        label: optionDisplay(o)
       }
     });
-  const selected = opts.length > 0 ?
-    opts.filter(o => o.value === field.value)[0] :
-    [];
+
+  const getSelected = () => {
+    if (!opts || !opts.length) {
+      return isMulti ? [] : '';
+    }
+
+    return isMulti
+      ? opts.filter(o => field.value.indexOf(o.value) >= 0)
+      : opts.find(o => o.value === field.value);
+  };
+
+  const onChange = value => {
+    const vals = isMulti
+      ? (value ? value.map(o => o.value) : [])
+      : value.value;
+
+    setFieldValue(field.name, vals);
+  };
 
   return (
     <DarklyReactSelect
-      placeholder={`Select ${props.displayName}...`}
+      name={field.name}
+      isMulti={isMulti}
+      placeholder={`Select ${displayName}...`}
       options={opts}
-      value={selected}
-      onChange={value => setFieldValue(field.name, value)}
+      value={getSelected()}
+      onChange={onChange}
     />
   );
 };

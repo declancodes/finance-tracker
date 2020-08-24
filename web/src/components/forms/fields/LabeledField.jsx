@@ -9,7 +9,8 @@ export const LabeledField = ({
   fieldType,
   options,
   optionDisplay,
-  props
+  props,
+  isMulti
 }) => {
   const displayName = titleCase(name);
 
@@ -25,6 +26,7 @@ export const LabeledField = ({
             displayName={displayName}
             options={options}
             optionDisplay={optionDisplay}
+            isMulti={isMulti}
           />
         ) : fieldType === 'date' ? (
           <DatePickerField name={name}/>
