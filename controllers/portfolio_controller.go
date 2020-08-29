@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/DeclanCodes/finance-tracker/models"
@@ -66,12 +65,6 @@ func (c *PortfolioController) CreatePortfolio(db *sqlx.DB) http.HandlerFunc {
 				AssetCategory: *ac,
 				Percentage:    per,
 			})
-
-			log.Println(pacmID)
-			log.Println(p.ID)
-			log.Println(ac.ID)
-			log.Println(per)
-			log.Println()
 		}
 		_, err = portfolioRepo.CreatePortfolioAssetCategoryMappings(db, pacms)
 		if err != nil {
