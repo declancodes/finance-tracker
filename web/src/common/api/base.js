@@ -30,20 +30,41 @@ export const remove = (url) => {
 
 export const sort = (promise, order) => {
   return promise
-    .then(response =>
-      response.data === undefined || response.data === null
-          ? []
-          : sortBy(response.data, order)
-    );
+    .then(response => {
+      return hasNoData(response)
+        ? []
+        : sortBy(response.data, order)
+    })
+    .catch(error => {
+      if (notFound(error)) {
+        return [];
+      }
+    });
 };
 
 export const sortTotal = (promise, property, order) => {
+  const emptyTotal = { entities: [], total: 0 };
+
   return promise
     .then(response => {
-      const hasNoData = response.data === undefined || response.data === null;
-      return {
-        entities: hasNoData ? [] : sortBy(response.data[property], order),
-        total: hasNoData ? 0 : response.data.total
-      };
+      return hasNoData(response)
+        ? emptyTotal
+        : {
+          entities: sortBy(response.data[property], order),
+          total: response.data.total
+        };
+    })
+    .catch(error => {
+      if (notFound(error)) {
+        return emptyTotal;
+      }
     });
+};
+
+const hasNoData = (response) => {
+  return response.data === undefined || response.data === null;
+};
+
+const notFound = (error) => {
+  return error.response && error.response.status === 404
 };
