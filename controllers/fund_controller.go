@@ -277,6 +277,10 @@ func (c *FundController) UpdateFundSharePrices(db *sqlx.DB) http.HandlerFunc {
 		}
 
 		for _, f := range fs {
+			if f.TickerSymbol == "XXXXX" || f.TickerSymbol == "" {
+				continue
+			}
+
 			sp, err := getSharePrice(f.TickerSymbol)
 			if err != nil {
 				errorExecuting(w, fund, err)
