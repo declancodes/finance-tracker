@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Table } from 'react-bootstrap';
-import moment from 'moment';
+import { startOfMonth, endOfMonth } from 'date-fns';
 import pluralize from 'pluralize';
 import { EntityForm } from '../forms/EntityForm';
 import { EntityHeader } from '../tables/EntityHeader';
@@ -18,8 +18,8 @@ class EntityPage extends React.Component {
       entities: [],
       totals: [],
       options: [],
-      start: moment().startOf('month').toDate(),
-      end: moment().endOf('month').toDate(),
+      start: startOfMonth(new Date()),
+      end: endOfMonth(new Date()),
       filterCategories: [],
       isCreating: false
     };

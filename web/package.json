@@ -8,15 +8,15 @@
     "build": "webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "DeclanCodes",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^4.5.2",
     "bootswatch": "^4.5.2",
+    "date-fns": "^2.17.0",
     "formik": "^2.2.0",
     "lodash.sortby": "^4.7.0",
-    "moment": "^2.29.1",
     "pluralize": "^8.0.0",
     "query-string": "^6.13.5",
     "react": "^16.13.1",

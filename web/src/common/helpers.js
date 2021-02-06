@@ -1,6 +1,6 @@
-import moment from 'moment';
+import { format, formatISO, parseISO } from 'date-fns';
 
-const dateDisplayFormat = 'MM/DD/YYYY';
+const dateDisplayFormat = 'MM/dd/yyyy';
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
   style: 'currency',
@@ -8,11 +8,11 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
 });
 
 export const displayDate = (dateString) => {
-  return moment(dateString).local().format(dateDisplayFormat);
+  return format(parseISO(dateString), dateDisplayFormat);
 }
 
 export const consumeDate = (dateString) => {
-  return moment(dateString).toISOString();
+  return formatISO(dateString);
 }
 
 export const displayCurrency = (currencyString) => {
