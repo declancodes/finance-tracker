@@ -14,11 +14,11 @@ const HOLDINGS_URL = `${API_URL}/holdings`;
 const sortHoldingsTotal = (promise, property, order) => {
   return promise
     .then(response => {
-      const hasNoData = response.data === undefined || response.data === null;
+      const hasNoData = response === undefined || response === null;
       return {
-        entities: hasNoData ? [] : sortBy(response.data[property], order),
-        valueTotal: hasNoData ? 0 : response.data.valueTotal,
-        effectiveExpenseTotal: hasNoData ? 0 : response.data.effectiveExpenseTotal
+        entities: hasNoData ? [] : sortBy(response[property], order),
+        valueTotal: hasNoData ? 0 : response.valueTotal,
+        effectiveExpenseTotal: hasNoData ? 0 : response.effectiveExpenseTotal
       };
     });
 };
@@ -75,7 +75,7 @@ export const createHolding = (values) => {
 export const getHoldings = (filterParams) => {
   return getHoldingsTotal(filterParams)
     .then(response => {
-      return response.entities;
+      return response;
     });
 };
 
