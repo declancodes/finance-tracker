@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   create,
   get,
@@ -59,7 +58,10 @@ export const updateFund = (values) => {
 };
 
 export const updateFundSharePrices = () => {
-  return axios.put(FUNDS_URL);
+  return fetch(FUNDS_URL, {
+    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+    method: 'PUT'
+  });
 };
 
 export const deleteFund = (uuid) => {

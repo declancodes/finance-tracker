@@ -1,9 +1,12 @@
-import axios from 'axios';
 import querystring from 'query-string';
 import sortBy from 'lodash.sortby';
 
 export const create = (url, values) => {
-  return axios.post(url, values)
+  return fetch(url, {
+    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+    method: 'POST',
+    body: JSON.stringify(values)
+  });
 };
 
 export const get = (baseUrl, filterParams) => {
@@ -17,15 +20,24 @@ export const get = (baseUrl, filterParams) => {
   };
   const url = querystring.stringifyUrl(parsedUrl, options);
 
-  return axios.get(url);
+  return fetch(url)
+    .then(response => response.json())
+    .then(json => json);
 };
 
 export const update = (url, values) => {
-  return axios.put(url, values)
+  return fetch(url, {
+    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+    method: 'PUT',
+    body: JSON.stringify(values)
+  });
 };
 
 export const remove = (url) => {
-  return axios.delete(url)
+  return fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'DELETE'
+  });
 };
 
 export const sort = (promise, order) => {
@@ -33,7 +45,7 @@ export const sort = (promise, order) => {
     .then(response => {
       return hasNoData(response)
         ? []
-        : sortBy(response.data, order)
+        : sortBy(response, order)
     })
     .catch(error => {
       if (notFound(error)) {
@@ -50,8 +62,8 @@ export const sortTotal = (promise, property, order) => {
       return hasNoData(response)
         ? emptyTotal
         : {
-          entities: sortBy(response.data[property], order),
-          total: response.data.total
+          entities: sortBy(response[property], order),
+          total: response.total
         };
     })
     .catch(error => {
@@ -62,7 +74,7 @@ export const sortTotal = (promise, property, order) => {
 };
 
 const hasNoData = (response) => {
-  return response.data === undefined || response.data === null;
+  return response === undefined || response === null;
 };
 
 const notFound = (error) => {
