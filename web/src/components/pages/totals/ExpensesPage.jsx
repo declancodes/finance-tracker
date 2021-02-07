@@ -35,6 +35,7 @@ const getInitialValues = (expense) => {
 export const ExpensesPage = () => (
   <EntityPage
     entityName='Expense'
+    entityPluralName='Expenses'
     blankEntity={{
       uuid: '',
       name: '',

@@ -36,6 +36,7 @@ const getInitialValues = (holding) => {
 export const HoldingsPage = () => (
   <EntityPage
     entityName='Holding'
+    entityPluralName='Holdings'
     blankEntity={{
       uuid: '',
       account: '',

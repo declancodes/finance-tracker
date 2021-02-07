@@ -42,6 +42,7 @@ const getInitialValues = (portfolio) => {
 export const PortfolioPage = () => (
   <EntityPage
     entityName='Portfolio'
+    entityPluralName='Portfolios'
     blankEntity={{
       uuid: '',
       name: '',

@@ -27,6 +27,7 @@ const getInitialValues = (account) => {
 export const AccountsPage = () => (
   <EntityPage
     entityName='Account'
+    entityPluralName='Accounts'
     blankEntity={{
       uuid: '',
       name: '',

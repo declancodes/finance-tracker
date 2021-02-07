@@ -1,15 +1,11 @@
 import React from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { startOfMonth, endOfMonth } from 'date-fns';
-import pluralize from 'pluralize';
 import { EntityForm } from '../forms/EntityForm';
 import { EntityHeader } from '../tables/EntityHeader';
 import { EntityRow } from '../tables/EntityRow';
 import { FilterPanel } from '../filters/FilterPanel';
-import {
-  displayCurrency,
-  getValueFromKey
-} from '../../common/helpers';
+import { displayCurrency, getValueFromKey } from '../../common/helpers';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -133,11 +129,9 @@ class EntityPage extends React.Component {
   }
 
   render() {
-    const entityPluralName = pluralize(this.props.entityName);
-
     return (
       <div>
-        <h3>{entityPluralName}</h3>
+        <h3>{this.props.entityPluralName}</h3>
         {this.props.usesFilters &&
           <FilterPanel
             usesDates={this.props.usesDates}
@@ -176,7 +170,7 @@ class EntityPage extends React.Component {
             ) : (
               <tr>
                 <td colSpan={Object.keys(this.props.blankEntity).length}>
-                  No {entityPluralName}
+                  No {this.props.entityPluralName}
                 </td>
               </tr>
             )}

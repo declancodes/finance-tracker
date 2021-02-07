@@ -10,6 +10,7 @@ export const CategoriesPage = ({
 }) => (
   <EntityPage
     entityName={`${categoryType} Category`}
+    entityPluralName={`${categoryType} Categories`}
     blankEntity={{
       uuid: '',
       name: '',

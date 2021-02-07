@@ -35,6 +35,7 @@ const getInitialValues = (contribution) => {
 export const ContributionsPage = () => (
   <EntityPage
     entityName='Contribution'
+    entityPluralName='Contributions'
     blankEntity={{
       uuid: '',
       name: '',
