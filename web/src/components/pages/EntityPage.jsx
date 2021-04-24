@@ -115,14 +115,16 @@ class EntityPage extends React.Component {
       const hasTotal = response.total !== undefined && response.total !== null;
       const hasValueTotal = response.valueTotal !== undefined && response.valueTotal !== null;
 
+      const entityPlural = this.props.entityPluralName.toLowerCase();
+
       this.setState(!hasTotal && !hasValueTotal ? {
         entities: response,
         totals: []
       } : hasTotal ? {
-        entities: response.entities,
+        entities: response[entityPlural],
         totals: [response.total]
       } : {
-        entities: response.entities,
+        entities: response[entityPlural],
         totals: [response.effectiveExpenseTotal, response.valueTotal]
       });
     });
