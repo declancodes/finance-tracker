@@ -1,6 +1,6 @@
 import React from 'react';
+import Select from 'react-select';
 import { useField, useFormikContext } from 'formik';
-import { DarklyReactSelect } from '../../common/DarklyReactSelect';
 import { getOptionsArrayFromKey } from '../../../common/helpers';
 
 export const LabeledSelectField = ({ ...props }) => {
@@ -42,7 +42,7 @@ export const LabeledSelectField = ({ ...props }) => {
   };
 
   return (
-    <DarklyReactSelect
+    <Select
       name={field.name}
       isMulti={isMulti}
       placeholder={`Select ${displayName}...`}

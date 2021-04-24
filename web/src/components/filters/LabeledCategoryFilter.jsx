@@ -1,5 +1,5 @@
 import React from 'react';
-import { DarklyReactSelect } from '../common/DarklyReactSelect';
+import Select from 'react-select';
 import {
   getOptionsArrayFromKey,
   titleCase
@@ -22,7 +22,7 @@ export const LabeledCategoryFilter = ({
   return (
     <>
       <label>{displayName}</label>
-      <DarklyReactSelect
+      <Select
         isMulti
         placeholder={`Filter by ${displayName}...`}
         options={opts}
