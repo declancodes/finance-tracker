@@ -2,10 +2,10 @@ import React, { MouseEventHandler, ReactChildren } from 'react';
 import './Button.css';
 
 interface ButtonProps {
-  className: string,
+  className?: string,
   type: 'button' | 'submit' | 'reset',
-  onClick: MouseEventHandler<HTMLButtonElement>,
-  children: ReactChildren
+  onClick?: MouseEventHandler<HTMLButtonElement>,
+  children?: React.ReactNode
 }
 
 export const Button = ({
