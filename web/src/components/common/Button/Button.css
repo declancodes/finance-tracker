@@ -1,0 +1,19 @@
+.button {
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+.button.primary {
+  color: white;
+  background-color: blue;
+}
+
+.button.secondary {
+  color: white;
+  background-color: gray;
+}
+
+.button.danger {
+  color: white;
+  background-color: red;
+}

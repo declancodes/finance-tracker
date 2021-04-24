@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { Button } from '../common/Button/Button';
 import { EntityForm } from '../forms/EntityForm';
 import { EntityHeader } from '../tables/EntityHeader';
 import { EntityRow } from '../tables/EntityRow';
@@ -197,7 +198,10 @@ class EntityPage extends React.Component {
             doFinalState={() => this.setIsCreating(false)}
           />
         ) : (
-          <Button onClick={() => this.setIsCreating(true)}>
+          <Button
+            className='primary'
+            onClick={() => this.setIsCreating(true)}
+          >
             {`Create ${this.props.entityName}`}
           </Button>
         )}

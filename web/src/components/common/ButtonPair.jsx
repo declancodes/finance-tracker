@@ -1,33 +1,30 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button } from './Button/Button';
 
 const CustButton = ({
   type,
   display,
   onClick,
-  variant,
-  size,
+  variant
 }) => (
   <Button
     type={type}
     onClick={onClick}
-    variant={variant}
-    size={size}
+    className={variant}
   >
     {display}
   </Button>
 );
 
 export const ButtonPair = ({
-  size,
   variant1,
   type1,
   display1,
   onClick1,
+  variant2,
   type2,
   display2,
-  onClick2,
-  variant2
+  onClick2
 }) => (
   <div className='button-pair'>
     <CustButton
@@ -35,7 +32,6 @@ export const ButtonPair = ({
       display={display1}
       onClick={onClick1}
       variant={variant1 || 'primary'}
-      size={size}
     />
     {' '}
     <CustButton
@@ -43,7 +39,6 @@ export const ButtonPair = ({
       display={display2}
       onClick={onClick2}
       variant={variant2 || 'secondary'}
-      size={size}
     />
   </div>
 );

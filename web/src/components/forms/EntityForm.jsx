@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Col, Form } from 'react-bootstrap';
+import { Col, Form } from 'react-bootstrap';
 import { FieldArray, Formik, Field } from 'formik';
 import { LabeledField } from './fields/LabeledField';
+import { Button } from '../common/Button/Button';
 import { ButtonPair } from '../common/ButtonPair';
 import { getOptionsArrayFromKey } from '../../common/helpers';
 

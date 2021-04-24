@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button } from '../common/Button/Button';
 import EntityPage from './EntityPage';
 import {
   createFund,
@@ -52,7 +52,10 @@ export const FundsPage = () => (
     doExtraModifications={doExtraModifications}
     getInitialValues={getInitialValues}
   >
-    <Button onClick={updateFundSharePrices}>
+    <Button
+      className='primary'
+      onClick={updateFundSharePrices}
+    >
       Get latest share prices
     </Button>
   </EntityPage>
