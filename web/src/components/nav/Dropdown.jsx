@@ -1,15 +1,14 @@
 import React from 'react';
-import { NavDropdown } from 'react-bootstrap';
-import { LinkItem } from './LinkItem';
 
-export const Dropdown = ({ title, linkItems }) => (
-  <NavDropdown title={title}>
+export const Dropdown = ({ linkItems }) => (
+  <div>
     {linkItems.map(li => (
-      <LinkItem
+      <a
         key={`li-key-${li.display}`}
-        link={li.link}
-        display={li.display}
-      />
+        href={li.link}
+      >
+        {li.display}
+      </a>
     ))}
-  </NavDropdown>
+  </div>
 );

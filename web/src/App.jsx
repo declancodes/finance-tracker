@@ -1,8 +1,4 @@
 import React from 'react';
-import {
-  Navbar,
-  Nav,
-} from 'react-bootstrap';
 import { hot } from 'react-hot-loader';
 import {
   BrowserRouter,
@@ -19,28 +15,24 @@ import { FundsPage } from './components/pages/FundsPage';
 import { HoldingsPage } from './components/pages/totals/HoldingsPage';
 import { HomePage } from './components/pages/HomePage';
 import { PortfolioPage } from './components/pages/totals/PortfolioPage';
-import { LinkItem } from './components/nav/LinkItem';
 import { Dropdown } from './components/nav/Dropdown';
 
 const accounts = '/accounts';
 const accountCategories = '/accountcategories';
 const contributions = '/contributions';
-
 const expenses = '/expenses';
 const expenseCategories = '/expensecategories';
-
 const funds = '/funds';
 const assetCategories = '/assetcategories';
 const holdings = '/holdings';
-
 const portfolios = '/portfolios';
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Navbar bg='dark' variant='dark'>
-        <Navbar.Brand href='/'>Finance Tracker</Navbar.Brand>
-        <Nav className='mr-auto'>
+      <nav>
+        <a href='/'>Finance Tracker</a>
+        <div className='mr-auto'>
           <Dropdown
             title='Accounts'
             linkItems={[
@@ -48,11 +40,7 @@ const App = () => {
               {link: accountCategories, display: 'Account Categories'},
             ]}
           />
-          <LinkItem
-            type='link'
-            link={contributions}
-            display='Contributions'
-          />
+          <a href={contributions}>Contributions</a>
           <Dropdown
             title='Expenses'
             linkItems={[
@@ -60,11 +48,7 @@ const App = () => {
               {link: expenseCategories, display: 'Expense Categories'},
             ]}
           />
-          <LinkItem
-            type='link'
-            link={holdings}
-            display='Holdings'
-          />
+          <a href={holdings}>Holdings</a>
           <Dropdown
             title='Funds'
             linkItems={[
@@ -72,13 +56,9 @@ const App = () => {
               {link: assetCategories, display: 'Asset Categories'},
             ]}
           />
-          <LinkItem
-            type='link'
-            link={portfolios}
-            display='Portfolios'
-          />
-        </Nav>
-      </Navbar>
+          <a href={portfolios}>Portfolios</a>
+        </div>
+      </nav>
       <Switch>
         <Route path='/' exact component={HomePage}/>
         <Route path={accounts} component={AccountsPage}/>
