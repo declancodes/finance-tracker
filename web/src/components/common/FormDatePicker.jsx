@@ -1,5 +1,4 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 export const FormDatePicker = ({ ...props }) => {
@@ -12,6 +11,6 @@ export const FormDatePicker = ({ ...props }) => {
   );
 
   return (
-    <Form.Control as={CustomDatePicker}/>
+    <CustomDatePicker/>
   );
 };

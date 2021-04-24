@@ -1,5 +1,4 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { Button } from '../common/Button/Button';
 import { EntityForm } from '../forms/EntityForm';
@@ -148,13 +147,7 @@ class EntityPage extends React.Component {
           />
         }
         {this.props.children}
-        <Table
-          striped
-          bordered
-          hover
-          size='sm'
-          responsive
-        >
+        <table>
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>
             {this.state.entities.length > 0 ? (
@@ -186,7 +179,7 @@ class EntityPage extends React.Component {
                 </tr>
             )}
           </tbody>
-        </Table>
+        </table>
         {this.state.isCreating ? (
           <EntityForm
             entityName={this.props.entityName}

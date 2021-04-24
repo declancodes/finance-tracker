@@ -1,5 +1,4 @@
 import React from 'react';
-import { Col, Form } from 'react-bootstrap';
 import { FieldArray, Formik, Field } from 'formik';
 import { LabeledField } from './fields/LabeledField';
 import { Button } from '../common/Button/Button';
@@ -65,7 +64,7 @@ export const EntityForm = ({
         }}
       >
         {props => (
-          <Form noValidate onSubmit={props.handleSubmit}>
+          <form noValidate onSubmit={props.handleSubmit}>
             {LabeledFieldOrNull(entity, 'name', 'text', props)}
             {LabeledFieldOrNull(entity, 'category', null, props, options, o => o.name, false)}
             {LabeledFieldOrNull(entity, 'account', null, props, options, o => o.name, false)}
@@ -84,11 +83,11 @@ export const EntityForm = ({
                   {innerProps => (
                     <div>
                       {props.values.assetAllocation.map((aa, i) => (
-                        <Form.Row key={i}>
-                          <Form.Label column sm={1}>
+                        <div key={i}>
+                          <label column sm={1}>
                             Asset Category
-                          </Form.Label>
-                          <Col sm={3}>
+                          </label>
+                          <div sm={3}>
                             <Field
                               name={`assetAllocation.${i}.category`}
                               component='select'
@@ -99,25 +98,25 @@ export const EntityForm = ({
                                 </option>
                               ))}
                             </Field>
-                          </Col>
-                          <Form.Label column sm={1}>
+                          </div>
+                          <label column sm={1}>
                             Percentage
-                          </Form.Label>
-                          <Col sm={3}>
+                          </label>
+                          <div sm={3}>
                             <Field
                               name={`assetAllocation.${i}.percentage`}
                               type='number'
                             />
-                          </Col>
-                          <Col sm={3}>
+                          </div>
+                          <div sm={3}>
                             <Button onClick={() => { innerProps.remove(i); }}>
                               Remove
                             </Button>
                             <Button onClick={() => { innerProps.insert(i, aa); console.log(props.values); }}>
                               Insert
                             </Button>
-                          </Col>
-                        </Form.Row>
+                          </div>
+                        </div>
                       ))}
                       <Button onClick={() => { innerProps.push({ category: '', percentage: 0 }); }}>
                         Add Asset Category
@@ -133,7 +132,7 @@ export const EntityForm = ({
               onClick2={doFinalState}
               display2='Cancel'
             />
-          </Form>
+          </form>
         )}
       </Formik>
     </div>

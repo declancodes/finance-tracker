@@ -1,5 +1,4 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
 import { DarklyReactSelect } from '../common/DarklyReactSelect';
 import {
   getOptionsArrayFromKey,
@@ -22,7 +21,7 @@ export const LabeledCategoryFilter = ({
 
   return (
     <>
-      <Form.Label>{displayName}</Form.Label>
+      <label>{displayName}</label>
       <DarklyReactSelect
         isMulti
         placeholder={`Filter by ${displayName}...`}
