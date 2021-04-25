@@ -1,0 +1,26 @@
+.nav-dropdown-container {
+  display: flex;
+  align-items: center;
+}
+
+.title,
+.triangle {
+  cursor: pointer;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  margin-left: 4px;
+}
+
+.nav-items {
+  top: 27px;
+  position: absolute;
+  z-index: 2;
+  background-color: white;
+  border: 1px solid black;
+}

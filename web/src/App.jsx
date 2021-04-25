@@ -5,6 +5,9 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
+import { NavBar } from './components/nav/NavBar/NavBar';
+import { NavDropdown } from './components/nav/NavDropdown/NavDropdown';
+import { NavItem } from './components/nav/NavItem/NavItem';
 import { AccountsPage } from './components/pages/totals/AccountsPage';
 import { AccountCategoriesPage } from './components/pages/categories/AccountCategoriesPage';
 import { AssetCategoriesPage } from './components/pages/categories/AssetCategoriesPage';
@@ -15,7 +18,6 @@ import { FundsPage } from './components/pages/FundsPage';
 import { HoldingsPage } from './components/pages/totals/HoldingsPage';
 import { HomePage } from './components/pages/HomePage';
 import { PortfolioPage } from './components/pages/totals/PortfolioPage';
-import { Dropdown } from './components/nav/Dropdown';
 
 const accounts = '/accounts';
 const accountCategories = '/accountcategories';
@@ -30,35 +32,33 @@ const portfolios = '/portfolios';
 const App = () => {
   return (
     <BrowserRouter>
-      <nav>
-        <a href='/'>Finance Tracker</a>
-        <div className='mr-auto'>
-          <Dropdown
-            title='Accounts'
-            linkItems={[
-              {link: accounts, display: 'Accounts'},
-              {link: accountCategories, display: 'Account Categories'},
-            ]}
-          />
-          <a href={contributions}>Contributions</a>
-          <Dropdown
-            title='Expenses'
-            linkItems={[
-              {link: expenses, display: 'Expenses'},
-              {link: expenseCategories, display: 'Expense Categories'},
-            ]}
-          />
-          <a href={holdings}>Holdings</a>
-          <Dropdown
-            title='Funds'
-            linkItems={[
-              {link: funds, display: 'Funds'},
-              {link: assetCategories, display: 'Asset Categories'},
-            ]}
-          />
-          <a href={portfolios}>Portfolios</a>
-        </div>
-      </nav>
+      <NavBar>
+        <NavItem to='/' title='Finance Tracker'/>
+        <NavDropdown
+          title='Accounts'
+          navItems={[
+            {to: accounts, title: 'Accounts'},
+            {to: accountCategories, title: 'Account Categories'},
+          ]}
+        />
+        <NavItem to={contributions} title='Contributions'/>
+        <NavDropdown
+          title='Expenses'
+          navItems={[
+            {to: expenses, title: 'Expenses'},
+            {to: expenseCategories, title: 'Expense Categories'},
+          ]}
+        />
+        <NavItem to={holdings} title='Holdings'/>
+        <NavDropdown
+          title='Funds'
+          navItems={[
+            {to: funds, title: 'Funds'},
+            {to: assetCategories, title: 'Asset Categories'},
+          ]}
+        />
+        <NavItem to={portfolios} title='Portfolios'/>
+      </NavBar>
       <Switch>
         <Route path='/' exact component={HomePage}/>
         <Route path={accounts} component={AccountsPage}/>
