@@ -4,7 +4,7 @@ import { Button } from '../common/Button/Button';
 import { EntityForm } from '../forms/EntityForm';
 import { EntityHeader } from '../tables/EntityHeader';
 import { EntityRow } from '../tables/EntityRow';
-import { FilterPanel } from '../filters/FilterPanel';
+import { FilterPanel } from '../filters/FilterPanel/FilterPanel';
 import { displayCurrency, getValueFromKey } from '../../common/helpers';
 
 class EntityPage extends React.Component {

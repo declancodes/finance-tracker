@@ -3,7 +3,9 @@ import Select from 'react-select';
 import {
   getOptionsArrayFromKey,
   titleCase
-} from '../../common/helpers';
+} from '../../../common/helpers';
+import { LabeledFilter } from '../LabeledFilter/LabeledFilter';
+import './LabeledCategoryFilter.css';
 
 export const LabeledCategoryFilter = ({
   filterCategory,
@@ -20,15 +22,17 @@ export const LabeledCategoryFilter = ({
     });
 
   return (
-    <>
-      <label>{displayName}</label>
+    <LabeledFilter
+      label={displayName}
+    >
       <Select
+        className='category-select'
         isMulti
         placeholder={`Filter by ${displayName}...`}
         options={opts}
         value={filterCategory.value}
         onChange={value => setFilterCategory(filterCategory.name, value)}
       />
-    </>
+    </LabeledFilter>
   );
 };

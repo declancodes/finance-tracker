@@ -1,0 +1,5 @@
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.datepicker {
+  min-height: 36px;
+}
