@@ -1,11 +1,13 @@
 import React from 'react';
 import { startOfMonth, endOfMonth } from 'date-fns';
-import { Button } from '../common/Button/Button';
-import { EntityForm } from '../forms/EntityForm';
-import { EntityHeader } from '../tables/EntityHeader';
-import { EntityRow } from '../tables/EntityRow';
-import { FilterPanel } from '../filters/FilterPanel/FilterPanel';
-import { displayCurrency, getValueFromKey } from '../../common/helpers';
+import { Button } from '../../common/Button/Button';
+import { EntityForm } from '../../forms/EntityForm';
+import { EntityHeader } from '../../tables/EntityHeader';
+import { EntityRow } from '../../tables/EntityRow';
+import { FilterPanel } from '../../filters/FilterPanel/FilterPanel';
+import { Table } from '../../common/Table/Table';
+import { displayCurrency, getValueFromKey } from '../../../common/helpers';
+import './EntityPage.css';
 
 class EntityPage extends React.Component {
   constructor(props) {
@@ -133,7 +135,7 @@ class EntityPage extends React.Component {
   render() {
     return (
       <div>
-        <h3>{this.props.entityPluralName}</h3>
+        <h2>{this.props.entityPluralName}</h2>
         {this.props.usesFilters &&
           <FilterPanel
             usesDates={this.props.usesDates}
@@ -147,7 +149,7 @@ class EntityPage extends React.Component {
           />
         }
         {this.props.children}
-        <table>
+        <Table>
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>
             {this.state.entities && this.state.entities.length > 0 ? (
@@ -179,7 +181,7 @@ class EntityPage extends React.Component {
                 </tr>
             )}
           </tbody>
-        </table>
+        </Table>
         {this.state.isCreating ? (
           <EntityForm
             entityName={this.props.entityName}

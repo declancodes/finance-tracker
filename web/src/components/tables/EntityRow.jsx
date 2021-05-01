@@ -27,11 +27,11 @@ export const EntityRow = ({
       {entity.hasOwnProperty('description') && <td>{entity.description}</td>}
       {entity.hasOwnProperty('tickerSymbol') && <td>{entity.tickerSymbol}</td>}
       {entity.hasOwnProperty('date') && <td>{displayDate(entity.date)}</td>}
-      {entity.hasOwnProperty('amount') && <td>{displayCurrency(entity.amount)}</td>}
-      {entity.hasOwnProperty('sharePrice') && <td>{displayCurrency(entity.sharePrice)}</td>}
-      {entity.hasOwnProperty('shares') && <td>{displayDecimals(entity.shares, 3)}</td>}
-      {entity.hasOwnProperty('expenseRatio') && <td>{`${displayPercentage(entity.expenseRatio, 3)}%`}</td>}
-      {entity.hasOwnProperty('effectiveExpense') && <td>{displayCurrency(entity.effectiveExpense)}</td>}
+      {entity.hasOwnProperty('amount') && <td className='number'>{displayCurrency(entity.amount)}</td>}
+      {entity.hasOwnProperty('sharePrice') && <td className='number'>{displayCurrency(entity.sharePrice)}</td>}
+      {entity.hasOwnProperty('shares') && <td className='number'>{displayDecimals(entity.shares, 3)}</td>}
+      {entity.hasOwnProperty('expenseRatio') && <td className='number'>{`${displayPercentage(entity.expenseRatio, 3)}%`}</td>}
+      {entity.hasOwnProperty('effectiveExpense') && <td className='number'>{displayCurrency(entity.effectiveExpense)}</td>}
       {entity.hasOwnProperty('holdings') &&
         <td>
           <ul>
@@ -62,7 +62,7 @@ export const EntityRow = ({
           </ul>
         </td>
       }
-      {entity.hasOwnProperty('value') && <td>{displayCurrency(entity.value)}</td>}
+      {entity.hasOwnProperty('value') && <td className='number'>{displayCurrency(entity.value)}</td>}
       <td>
         {isEditing ? (
           <EntityForm

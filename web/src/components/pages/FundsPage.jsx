@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../common/Button/Button';
-import EntityPage from './EntityPage';
+import EntityPage from './EntityPage/EntityPage';
 import {
   createFund,
   getFunds,

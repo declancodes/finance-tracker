@@ -1,0 +1,17 @@
+.table-container {
+  border: 1px solid #444c56;
+  border-collapse: collapse;
+}
+
+.table-container tr:hover {
+  background-color: #525252;;
+}
+
+.table-container th, td {
+  border: 1px solid #444c56;
+  padding: 8px;
+}
+
+.table-container td.number {
+  text-align: right;
+}

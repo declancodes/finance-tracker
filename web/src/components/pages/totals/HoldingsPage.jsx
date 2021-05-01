@@ -1,5 +1,5 @@
 import React from 'react';
-import EntityPage from '../EntityPage';
+import EntityPage from '../EntityPage/EntityPage';
 import {
   createHolding,
   getHoldingsTotal,
