@@ -150,7 +150,7 @@ class EntityPage extends React.Component {
         <table>
           <EntityHeader entity={this.props.blankEntity}/>
           <tbody>
-            {this.state.entities.length > 0 ? (
+            {this.state.entities && this.state.entities.length > 0 ? (
               this.state.entities.map(e => (
                 <EntityRow
                   key={e.uuid}
