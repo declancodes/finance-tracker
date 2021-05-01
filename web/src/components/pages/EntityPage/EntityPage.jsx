@@ -7,7 +7,7 @@ import { EntityRow } from '../../tables/EntityRow';
 import { FilterPanel } from '../../filters/FilterPanel/FilterPanel';
 import { Table } from '../../common/Table/Table';
 import { displayCurrency, getValueFromKey } from '../../../common/helpers';
-import './EntityPage.css';
+import './EntityPage.scss';
 
 class EntityPage extends React.Component {
   constructor(props) {

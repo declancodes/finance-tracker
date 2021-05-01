@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavItem, NavItemProps } from '../NavItem/NavItem';
-import './NavDropdown.css';
+import './NavDropdown.scss';
 
 interface NavDropdownProps {
   title: string,

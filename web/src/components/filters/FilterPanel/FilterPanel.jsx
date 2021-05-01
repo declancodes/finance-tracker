@@ -1,7 +1,7 @@
 import React from 'react';
 import { LabeledCategoryFilter } from '../LabeledCategoryFilter/LabeledCategoryFilter';
 import { LabeledDatePicker } from '../LabeledDatePicker/LabeledDatePicker';
-import './FilterPanel.css';
+import './FilterPanel.scss';
 
 export const FilterPanel = ({
   usesDates,

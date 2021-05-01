@@ -5,7 +5,7 @@ import {
   titleCase
 } from '../../../common/helpers';
 import { LabeledFilter } from '../LabeledFilter/LabeledFilter';
-import './LabeledCategoryFilter.css';
+import './LabeledCategoryFilter.scss';
 
 export const LabeledCategoryFilter = ({
   filterCategory,

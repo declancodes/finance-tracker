@@ -1,5 +1,5 @@
 import React from 'react';
-import './NavItem.css';
+import './NavItem.scss';
 
 export interface NavItemProps {
   to: string,

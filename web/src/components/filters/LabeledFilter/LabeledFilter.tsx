@@ -1,5 +1,5 @@
 import React from 'react';
-import './LabeledFilter.css';
+import './LabeledFilter.scss';
 
 interface LabeledFilterProps {
   label: string,
