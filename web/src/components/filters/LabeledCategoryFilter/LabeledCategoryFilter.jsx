@@ -4,7 +4,7 @@ import {
   getOptionsArrayFromKey,
   titleCase
 } from '../../../common/helpers';
-import { LabeledFilter } from '../LabeledFilter/LabeledFilter';
+import { LabeledControl } from '../../common/LabeledControl/LabeledControl';
 import './LabeledCategoryFilter.scss';
 
 export const LabeledCategoryFilter = ({
@@ -22,7 +22,7 @@ export const LabeledCategoryFilter = ({
     });
 
   return (
-    <LabeledFilter
+    <LabeledControl
       label={displayName}
     >
       <Select
@@ -33,6 +33,6 @@ export const LabeledCategoryFilter = ({
         value={filterCategory.value}
         onChange={value => setFilterCategory(filterCategory.name, value)}
       />
-    </LabeledFilter>
+    </LabeledControl>
   );
 };

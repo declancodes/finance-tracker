@@ -1,19 +1,20 @@
+@import "../../../styles/colors";
+
 .button {
+  color: $primary-color;
   border-radius: 4px;
   border: 1px solid transparent;
-}
+  cursor: pointer;
 
-.button.primary {
-  color: white;
-  background-color: blue;
-}
+  &.primary {
+    background-color: $primary-button-color;
+  }
 
-.button.secondary {
-  color: white;
-  background-color: gray;
-}
+  &.secondary {
+    background-color: $secondary-button-color;
+  }
 
-.button.danger {
-  color: white;
-  background-color: red;
+  &.danger {
+    background-color: $error-color;
+  }
 }

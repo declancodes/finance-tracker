@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { useField, useFormikContext } from 'formik';
 import { getOptionsArrayFromKey } from '../../../common/helpers';
 
-export const LabeledSelectField = ({ ...props }) => {
+export const SelectField = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
 

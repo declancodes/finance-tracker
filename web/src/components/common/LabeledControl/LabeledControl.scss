@@ -1,0 +1,8 @@
+.labeled-control {
+  display: flex;
+  flex-direction: column;
+
+  & label {
+    margin-bottom: 4px;
+  }
+}

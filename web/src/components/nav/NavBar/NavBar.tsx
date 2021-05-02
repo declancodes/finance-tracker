@@ -6,7 +6,9 @@ interface NavBarProps {
 }
 
 export const NavBar = ({ children }: NavBarProps) => (
-  <nav className='nav-bar'>
-    {children}
+  <nav role='navigation' className='nav-bar'>
+    <ul>
+      {children}
+    </ul>
   </nav>
 );

@@ -10,9 +10,9 @@ export const NavItem = ({
   to,
   title
 }: NavItemProps) => (
-  <div className='nav-item-container'>
+  <li className='nav-item'>
     <a href={to}>
       {title}
     </a>
-  </div>
+  </li>
 );

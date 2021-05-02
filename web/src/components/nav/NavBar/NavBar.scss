@@ -1,4 +1,14 @@
-nav.nav-bar {
+@import "../../../styles/colors";
+
+nav.nav-bar > ul {
   display: flex;
   align-items: center;
+  min-height: 44px;
+  border: 1px solid $primary-color;
 }
+
+// .nav-bar > li {
+//   display: block;
+//   float: left;
+//   padding: 1rem;
+// }

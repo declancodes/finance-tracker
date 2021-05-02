@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EntityForm } from '../forms/EntityForm';
+import { EntityForm } from '../forms/EntityForm/EntityForm';
 import { ModifyRowPanel } from './ModifyRowPanel';
 import {
   displayCurrency,

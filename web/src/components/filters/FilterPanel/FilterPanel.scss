@@ -1,7 +1,7 @@
 .filter-panel {
   display: flex;
-}
 
-.filter-panel .labeled-filter {
-  padding-right: 8px;
+  & .labeled-control {
+    padding-right: 8px;
+  }
 }

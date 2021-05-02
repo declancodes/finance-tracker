@@ -1,26 +1,36 @@
+@import "../../../styles/colors";
+
 .nav-dropdown-container {
-  display: flex;
-  align-items: center;
-}
+  list-style-type: none;
 
-.title,
-.triangle {
-  cursor: pointer;
-}
+  & .dropdown {
+    display: flex;
+    align-items: center;
 
-.triangle {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid black;
-  margin-left: 4px;
-}
+    & .title,
+    & .triangle {
+      cursor: pointer;
+    }
 
-.nav-items {
-  top: 27px;
-  position: absolute;
-  z-index: 2;
-  background-color: white;
-  border: 1px solid black;
+    & .triangle {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid $primary-color;
+      margin-left: 4px;
+      display: inline-block;
+    }
+  }
+
+  & .nav-items {
+    margin-top: 1rem;
+    position: absolute;
+    display: block;
+    list-style-type: none;
+    padding-left: 0;
+    z-index: 2;
+    background-color: $primary-background-color;
+    border: 1px solid $primary-color;
+  }
 }

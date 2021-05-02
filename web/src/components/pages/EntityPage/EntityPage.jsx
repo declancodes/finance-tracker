@@ -1,7 +1,7 @@
 import React from 'react';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { Button } from '../../common/Button/Button';
-import { EntityForm } from '../../forms/EntityForm';
+import { EntityForm } from '../../forms/EntityForm/EntityForm';
 import { EntityHeader } from '../../tables/EntityHeader';
 import { EntityRow } from '../../tables/EntityRow';
 import { FilterPanel } from '../../filters/FilterPanel/FilterPanel';

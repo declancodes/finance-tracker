@@ -1,6 +1,7 @@
 import React from 'react';
 import { DatePickerField } from './DatePickerField';
-import { LabeledSelectField } from './LabeledSelectField';
+import { LabeledControl } from '../../common/LabeledControl/LabeledControl';
+import { SelectField } from './SelectField';
 import { titleCase } from '../../../common/helpers';
 
 export const LabeledField = ({
@@ -14,10 +15,11 @@ export const LabeledField = ({
   const displayName = titleCase(name);
 
   return (
-    <div className='container-fluid'>
-      <label>{displayName}</label>
+    <LabeledControl
+      label={displayName}
+    >
       {options !== undefined ? (
-        <LabeledSelectField
+        <SelectField
           name={name}
           displayName={displayName}
           options={options}
@@ -34,6 +36,6 @@ export const LabeledField = ({
           onChange={props.handleChange}
         />
       )}
-    </div>
+    </LabeledControl>
   );
 };

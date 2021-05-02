@@ -1,3 +1,11 @@
-.nav-item-container {
-  padding: 0 4px;
+@import "../../../styles/colors";
+
+.nav-item {
+  list-style-type: none;
+  padding-left: 0;
+
+  & a {
+    color: $primary-color;
+    text-decoration: none;
+  }
 }

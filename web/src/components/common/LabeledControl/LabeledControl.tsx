@@ -1,17 +1,17 @@
 import React from 'react';
-import './LabeledFilter.scss';
+import './LabeledControl.scss';
 
-interface LabeledFilterProps {
+interface LabeledControlProps {
   label: string,
   children: React.ReactNode
 }
 
-export const LabeledFilter = ({
+export const LabeledControl = ({
   label,
   children
-}: LabeledFilterProps) => {
+}: LabeledControlProps) => {
   return (
-    <div className='labeled-filter'>
+    <div className='labeled-control'>
       <label>{label}</label>
       {children}
     </div>

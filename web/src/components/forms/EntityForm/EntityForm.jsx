@@ -1,9 +1,10 @@
 import React from 'react';
 import { FieldArray, Formik, Field } from 'formik';
-import { LabeledField } from './fields/LabeledField';
-import { Button } from '../common/Button/Button';
-import { ButtonPair } from '../common/ButtonPair';
-import { getOptionsArrayFromKey } from '../../common/helpers';
+import { LabeledField } from '../fields/LabeledField';
+import { Button } from '../../common/Button/Button';
+import { ButtonPair } from '../../common/ButtonPair';
+import { getOptionsArrayFromKey } from '../../../common/helpers';
+import './EntityForm.scss';
 
 const LabeledFieldOrNull = (
   entity,
@@ -64,7 +65,11 @@ export const EntityForm = ({
         }}
       >
         {props => (
-          <form noValidate onSubmit={props.handleSubmit}>
+          <form
+            className='entity-form'
+            noValidate
+            onSubmit={props.handleSubmit}
+          >
             {LabeledFieldOrNull(entity, 'name', 'text', props)}
             {LabeledFieldOrNull(entity, 'category', null, props, options, o => o.name, false)}
             {LabeledFieldOrNull(entity, 'account', null, props, options, o => o.name, false)}

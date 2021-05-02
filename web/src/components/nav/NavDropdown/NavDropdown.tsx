@@ -18,15 +18,17 @@ export const NavDropdown = ({
   };
 
   return (
-    <div
+    <li
       className='nav-dropdown-container'
       tabIndex={0}
       onClick={onClick}
     >
-      <div className='title'>{title}</div>
-      <div className='triangle'/>
+      <div className='dropdown'>
+        <div className='title'>{title}</div>
+        <div className='triangle'/>
+      </div>
       {isOpen &&
-        <div className='nav-items'>
+        <ul className='nav-items'>
           {navItems.map(ni => (
             <NavItem
               key={`nav-dropdown-item-${ni.title}`}
@@ -34,8 +36,8 @@ export const NavDropdown = ({
               title={ni.title}
             />
           ))}
-        </div>
+        </ul>
       }
-    </div>
+    </li>
   );
 };
