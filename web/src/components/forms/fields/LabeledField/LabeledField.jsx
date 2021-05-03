@@ -1,8 +1,9 @@
 import React from 'react';
-import { DatePickerField } from './DatePickerField';
-import { LabeledControl } from '../../common/LabeledControl/LabeledControl';
-import { SelectField } from './SelectField';
-import { titleCase } from '../../../common/helpers';
+import { DatePickerField } from '../DatePickerField';
+import { LabeledControl } from '../../../common/LabeledControl/LabeledControl';
+import { SelectField } from '../SelectField';
+import { titleCase } from '../../../../common/helpers';
+import './LabeledField.scss';
 
 export const LabeledField = ({
   name,
@@ -30,6 +31,7 @@ export const LabeledField = ({
         <DatePickerField name={name}/>
       ) : (
         <input
+          className='labeled-input'
           name={name}
           type={fieldType}
           value={props.values[name]}

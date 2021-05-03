@@ -1,0 +1,9 @@
+@import "../../../../styles/colors";
+
+.labeled-input {
+  background-color: $primary-background-color;
+  color: $primary-color;
+  border: 1px solid $primary-border-color;
+  border-radius: 4px;
+  height: 38px;
+}
