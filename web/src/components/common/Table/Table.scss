@@ -1,17 +1,20 @@
+@import "../../../styles/colors";
+
 .table-container {
-  border: 1px solid #444c56;
+  border: 1px solid $primary-border-color;
   border-collapse: collapse;
-}
 
-.table-container tr:hover {
-  background-color: #525252;;
-}
+  & tr:hover {
+    background-color: $hover-color;
+  }
 
-.table-container th, td {
-  border: 1px solid #444c56;
-  padding: 8px;
-}
+  & th,
+  & td {
+    border: 1px solid $primary-border-color;
+    padding: 8px;
+  }
 
-.table-container td.number {
-  text-align: right;
+  & td.number {
+    text-align: right;
+  }
 }
