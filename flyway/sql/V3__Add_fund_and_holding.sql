@@ -8,9 +8,10 @@ CREATE TABLE fund (
     fund_uuid UUID PRIMARY KEY,
     asset_category_uuid UUID NOT NULL REFERENCES asset_category ON DELETE RESTRICT,
     name TEXT NOT NULL,
-    ticker_symbol VARCHAR(5) UNIQUE NOT NULL,
+    ticker_symbol VARCHAR(5) NOT NULL,
     share_price NUMERIC(12, 4) NOT NULL,
-    expense_ratio NUMERIC(12, 8) NOT NULL
+    expense_ratio NUMERIC(12, 8) NOT NULL,
+    is_private BOOLEAN NOT NULL
 );
 
 CREATE TABLE holding (

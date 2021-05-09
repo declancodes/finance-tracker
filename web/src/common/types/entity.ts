@@ -34,7 +34,8 @@ export interface Fund extends BaseEntity {
   category: string,
   tickerSymbol: string,
   sharePrice: number,
-  expenseRatio: number
+  expenseRatio: number,
+  isPrivate: boolean
 }
 
 export interface Holding extends BaseEntity {

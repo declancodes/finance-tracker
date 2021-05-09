@@ -24,6 +24,7 @@ type Fund struct {
 	TickerSymbol string          `json:"tickerSymbol" db:"ticker_symbol"`
 	SharePrice   decimal.Decimal `json:"sharePrice" db:"share_price"`
 	ExpenseRatio decimal.Decimal `json:"expenseRatio" db:"expense_ratio"`
+	IsPrivate    bool            `json:"isPrivate" db:"is_private"`
 }
 
 // Holding is a position in a fund.

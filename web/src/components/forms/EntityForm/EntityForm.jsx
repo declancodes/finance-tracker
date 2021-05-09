@@ -81,6 +81,7 @@ export const EntityForm = ({
             {LabeledFieldOrNull(entity, 'sharePrice', 'number', props)}
             {LabeledFieldOrNull(entity, 'shares', 'number', props)}
             {LabeledFieldOrNull(entity, 'expenseRatio', 'number', props)}
+            {LabeledFieldOrNull(entity, 'isPrivate', 'checkbox', props)}
             {LabeledFieldOrNull(entity, 'holdings', null, props, options, o => `${o.account.name}: ${o.fund.tickerSymbol}`, true)}
             {entity.hasOwnProperty('assetAllocation') &&
               <div>

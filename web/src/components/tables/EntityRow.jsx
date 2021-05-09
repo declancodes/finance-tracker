@@ -32,6 +32,7 @@ export const EntityRow = ({
       {entity.hasOwnProperty('shares') && <td className='number'>{displayDecimals(entity.shares, 3)}</td>}
       {entity.hasOwnProperty('expenseRatio') && <td className='number'>{`${displayPercentage(entity.expenseRatio, 3)}%`}</td>}
       {entity.hasOwnProperty('effectiveExpense') && <td className='number'>{displayCurrency(entity.effectiveExpense)}</td>}
+      {entity.hasOwnProperty('isPrivate') && <td>{entity.isPrivate.toString()}</td>}
       {entity.hasOwnProperty('holdings') &&
         <td>
           <ul>

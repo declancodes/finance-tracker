@@ -40,7 +40,8 @@ func (r *FundRepository) CreateFunds(db *sqlx.DB, fs []*models.Fund) ([]uuid.UUI
 		name,
 		ticker_symbol,
 		share_price,
-		expense_ratio
+		expense_ratio,
+		is_private
 	)
 	VALUES (
 		:fund_uuid,
@@ -48,7 +49,8 @@ func (r *FundRepository) CreateFunds(db *sqlx.DB, fs []*models.Fund) ([]uuid.UUI
 		:name,
 		:ticker_symbol,
 		:share_price,
-		:expense_ratio
+		:expense_ratio,
+		:is_private
 	)
 	RETURNING fund_uuid;`
 
@@ -148,7 +150,8 @@ func (r *FundRepository) GetFunds(db *sqlx.DB, mValues map[string]interface{}) (
 		fund.name,
 		fund.ticker_symbol,
 		fund.share_price,
-		fund.expense_ratio
+		fund.expense_ratio,
+		fund.is_private
 	FROM fund
 	INNER JOIN asset_category
 		ON fund.asset_category_uuid = asset_category.asset_category_uuid`
@@ -205,6 +208,7 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 		fund.ticker_symbol AS "fund.ticker_symbol",
 		fund.share_price AS "fund.share_price",
 		fund.expense_ratio AS "fund.expense_ratio",
+		fund.is_private AS "fund.is_private",
 		holding.shares
 	FROM holding
 	INNER JOIN account
@@ -243,8 +247,8 @@ func (r *FundRepository) GetHoldings(db *sqlx.DB, mValues map[string]interface{}
 			&h.Account.Category.ID, &h.Account.Category.Name, &h.Account.Category.Description,
 			&h.Account.Name, &h.Account.Description, &h.Account.Amount,
 			&h.Fund.ID,
-			&h.Fund.Category.ID, &h.Fund.Category.Name, &h.Fund.Category.Description,
-			&h.Fund.Name, &h.Fund.TickerSymbol, &h.Fund.SharePrice, &h.Fund.ExpenseRatio,
+			&h.Fund.Category.ID, &h.Fund.Category.Name, &h.Fund.Category.Description, &h.Fund.Name,
+			&h.Fund.TickerSymbol, &h.Fund.SharePrice, &h.Fund.ExpenseRatio, &h.Fund.IsPrivate,
 			&h.Shares)
 		if err != nil {
 			return hs, err
@@ -280,7 +284,8 @@ func (r *FundRepository) UpdateFund(db *sqlx.DB, f *models.Fund) error {
 		name = :name,
 		ticker_symbol = :ticker_symbol,
 		share_price = :share_price,
-		expense_ratio = :expense_ratio
+		expense_ratio = :expense_ratio,
+		is_private = :is_private
 	WHERE
 		fund_uuid = :fund_uuid;`
 
