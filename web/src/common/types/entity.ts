@@ -20,7 +20,9 @@ export interface BaseAmountEntity extends BaseEntity {
 }
 
 export interface Account extends BaseAmountEntity {}
-export interface Expense extends BaseAmountEntity {}
+export interface Expense extends BaseAmountEntity {
+  date: Date
+}
 
 export interface Contribution extends BaseEntity {
   account: Account,

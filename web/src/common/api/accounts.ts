@@ -59,12 +59,6 @@ export const createContribution = async (contribution: Contribution) => {
   return await create(CONTRIBUTIONS_URL, contribution);
 };
 
-export const getContributions = async (filterParams: StringifiableRecord): Promise<Contribution[]> => {
-  const contributionsTotal = await getContributionsTotal(filterParams);
-
-  return contributionsTotal.contributions;
-};
-
 export const getContributionsTotal = async (filterParams: StringifiableRecord): Promise<ContributionsTotal> => {
   const totalEntity =  await getTotalAmountEntity(
     get(CONTRIBUTIONS_URL, filterParams),
@@ -72,7 +66,17 @@ export const getContributionsTotal = async (filterParams: StringifiableRecord): 
   );
 
   return {
-    contributions: totalEntity.entities,
+    contributions: totalEntity.entities.sort((a: Contribution, b: Contribution) => {
+      if (a.date > b.date) {
+        return 1;
+      }
+
+      if (a.date < b.date) {
+        return -1;
+      }
+
+      return 0;
+    }),
     total: totalEntity.total
   }
 };
