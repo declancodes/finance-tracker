@@ -42,7 +42,17 @@ export const getAccountsTotal = async (filterParams: StringifiableRecord): Promi
   );
 
   return {
-    accounts: totalEntity.entities,
+    accounts: totalEntity.entities.sort((a: Account, b: Account) => {
+      if (a.category.name > b.category.name) {
+        return 1;
+      }
+
+      if (a.category.name < b.category.name) {
+        return -1;
+      }
+
+      return 0;
+    }),
     total: totalEntity.total
   };
 };

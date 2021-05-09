@@ -15,7 +15,7 @@ export interface TotalEntity extends Total {
 export interface Category extends BaseEntity {}
 
 export interface BaseAmountEntity extends BaseEntity {
-  category: string,
+  category: Category,
   amount: number
 }
 
@@ -31,7 +31,7 @@ export interface Contribution extends BaseEntity {
 }
 
 export interface Fund extends BaseEntity {
-  category: string,
+  category: Category,
   tickerSymbol: string,
   sharePrice: number,
   expenseRatio: number,
