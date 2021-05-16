@@ -73,7 +73,21 @@ export const getHoldingsTotal = async (filterParams: StringifiableRecord): Promi
 
   const holdingsTotal = await holdingsResponse.json();
   return {
-    holdings: holdingsTotal.holdings,
+    holdings: holdingsTotal.holdings.sort((a: Holding, b: Holding) => {
+      if (a.account.name > b.account.name) {
+        return 1;
+      }
+      if (a.account.name < b.account.name) {
+        return -1;
+      }
+      if (a.fund.tickerSymbol > b.fund.tickerSymbol) {
+        return 1;
+      }
+      if (a.fund.tickerSymbol < b.fund.tickerSymbol) {
+        return -1;
+      }
+      return 0;
+    }),
     valueTotal: holdingsTotal.valueTotal,
     effectiveExpenseTotal: holdingsTotal.effectiveExpenseTotal
   };
