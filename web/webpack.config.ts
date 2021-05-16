@@ -27,7 +27,7 @@ const config: webpack.Configuration = {
         include: /node_modules/
       },
       {
-        test: /\.scss$/i,
+        test: /\.(sc|c)ss$/i,
         use: ["style-loader", "css-loader", "sass-loader"]
       }
     ]
