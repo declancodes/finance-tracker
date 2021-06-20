@@ -72,6 +72,12 @@ func main() {
 	r.HandleFunc("/contributions/{id}", ac.UpdateContribution(db)).Methods("PUT")
 	r.HandleFunc("/contributions/{id}", ac.DeleteContribution(db)).Methods("DELETE")
 
+	r.HandleFunc("/incomes", ac.CreateIncome(db)).Methods("POST")
+	r.HandleFunc("/incomes", ac.GetIncomes(db)).Methods("GET")
+	r.HandleFunc("/incomes/{id}", ac.GetIncome(db)).Methods("GET")
+	r.HandleFunc("/incomes/{id}", ac.UpdateIncome(db)).Methods("PUT")
+	r.HandleFunc("/incomes/{id}", ac.DeleteIncome(db)).Methods("DELETE")
+
 	r.HandleFunc("/expensecategories", ec.CreateExpenseCategory(db)).Methods("POST")
 	r.HandleFunc("/expensecategories", ec.GetExpenseCategories(db)).Methods("GET")
 	r.HandleFunc("/expensecategories/{id}", ec.GetExpenseCategory(db)).Methods("GET")

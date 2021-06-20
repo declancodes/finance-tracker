@@ -1,5 +1,13 @@
 import { StringifiableRecord } from "query-string";
-import { Account, AccountsTotal, Category, Contribution, ContributionsTotal } from "../types/entity";
+import {
+  Account,
+  AccountsTotal,
+  Category,
+  Contribution,
+  ContributionsTotal,
+  Income,
+  IncomesTotal
+} from "../types/entity";
 import { create, get, update, remove, getEntities, getTotalAmountEntity } from "./base"
 
 declare const API_URL: string;
@@ -7,6 +15,7 @@ declare const API_URL: string;
 const ACCOUNT_CATEGORIES_URL = `${API_URL}/accountcategories`;
 const ACCOUNTS_URL = `${API_URL}/accounts`;
 const CONTRIBUTIONS_URL = `${API_URL}/contributions`;
+const INCOMES_URL = `${API_URL}/incomes`;
 
 export const createAccountCategory = async (category: Category) => {
   return await create(ACCOUNT_CATEGORIES_URL, category);
@@ -97,4 +106,38 @@ export const updateContribution = async (contribution: Contribution) => {
 
 export const deleteContribution = async (uuid: string) => {
   return await remove(`${CONTRIBUTIONS_URL}/${uuid}`);
+};
+
+export const createIncome = async (income: Income) => {
+  return await create(INCOMES_URL, income);
+};
+
+export const getIncomesTotal = async (filterParams: StringifiableRecord): Promise<IncomesTotal> => {
+  const totalEntity =  await getTotalAmountEntity(
+    get(INCOMES_URL, filterParams),
+    "incomes"
+  );
+
+  return {
+    incomes: totalEntity.entities.sort((a: Income, b: Income) => {
+      if (a.date > b.date) {
+        return 1;
+      }
+
+      if (a.date < b.date) {
+        return -1;
+      }
+
+      return 0;
+    }),
+    total: totalEntity.total
+  }
+};
+
+export const updateIncome = async (income: Income) => {
+  return await update(`${INCOMES_URL}/${income.uuid}`, income);
+};
+
+export const deleteIncome = async (uuid: string) => {
+  return await remove(`${INCOMES_URL}/${uuid}`);
 };

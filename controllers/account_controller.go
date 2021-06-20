@@ -16,6 +16,7 @@ const (
 	accountCategory = "account category"
 	account         = "account"
 	contribution    = "contribution"
+	income          = "income"
 )
 
 // AccountController is the means for interacting with Account entities from an http router.
@@ -29,6 +30,11 @@ type accountsResponse struct {
 type contributionsResponse struct {
 	Contributions []*models.Contribution `json:"contributions"`
 	Total         decimal.Decimal        `json:"total"`
+}
+
+type incomesResponse struct {
+	Incomes []*models.Income `json:"incomes"`
+	Total   decimal.Decimal  `json:"total"`
 }
 
 var accountRepo = repositories.AccountRepository{}
@@ -90,6 +96,26 @@ func (c *AccountController) CreateContribution(db *sqlx.DB) http.HandlerFunc {
 			return
 		}
 		created(w, cIDs[0])
+	}
+}
+
+// CreateIncome creates an Income based on the r *http.Request Body.
+func (c *AccountController) CreateIncome(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var i *models.Income
+		err := json.NewDecoder(r.Body).Decode(&i)
+		if err != nil {
+			badRequestModel(w, income, err)
+			return
+		}
+
+		i.ID = uuid.New()
+		iIDs, err := accountRepo.CreateIncomes(db, []*models.Income{i})
+		if err != nil {
+			errorCreating(w, income, err)
+			return
+		}
+		created(w, iIDs[0])
 	}
 }
 
@@ -209,6 +235,47 @@ func (c *AccountController) GetContributions(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// GetIncome gets a Income.
+func (c *AccountController) GetIncome(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		iID, err := getID(r)
+		if err != nil {
+			badRequestID(w, err)
+			return
+		}
+
+		i, err := accountRepo.GetIncome(db, iID)
+		if err != nil {
+			errorExecuting(w, income, err)
+			return
+		}
+		read(w, i, income)
+	}
+}
+
+// GetIncomes gets Income entities.
+func (c *AccountController) GetIncomes(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		is, err := accountRepo.GetIncomes(db, getFilters(r))
+		if err != nil {
+			errorExecuting(w, income, err)
+			return
+		}
+
+		var t decimal.Decimal
+		for _, c := range is {
+			t = t.Add(c.Amount)
+		}
+
+		resp := incomesResponse{
+			Incomes: is,
+			Total:   t,
+		}
+
+		read(w, resp, income)
+	}
+}
+
 // UpdateAccountCategory updates an AccountCategory.
 func (c *AccountController) UpdateAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -287,6 +354,32 @@ func (c *AccountController) UpdateContribution(db *sqlx.DB) http.HandlerFunc {
 	}
 }
 
+// UpdateIncome updates a Income.
+func (c *AccountController) UpdateIncome(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		iID, err := getID(r)
+		if err != nil {
+			badRequestID(w, err)
+			return
+		}
+
+		var i *models.Income
+		err = json.NewDecoder(r.Body).Decode(&i)
+		if err != nil {
+			badRequestModel(w, income, err)
+			return
+		}
+
+		i.ID = iID
+		err = accountRepo.UpdateIncome(db, i)
+		if err != nil {
+			errorExecuting(w, income, err)
+			return
+		}
+		updated(w, i.ID)
+	}
+}
+
 // DeleteAccountCategory deletes an AccountCategory.
 func (c *AccountController) DeleteAccountCategory(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -305,6 +398,13 @@ func (c *AccountController) DeleteAccount(db *sqlx.DB) http.HandlerFunc {
 func (c *AccountController) DeleteContribution(db *sqlx.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		delete(w, r, db, contribution, accountRepo.DeleteContribution)
+	}
+}
+
+// DeleteIncome deletes a Income.
+func (c *AccountController) DeleteIncome(db *sqlx.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		delete(w, r, db, income, accountRepo.DeleteIncome)
 	}
 }
 

@@ -30,6 +30,12 @@ export interface Contribution extends BaseEntity {
   amount: number
 }
 
+export interface Income extends BaseEntity {
+  account: Account,
+  date: Date,
+  amount: number
+}
+
 export interface Fund extends BaseEntity {
   category: Category,
   tickerSymbol: string,
@@ -70,6 +76,10 @@ export interface AccountsTotal extends Total {
 
 export interface ContributionsTotal extends Total {
   contributions: Contribution[]
+}
+
+export interface IncomesTotal extends Total {
+  incomes: Income[]
 }
 
 export interface ExpensesTotal extends Total {

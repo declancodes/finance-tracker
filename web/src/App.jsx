@@ -12,6 +12,7 @@ import { AccountsPage } from './components/pages/totals/AccountsPage';
 import { AccountCategoriesPage } from './components/pages/categories/AccountCategoriesPage';
 import { AssetCategoriesPage } from './components/pages/categories/AssetCategoriesPage';
 import { ContributionsPage } from './components/pages/totals/ContributionsPage';
+import { IncomesPage } from './components/pages/totals/IncomesPage';
 import { ExpensesPage } from './components/pages/totals/ExpensesPage';
 import { ExpenseCategoriesPage } from './components/pages/categories/ExpenseCategoriesPage';
 import { FundsPage } from './components/pages/FundsPage';
@@ -22,6 +23,7 @@ import { PortfolioPage } from './components/pages/totals/PortfolioPage';
 const accounts = '/accounts';
 const accountCategories = '/accountcategories';
 const contributions = '/contributions';
+const incomes = '/incomes';
 const expenses = '/expenses';
 const expenseCategories = '/expensecategories';
 const funds = '/funds';
@@ -42,6 +44,7 @@ const App = () => {
           ]}
         />
         <NavItem to={contributions} title='Contributions'/>
+        <NavItem to={incomes} title='Incomes'/>
         <NavDropdown
           title='Expenses'
           navItems={[
@@ -64,6 +67,7 @@ const App = () => {
         <Route path={accounts} component={AccountsPage}/>
         <Route path={accountCategories} component={AccountCategoriesPage}/>
         <Route path={contributions} component={ContributionsPage}/>
+        <Route path={incomes} component={IncomesPage}/>
         <Route path={expenses} component={ExpensesPage}/>
         <Route path={expenseCategories} component={ExpenseCategoriesPage}/>
         <Route path={funds} component={FundsPage}/>

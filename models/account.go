@@ -24,10 +24,21 @@ type Account struct {
 	Amount      decimal.Decimal `json:"amount" db:"amount"`
 }
 
-// Contribution is a payment made to an Account.
-// This might be something like a paycheck deposit, a savings Account deposit, retirement plan deposit, etc.
+// Contribution is a payment made from Income to an Account.
+// This might be something like a savings Account deposit, retirement plan deposit, etc.
 type Contribution struct {
 	ID          uuid.UUID       `json:"uuid,omitEmpty" db:"contribution_uuid"`
+	Account     Account         `json:"account" db:"account"`
+	Name        string          `json:"name" db:"name"`
+	Description string          `json:"description" db:"description"`
+	Date        time.Time       `json:"date" db:"date_made"`
+	Amount      decimal.Decimal `json:"amount" db:"amount"`
+}
+
+// Income is a payment taken from work or investment returns.
+// This might be something like a paycheck deposit, a savings Account interest payment, income from investment, etc.
+type Income struct {
+	ID          uuid.UUID       `json:"uuid,omitEmpty" db:"income_uuid"`
 	Account     Account         `json:"account" db:"account"`
 	Name        string          `json:"name" db:"name"`
 	Description string          `json:"description" db:"description"`

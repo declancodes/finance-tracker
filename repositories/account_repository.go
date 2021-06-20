@@ -85,6 +85,34 @@ func (r *AccountRepository) CreateContributions(db *sqlx.DB, cs []*models.Contri
 	return IDs, nil
 }
 
+// CreateIncomes creates Income entities in db.
+func (r *AccountRepository) CreateIncomes(db *sqlx.DB, is []*models.Income) ([]uuid.UUID, error) {
+	query := `
+	INSERT INTO income (
+		income_uuid,
+		account_uuid,
+		name,
+		description,
+		amount,
+		date_made
+	)
+	VALUES (
+		:income_uuid,
+		:account.account_uuid,
+		:name,
+		:description,
+		:amount,
+		:date_made
+	)
+	RETURNING income_uuid;`
+
+	IDs, err := createAndGetIDs(db, query, is)
+	if err != nil {
+		return nil, err
+	}
+	return IDs, nil
+}
+
 // GetAccountCategory retrieves the AccountCategory with acID from db.
 func (r *AccountRepository) GetAccountCategory(db *sqlx.DB, acID uuid.UUID) (*models.AccountCategory, error) {
 	mValues := map[string]interface{}{
@@ -245,6 +273,79 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 	return cs, nil
 }
 
+// GetIncome retrieves Income with iID from db.
+func (r *AccountRepository) GetIncome(db *sqlx.DB, iID uuid.UUID) (*models.Income, error) {
+	mValues := map[string]interface{}{
+		"income": iID.String(),
+	}
+
+	is, err := r.GetIncomes(db, mValues)
+	if err != nil {
+		return nil, err
+	}
+	return is[0], nil
+}
+
+// GetIncomes retrieves Income entities from db.
+// Filters for Income retrieval are applied to the query based on the key-value pairs in mValues.
+func (r *AccountRepository) GetIncomes(db *sqlx.DB, mValues map[string]interface{}) ([]*models.Income, error) {
+	query := `
+	SELECT
+		income.income_uuid,
+		account.account_uuid AS "account.account_uuid",
+		account_category.account_category_uuid AS "account_category.account_category_uuid",
+		account_category.name AS "account_category.name",
+		account_category.description AS "account_category.description",
+		account.name AS "account.name",
+		account.description AS "account.description",
+		account.amount AS "account.amount",
+		income.name,
+		income.description,
+		income.amount,
+		income.date_made
+	FROM income
+	INNER JOIN account
+		ON income.account_uuid = account.account_uuid
+	INNER JOIN account_category
+		ON account.account_category_uuid = account_category.account_category_uuid`
+
+	mFilters := map[string]string{
+		"income":     "income.income_uuid = ",
+		"accounts":   "account.name IN ",
+		"categories": "account_category.name IN ",
+		"start":      "income.date_made >= ",
+		"end":        "income.date_made <= ",
+	}
+
+	q, args, err := getGetQueryAndValues(query, mValues, mFilters)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Queryx(q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var is []*models.Income
+	for rows.Next() {
+		var i models.Income
+
+		err = rows.Scan(&i.ID,
+			&i.Account.ID,
+			&i.Account.Category.ID, &i.Account.Category.Name, &i.Account.Category.Description,
+			&i.Account.Name, &i.Account.Description, &i.Account.Amount,
+			&i.Name, &i.Description, &i.Amount, &i.Date)
+		if err != nil {
+			return nil, err
+		}
+
+		is = append(is, &i)
+	}
+	return is, nil
+}
+
 // UpdateAccountCategory updates an AccountCategory in db.
 func (r *AccountRepository) UpdateAccountCategory(db *sqlx.DB, ac *models.AccountCategory) error {
 	query := `
@@ -289,6 +390,22 @@ func (r *AccountRepository) UpdateContribution(db *sqlx.DB, c *models.Contributi
 	return updateEntity(db, query, c)
 }
 
+// UpdateIncome updates a Income in db.
+func (r *AccountRepository) UpdateIncome(db *sqlx.DB, i *models.Income) error {
+	query := `
+	UPDATE income
+	SET
+		account_uuid = :account.account_uuid,
+		name = :name,
+		description = :description,
+		amount = :amount,
+		date_made = :date_made
+	WHERE
+		income_uuid = :income_uuid;`
+
+	return updateEntity(db, query, i)
+}
+
 // DeleteAccountCategory deletes an AccountCategory from db.
 func (r *AccountRepository) DeleteAccountCategory(db *sqlx.DB, acID uuid.UUID) error {
 	query := `
@@ -317,4 +434,14 @@ func (r *AccountRepository) DeleteContribution(db *sqlx.DB, cID uuid.UUID) error
 		contribution_uuid = $1;`
 
 	return deleteEntity(db, query, cID)
+}
+
+// DeleteIncome deletes a Income from db.
+func (r *AccountRepository) DeleteIncome(db *sqlx.DB, iID uuid.UUID) error {
+	query := `
+	DELETE FROM income
+	WHERE
+		income_uuid = $1;`
+
+	return deleteEntity(db, query, iID)
 }
