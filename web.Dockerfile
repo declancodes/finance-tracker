@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY web/ .
 
-RUN npm install
+RUN npm ci
 
 ENTRYPOINT [ "npm", "start" ]
