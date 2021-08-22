@@ -3,7 +3,7 @@ import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import "webpack-dev-server";
 
-const config: webpack.Configuration = {
+const config: any = {
   mode: "development",
   entry: "./src/index.tsx",
   module: {
@@ -41,17 +41,17 @@ const config: webpack.Configuration = {
     filename: "bundle.js"
   },
   devServer: {
-    contentBase: path.join(__dirname, "public/"),
     port: 3000,
-    publicPath: "http://localhost:3000/dist/",
     hot: true,
-    historyApiFallback: true
+    historyApiFallback: true,
+    devMiddleware: {
+      publicPath: "http://localhost:3000/dist/"
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "public/index.html",
     }),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       "API_URL": JSON.stringify("http://localhost:8080")
     })
