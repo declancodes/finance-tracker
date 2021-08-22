@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EntityForm } from '../forms/EntityForm/EntityForm';
-import { ModifyRowPanel } from './ModifyRowPanel';
+import { RowActions } from './RowActions/RowActions';
 import {
   displayCurrency,
   displayDate,
@@ -76,7 +76,7 @@ export const EntityRow = ({
             doFinalState={() => setIsEditing(false)}
           />
         ) : (
-          <ModifyRowPanel
+          <RowActions
             handleEdit={() => setIsEditing(true)}
             handleDelete={() => handleDelete(entity.uuid)}
           />
