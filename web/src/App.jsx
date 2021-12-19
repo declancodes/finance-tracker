@@ -35,7 +35,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <NavBar>
-        <NavItem to='/' title='Finance Tracker'/>
+        <NavItem to='/'>
+          Finance Tracker
+        </NavItem>
         <NavDropdown
           title='Accounts'
           navItems={[
@@ -43,8 +45,12 @@ const App = () => {
             {to: accountCategories, title: 'Account Categories'},
           ]}
         />
-        <NavItem to={contributions} title='Contributions'/>
-        <NavItem to={incomes} title='Incomes'/>
+        <NavItem to={contributions}>
+          Contributions
+        </NavItem>
+        <NavItem to={incomes}>
+          Incomes
+        </NavItem>
         <NavDropdown
           title='Expenses'
           navItems={[
@@ -52,7 +58,9 @@ const App = () => {
             {to: expenseCategories, title: 'Expense Categories'},
           ]}
         />
-        <NavItem to={holdings} title='Holdings'/>
+        <NavItem to={holdings}>
+          Holdings
+        </NavItem>
         <NavDropdown
           title='Funds'
           navItems={[
@@ -60,7 +68,9 @@ const App = () => {
             {to: assetCategories, title: 'Asset Categories'},
           ]}
         />
-        <NavItem to={portfolios} title='Portfolios'/>
+        <NavItem to={portfolios}>
+          Portfolios
+        </NavItem>
       </NavBar>
       <Switch>
         <Route path='/' exact component={HomePage}/>
