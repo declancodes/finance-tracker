@@ -33,7 +33,8 @@ export const AccountsPage = () => (
       name: '',
       category: '',
       description: '',
-      amount: 0
+      amount: 0,
+      isArchived: false
     }}
     usesFilters
     filterCategories={[

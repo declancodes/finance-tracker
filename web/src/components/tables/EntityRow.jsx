@@ -27,6 +27,7 @@ export const EntityRow = ({
       {entity.hasOwnProperty('description') && <td>{entity.description}</td>}
       {entity.hasOwnProperty('tickerSymbol') && <td>{entity.tickerSymbol}</td>}
       {entity.hasOwnProperty('date') && <td>{displayDate(entity.date)}</td>}
+      {entity.hasOwnProperty('isArchived') && <td>{entity.isArchived.toString()}</td>}
       {entity.hasOwnProperty('amount') && <td className='number'>{displayCurrency(entity.amount)}</td>}
       {entity.hasOwnProperty('sharePrice') && <td className='number'>{displayCurrency(entity.sharePrice)}</td>}
       {entity.hasOwnProperty('shares') && <td className='number'>{displayDecimals(entity.shares, 3)}</td>}

@@ -37,7 +37,7 @@ export const FundsPage = () => (
       tickerSymbol: '',
       sharePrice: 0,
       expenseRatio: 0,
-      isPrivate: true
+      isPrivate: false
     }}
     usesFilters
     filterCategories={[

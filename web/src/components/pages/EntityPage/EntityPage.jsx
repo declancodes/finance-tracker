@@ -167,14 +167,14 @@ class EntityPage extends React.Component {
               ))
             ) : (
               <tr>
-                <td colSpan={Object.keys(this.props.blankEntity).length}>
+                <td colspan={Object.keys(this.props.blankEntity).length}>
                   No {this.props.entityPluralName}
                 </td>
               </tr>
             )}
             {this.state.totals.length > 0 && (
                 <tr>
-                  <td colSpan={Object.keys(this.props.blankEntity).length - 1 - this.state.totals.length}>Total</td>
+                  <td colspan={Object.keys(this.props.blankEntity).length - 1 - this.state.totals.length}>Total</td>
                   {this.state.totals.map((t, i) => (
                     <td key={i} className='number'>{displayCurrency(t)}</td>
                   ))}

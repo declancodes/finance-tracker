@@ -22,6 +22,7 @@ type Account struct {
 	Name        string          `json:"name" db:"name"`
 	Description string          `json:"description" db:"description"`
 	Amount      decimal.Decimal `json:"amount" db:"amount"`
+	IsArchived  bool            `json:"isArchived" db:"is_archived"`
 }
 
 // Contribution is a payment made from Income to an Account.

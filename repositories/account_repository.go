@@ -39,14 +39,16 @@ func (r *AccountRepository) CreateAccounts(db *sqlx.DB, as []*models.Account) ([
 		account_category_uuid,
 		name,
 		description,
-		amount
+		amount,
+		is_archived
 	)
 	VALUES (
 		:account_uuid,
 		:account_category.account_category_uuid,
 		:name,
 		:description,
-		:amount
+		:amount,
+		:is_archived
 	)
 	RETURNING account_uuid;`
 
@@ -177,7 +179,8 @@ func (r *AccountRepository) GetAccounts(db *sqlx.DB, mValues map[string]interfac
 		account_category.description AS "account_category.description",
 		account.name,
 		account.description,
-		account.amount
+		account.amount,
+		account.is_archived
 	FROM account
 	INNER JOIN account_category
 		ON account.account_category_uuid = account_category.account_category_uuid`
@@ -226,6 +229,7 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 		account.name AS "account.name",
 		account.description AS "account.description",
 		account.amount AS "account.amount",
+		account.is_archived AS "account.is_archived",
 		contribution.name,
 		contribution.description,
 		contribution.amount,
@@ -262,7 +266,7 @@ func (r *AccountRepository) GetContributions(db *sqlx.DB, mValues map[string]int
 		err = rows.Scan(&c.ID,
 			&c.Account.ID,
 			&c.Account.Category.ID, &c.Account.Category.Name, &c.Account.Category.Description,
-			&c.Account.Name, &c.Account.Description, &c.Account.Amount,
+			&c.Account.Name, &c.Account.Description, &c.Account.Amount, &c.Account.IsArchived,
 			&c.Name, &c.Description, &c.Amount, &c.Date)
 		if err != nil {
 			return nil, err
@@ -299,6 +303,7 @@ func (r *AccountRepository) GetIncomes(db *sqlx.DB, mValues map[string]interface
 		account.name AS "account.name",
 		account.description AS "account.description",
 		account.amount AS "account.amount",
+		account.is_archived AS "account.is_archived",
 		income.name,
 		income.description,
 		income.amount,
@@ -335,7 +340,7 @@ func (r *AccountRepository) GetIncomes(db *sqlx.DB, mValues map[string]interface
 		err = rows.Scan(&i.ID,
 			&i.Account.ID,
 			&i.Account.Category.ID, &i.Account.Category.Name, &i.Account.Category.Description,
-			&i.Account.Name, &i.Account.Description, &i.Account.Amount,
+			&i.Account.Name, &i.Account.Description, &i.Account.Amount, &i.Account.IsArchived,
 			&i.Name, &i.Description, &i.Amount, &i.Date)
 		if err != nil {
 			return nil, err
@@ -367,7 +372,8 @@ func (r *AccountRepository) UpdateAccount(db *sqlx.DB, a *models.Account) error 
 		account_category_uuid = :account_category.account_category_uuid,
 		name = :name,
 		description = :description,
-		amount = :amount
+		amount = :amount,
+		is_archived = :is_archived
 	WHERE
 		account_uuid = :account_uuid;`
 
