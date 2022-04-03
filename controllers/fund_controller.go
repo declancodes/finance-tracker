@@ -349,7 +349,7 @@ func getSharePrice(s string) (decimal.Decimal, error) {
 	u := &url.URL{
 		Scheme:   "https",
 		Host:     os.Getenv("IEX_HOST"),
-		Path:     fmt.Sprintf("v1/stock/%s/previous", s),
+		Path:     fmt.Sprintf("stable/stock/%s/quote/latestPrice", s),
 		RawQuery: fmt.Sprintf("token=%s", os.Getenv("IEX_KEY")),
 	}
 
@@ -366,12 +366,12 @@ func getSharePrice(s string) (decimal.Decimal, error) {
 		return decimal.Zero, err
 	}
 
-	var pp models.PreviousPrice
-	err = json.NewDecoder(resp.Body).Decode(&pp)
+	var latestPrice decimal.Decimal
+	err = json.NewDecoder(resp.Body).Decode(&latestPrice)
 	if err != nil {
 		log.Println(err)
 		return decimal.Zero, err
 	}
 
-	return pp.Close, nil
+	return latestPrice, nil
 }
